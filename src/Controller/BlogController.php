@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Article;
 use App\Entity\Comment;
+use App\Entity\Favoris;
 use App\Form\CommentType;
 use App\Repository\ArticleRepository;
 use App\Repository\CategoryRepository;
@@ -86,13 +87,16 @@ class BlogController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function addToFavorites(Article $article, EntityManagerInterface $entityManager): Response
     {
-        $user = $this->getUser();
+        $favoris = $entityManager->getRepository(Favoris::class)->findOneBy(['user' => $this->getUser(), 'article' => $article]);
 
-        if ($user->getFavoriteArticles()->contains($article)) {
-            $user->removeFavoriteArticle($article);
+        if ($favoris) {
+            $entityManager->remove($favoris);
             $message = 'L\'article a été retiré de vos favoris';
         } else {
-            $user->addFavoriteArticle($article);
+            $favoris = new Favoris();
+            $favoris->setUser($this->getUser());
+            $favoris->setArticle($article);
+            $entityManager->persist($favoris);
             $message = 'L\'article a été ajouté à vos favoris';
         }
 

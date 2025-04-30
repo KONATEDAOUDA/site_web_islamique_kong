@@ -21,7 +21,15 @@ class Favoris
     #[ORM\ManyToOne(inversedBy: 'favoris')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
-    
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Podcast $podcast = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Article $article = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -39,4 +47,29 @@ class Favoris
         return $this;
     }
 
+    public function getPodcast(): ?Podcast
+    {
+        return $this->podcast;
+    }
+
+    public function setPodcast(?Podcast $podcast): static
+    {
+        $this->podcast = $podcast;
+
+        return $this;
+    }
+
+    public function getArticle(): ?Article
+    {
+        return $this->article;
+    }
+
+    public function setArticle(?Article $article): static
+    {
+        $this->article = $article;
+
+        return $this;
+    }
+
 }
+
