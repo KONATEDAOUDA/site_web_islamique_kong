@@ -1,0 +1,169 @@
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <a href="{{ path('admin_dashboard') }}" class="brand-link">
+        <img src="{{ asset('images/logo.png') }}" alt="Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+        <span class="brand-text font-weight-light">Admin Kong</span>
+    </a>
+
+    <div class="sidebar">
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+            <div class="image">
+                <img src="{{ asset('images/user-default.png') }}" class="img-circle elevation-2" alt="User Image">
+            </div>
+            <div class="info">
+                <a href="{{ path('app_profile') }}" class="d-block">{{ app.user.firstName|default(app.user.email) }}</a>
+            </div>
+        </div>
+
+        <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <li class="nav-item">
+                    <a href="{{ path('admin_dashboard') }}" class="nav-link {% if app.request.get('_route') == 'admin_dashboard' %}active{% endif %}">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <p>Tableau de bord</p>
+                    </a>
+                </li>
+
+                {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_SUPERVISOR') or is_granted('ROLE_BLOG_MANAGER') %}
+                <li class="nav-item has-treeview {% if app.request.get('_route') starts with 'admin_blog' %}menu-open{% endif %}">
+                    <a href="#" class="nav-link {% if app.request.get('_route') starts with 'admin_blog' %}active{% endif %}">
+                        <i class="nav-icon fas fa-blog"></i>
+                        <p>
+                            Blog
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ path('admin_blog_article_index') }}" class="nav-link {% if app.request.get('_route') == 'admin_blog_article_index' %}active{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Articles</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path('admin_blog_category_index') }}" class="nav-link {% if app.request.get('_route') == 'admin_blog_category_index' %}active{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Catégories</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path('admin_blog_comment_index') }}" class="nav-link {% if app.request.get('_route') == 'admin_blog_comment_index' %}active{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Commentaires</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                {% endif %}
+
+                {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_SUPERVISOR') %}
+                <li class="nav-item has-treeview {% if app.request.get('_route') starts with 'admin_podcast' %}menu-open{% endif %}">
+                    <a href="#" class="nav-link {% if app.request.get('_route') starts with 'admin_podcast' %}active{% endif %}">
+                        <i class="nav-icon fas fa-podcast"></i>
+                        <p>
+                            Podcasts
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ path('admin_podcast_index') }}" class="nav-link {% if app.request.get('_route') == 'admin_podcast_index' %}active{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Podcasts</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path('admin_podcast_category_index') }}" class="nav-link {% if app.request.get('_route') == 'admin_podcast_category_index' %}active{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Catégories</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                {% endif %}
+
+                {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_SUPERVISOR') or is_granted('ROLE_ARCHIVE_MANAGER') %}
+                <li class="nav-item has-treeview {% if app.request.get('_route') starts with 'admin_archive' %}menu-open{% endif %}">
+                    <a href="#" class="nav-link {% if app.request.get('_route') starts with 'admin_archive' %}active{% endif %}">
+                        <i class="nav-icon fas fa-archive"></i>
+                        <p>
+                            Archives
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ path('admin_archive_index') }}" class="nav-link {% if app.request.get('_route') == 'admin_archive_index' %}active{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Archives</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path('admin_archive_category_index') }}" class="nav-link {% if app.request.get('_route') == 'admin_archive_category_index' %}active{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Catégories</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                {% endif %}
+
+                {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_SUPERVISOR') or is_granted('ROLE_TEACHER') %}
+                <li class="nav-item">
+                    <a href="{{ path('admin_teacher_content_index') }}" class="nav-link {% if app.request.get('_route') starts with 'admin_teacher' %}active{% endif %}">
+                        <i class="nav-icon fas fa-chalkboard-teacher"></i>
+                        <p>Enseignements</p>
+                    </a>
+                </li>
+                {% endif %}
+
+                {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_SUPERVISOR') %}
+                <li class="nav-item">
+                    <a href="{{ path('admin_forum_index') }}" class="nav-link {% if app.request.get('_route') starts with 'admin_forum' %}active{% endif %}">
+                        <i class="nav-icon fas fa-comments"></i>
+                        <p>Forum</p>
+                    </a>
+                </li>
+                {% endif %}
+
+                {% if is_granted('ROLE_ADMIN') %}
+                <li class="nav-item">
+                    <a href="{{ path('admin_user_index') }}" class="nav-link {% if app.request.get('_route') starts with 'admin_user' %}active{% endif %}">
+                        <i class="nav-icon fas fa-users"></i>
+                        <p>Utilisateurs</p>
+                    </a>
+                </li>
+
+                <li class="nav-item has-treeview {% if app.request.get('_route') starts with 'admin_setting' %}menu-open{% endif %}">
+                    <a href="#" class="nav-link {% if app.request.get('_route') starts with 'admin_setting' %}active{% endif %}">
+                        <i class="nav-icon fas fa-cogs"></i>
+                        <p>
+                            Paramètres
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ path('admin_setting_general') }}" class="nav-link {% if app.request.get('_route') == 'admin_setting_general' %}active{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Général</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path('admin_faq_index') }}" class="nav-link {% if app.request.get('_route') starts with 'admin_faq' %}active{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>FAQ</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path('admin_setting_terms') }}" class="nav-link {% if app.request.get('_route') == 'admin_setting_terms' %}active{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Conditions d'utilisation</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</aside>

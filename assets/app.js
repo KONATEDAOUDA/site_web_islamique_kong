@@ -1,10 +1,16 @@
-import './bootstrap.js';
-/*
- * Welcome to your app's main JavaScript file!
- *
- * This file will be included onto the page via the importmap() Twig function,
- * which should already be in your base.html.twig.
- */
-import './styles/app.css';
+// Import des polices
+import '@fontsource/poppins';
+// Retirez ou commentez la ligne ci-dessous jusqu'à ce que vous installiez le package
+// import '@fontsource/amiri';
 
-console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');
+// Import des CSS
+import 'admin-lte/dist/css/adminlte.min.css';
+import './styles/app.scss';
+
+// Import des JS
+import 'bootstrap';
+import 'admin-lte/dist/js/adminlte.min';
+
+// Facultatif: importez le jQuery pour le rendre disponible globalement
+import $ from 'jquery';
+global.$ = global.jQuery = $;

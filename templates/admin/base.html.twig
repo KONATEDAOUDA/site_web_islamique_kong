@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.locale|default('fr') }}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}Administration - Portail Islamique de Kong{% endblock %}</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⋆</text></svg>">
+        
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('admin') }}
+        {% endblock %}
+
+        {% block javascripts %}
+            {{ encore_entry_script_tags('admin') }}
+        {% endblock %}
+    </head>
+    <body class="sidebar-mini layout-fixed">
+        <div class="wrapper">
+            {% include 'admin/partials/_navbar.html.twig' %}
+            {% include 'admin/partials/_sidebar.html.twig' %}
+            
+            <div class="content-wrapper">
+                <section class="content-header">
+                    <div class="container-fluid">
+                        <div class="row mb-2">
+                            <div class="col-sm-6">
+                                <h1>{% block page_title %}Administration{% endblock %}</h1>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="content">
+                    <div class="container-fluid">
+                        {% for label, messages in app.flashes %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+                        
+                        {% block content %}{% endblock %}
+                    </div>
+                </section>
+            </div>
+            
+            {% include 'admin/partials/_footer.html.twig' %}
+        </div>
+    </body>
+</html>

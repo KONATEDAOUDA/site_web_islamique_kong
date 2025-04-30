@@ -1,0 +1,183 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Tableau de bord - Administration{% endblock %}
+
+{% block page_title %}Tableau de bord{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-info">
+                <div class="inner">
+                    <h3>{{ articlesCount|default(0) }}</h3>
+                    <p>Articles</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-newspaper"></i>
+                </div>
+                <a href="{{ path('admin_blog_article_index') }}" class="small-box-footer">
+                    Plus d'infos <i class="fas fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-success">
+                <div class="inner">
+                    <h3>{{ podcastsCount|default(0) }}</h3>
+                    <p>Podcasts</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-podcast"></i>
+                </div>
+                <a href="{{ path('admin_podcast_index') }}" class="small-box-footer">
+                    Plus d'infos <i class="fas fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-warning">
+                <div class="inner">
+                    <h3>{{ usersCount|default(0) }}</h3>
+                    <p>Utilisateurs</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <a href="{{ path('admin_user_index') }}" class="small-box-footer">
+                    Plus d'infos <i class="fas fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-danger">
+                <div class="inner">
+                    <h3>{{ commentsCount|default(0) }}</h3>
+                    <p>Commentaires</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <a href="{{ path('admin_blog_comment_index') }}" class="small-box-footer">
+                    Plus d'infos <i class="fas fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Dernières activités</h3>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Titre</th>
+                                <th>Auteur</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if recentActivities is defined and recentActivities|length > 0 %}
+                                {% for activity in recentActivities %}
+                                    <tr>
+                                        <td>
+                                            {% if activity.type == 'article' %}
+                                                <span class="badge bg-primary">Article</span>
+                                            {% elseif activity.type == 'podcast' %}
+                                                <span class="badge bg-success">Podcast</span>
+                                            {% elseif activity.type == 'comment' %}
+                                                <span class="badge bg-info">Commentaire</span>
+                                            {% elseif activity.type == 'archive' %}
+                                                <span class="badge bg-warning">Archive</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ activity.title }}</td>
+                                        <td>{{ activity.author }}</td>
+                                        <td>{{ activity.date|date('d/m/Y H:i') }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="4" class="text-center">Aucune activité récente</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Statistiques du site</h3>
+                </div>
+                <div class="card-body">
+                    <canvas id="visitorChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h3 class="card-title">Actions rapides</h3>
+                </div>
+                <div class="card-body">
+                    <div class="btn-group-vertical w-100">
+                        <a href="{{ path('admin_blog_article_new') }}" class="btn btn-primary mb-2">
+                            <i class="fas fa-plus mr-2"></i> Nouvel article
+                        </a>
+                        <a href="{{ path('admin_podcast_new') }}" class="btn btn-success mb-2">
+                            <i class="fas fa-plus mr-2"></i> Nouveau podcast
+                        </a>
+                        <a href="{{ path('admin_archive_new') }}" class="btn btn-warning mb-2">
+                            <i class="fas fa-plus mr-2"></i> Nouvelle archive
+                        </a>
+                        <a href="{{ path('admin_user_new') }}" class="btn btn-info">
+                            <i class="fas fa-user-plus mr-2"></i> Nouvel utilisateur
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Données factices pour le graphique des visiteurs
+            var ctx = document.getElementById('visitorChart').getContext('2d');
+            var visitorChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil'],
+                    datasets: [{
+                        label: 'Visiteurs',
+                        data: [500, 800, 650, 900, 1200, 1300, 1500],
+                        backgroundColor: 'rgba(60, 141, 188, 0.2)',
+                        borderColor: 'rgba(60, 141, 188, 1)',
+                        pointBorderColor: 'rgba(60, 141, 188, 1)',
+                        pointBackgroundColor: '#fff',
+                        pointHoverBackgroundColor: 'rgba(60, 141, 188, 1)',
+                        pointHoverBorderColor: 'rgba(60, 141, 188, 1)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}

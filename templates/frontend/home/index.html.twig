@@ -1,0 +1,224 @@
+{% extends 'frontend/base.html.twig' %}
+
+{% block title %}Portail Islamique de Kong{% endblock %}
+
+{% block main %}
+    <!-- Bannière principale avec image de mosquée traditionnelle de Kong -->
+    <div class="hero-section position-relative">
+        <div class="overlay bg-dark position-absolute w-100 h-100" style="opacity: 0.6;"></div>
+        <div class="container">
+            <div class="row align-items-center" style="min-height: 500px;">
+                <div class="col-md-8 text-white position-relative">
+                    <h1 class="display-4 fw-bold">Bienvenue sur le Site Islamique de Kong</h1>
+                    <p class="lead">Un espace de préservation et de partage du patrimoine islamique de Kong</p>
+                    <div class="mt-4">
+                        <a href="{{ path('app_about') }}" class="btn btn-primary btn-lg me-2">En savoir plus</a>
+                        <a href="{{ path('app_blog') }}" class="btn btn-outline-light btn-lg">Explorer le blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section historique de Kong -->
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-md-12 text-center mb-4">
+                <h2 class="section-title">Histoire Islamique de Kong</h2>
+                <div class="divider mx-auto"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <img src="{{ asset('images/archive/kong-mosque.jpg') }}" alt="Historique de Kong" class="img-fluid rounded">
+            </div>
+            <div class="col-md-6">
+                <h3 class="mb-3">Un centre islamique historique</h3>
+                <p>Fondée au XVIIIe siècle, Kong est devenue un important centre commercial et islamique en Afrique de l'Ouest. Les érudits, les commerçants et les fidèles y ont créé une riche tradition d'enseignement et de pratique de l'Islam.</p>
+                <p>La ville est connue pour ses mosquées en terre, ses écoles coraniques et sa contribution à la diffusion de la culture islamique dans toute la région.</p>
+                <p>Ce site vise à préserver et à partager ce riche patrimoine islamique à travers des articles, des podcasts, des archives historiques et des enseignements des maîtres contemporains.</p>
+                <a href="{{ path('app_archive') }}" class="btn btn-primary mt-3">Découvrir les archives</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Derniers articles -->
+    <div class="bg-light py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 text-center mb-4">
+                    <h2 class="section-title">Derniers Articles</h2>
+                    <div class="divider mx-auto"></div>
+                </div>
+            </div>
+            <div class="row">
+                {% if latestArticles is defined and latestArticles|length > 0 %}
+                    {% for article in latestArticles %}
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <img src="{{ asset('images/archive/grande_mosquee_kong_old.jpg')}}" class="card-img-top" alt="{{ article.title }}">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ article.title }}</h5>
+                                    <p class="card-text">{{ article.excerpt }}</p>
+                                </div>
+                                <div class="card-footer bg-white border-0">
+                                    <a href="{{ path('app_blog_show', {'slug': article.slug}) }}" class="btn btn-sm btn-outline-primary">Lire plus</a>
+                                    <small class="text-muted float-end">{{ article.createdAt|date('d/m/Y') }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="col-md-12">
+                        <div class="alert alert-info">
+                            <p class="mb-0">Aucun article n'a été publié pour le moment.</p>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-center mt-4">
+                    <a href="{{ path('app_blog') }}" class="btn btn-primary">Voir tous les articles</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Derniers podcasts -->
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-md-12 text-center mb-4">
+                <h2 class="section-title">Derniers Podcasts</h2>
+                <div class="divider mx-auto"></div>
+            </div>
+        </div>
+        <div class="row">
+            {% if latestPodcasts is defined and latestPodcasts|length > 0 %}
+                {% for podcast in latestPodcasts %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ podcast.title }}</h5>
+                                <p class="card-text">{{ podcast.description }}</p>
+                                <div class="podcast-player mb-3">
+                                    <audio controls class="w-100">
+                                        <source src="{{ asset(podcast.audioFile) }}" type="audio/mpeg">
+                                        Votre navigateur ne supporte pas la lecture audio.
+                                    </audio>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white border-0">
+                                <a href="{{ path('app_podcast_show', {'slug': podcast.slug}) }}" class="btn btn-sm btn-outline-primary">Plus de détails</a>
+                                <small class="text-muted float-end">{{ podcast.createdAt|date('d/m/Y') }}</small>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-md-12">
+                    <div class="alert alert-info">
+                        <p class="mb-0">Aucun podcast n'a été publié pour le moment.</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-center mt-4">
+                <a href="{{ path('app_podcast') }}" class="btn btn-primary">Voir tous les podcasts</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Archives pertinentes -->
+    <div class="bg-light py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 text-center mb-4">
+                    <h2 class="section-title">Archives Pertinentes</h2>
+                    <div class="divider mx-auto"></div>
+                </div>
+            </div>
+            <div class="row">
+                {% if relevantArchives is defined and relevantArchives|length > 0 %}
+                    {% for archive in relevantArchives %}
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <div class="archive-type mb-2">
+                                        {% if archive.type == 'article' %}
+                                            <span class="badge bg-primary">Article</span>
+                                        {% elseif archive.type == 'audio' %}
+                                            <span class="badge bg-success">Audio</span>
+                                        {% elseif archive.type == 'video' %}
+                                            <span class="badge bg-danger">Vidéo</span>
+                                        {% endif %}
+                                    </div>
+                                    <h5 class="card-title">{{ archive.title }}</h5>
+                                    <p class="card-text">{{ archive.description }}</p>
+                                </div>
+                                <div class="card-footer bg-white border-0">
+                                    <a href="{{ path('app_archive_show') }}" class="btn btn-sm btn-outline-primary">Consulter</a>
+                                    <small class="text-muted float-end">{{ archive.year }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="col-md-12">
+                        <div class="alert alert-info">
+                            <p class="mb-0">Aucune archive n'a été publiée pour le moment.</p>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-center mt-4">
+                    <a href="{{ path('app_archive') }}" class="btn btn-primary">Explorer toutes les archives</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section des maîtres islamiques -->
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-md-12 text-center mb-4">
+                <h2 class="section-title">Maîtres Islamiques</h2>
+                <div class="divider mx-auto"></div>
+                <p class="lead">Découvrez les enseignements et le savoir-faire des maîtres islamiques de Kong</p>
+            </div>
+        </div>
+        <div class="row">
+            {# {% if teachers is defined and teachers|length > 0 %} #}
+                {% for teacher in teachers %}
+                    <div class="col-md-3 mb-4">
+                        <div class="card teacher-card text-center h-100">
+                            <img src="{{ asset('images/teacher/icon_user.jpeg') }}" class="card-img-top rounded-circle mx-auto mt-3" alt="{{ teacher.name }}" style="width: 150px; height: 150px; object-fit: cover;">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ teacher.name }}</h5>
+                                <p class="card-text text-muted">
+                                    <strong class="text-primary">Spécialité :</strong>
+                                    {{ teacher.specialty }}
+                                </p>
+                            </div>
+                            <div class="card-footer bg-white border-0">
+                                <a href="{{ path('app_teacher_show', {'slug': teacher.slug}) }}" class="btn btn-sm btn-outline-primary">Voir le profil</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {# {% else %}
+                <div class="col-md-12">
+                    <div class="alert alert-info">
+                        <p class="mb-0">Aucun maître islamique n'a été ajouté pour le moment.</p>
+                    </div>
+                </div> #}
+            {# {% endif %} #}
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-center mt-4">
+                <a href="{{ path('app_teacher') }}" class="btn btn-primary">Tous les maîtres</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,50 @@
+<footer class="bg-dark text-light py-5 mt-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <h5>Portail Islamique de Kong</h5>
+                <p>Préservation et partage du patrimoine islamique de Kong.</p>
+                <div class="social-icons mt-3">
+                    <a href="#" class="text-light me-3"><i class="fab fa-facebook-f">Facebook</i></a>
+                    <a href="#" class="text-light me-3"><i class="fab fa-linkedin"></i>Linkedin</a>
+                    <a href="#" class="text-light me-3"><i class="fab fa-youtube"></i>Youtube</a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <h5>Nos partenaire</h5>
+                <ul class="list-unstyled">
+                    <li><a href="" class="text-light">Partenaire 1</a></li>
+                    <li><a href="" class="text-light">Partenaire 2</a></li>
+                    <li><a href="" class="text-light">Partenaire 3</a></li>
+                    <li><a href="" class="text-light">Partenaire 4</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h5>Liens utiles</h5>
+                <ul class="list-unstyled">
+                    <li><a href="{{ path('app_forum') }}" class="text-light">Forum</a></li>
+                    <li><a href="{{ path('app_blog') }}" class="text-light">FAQ</a></li>
+                    <li><a href="{{ path('app_terms') }}" class="text-light">Terms</a></li>
+                    <li><a href="{{ path('app_privacy') }}" class="text-light">Privacy</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h5>Contactez-nous</h5>
+                <address>
+                    <p><i class="fas fa-map-marker-alt me-2"></i> Kong, Côte d'Ivoire</p>
+                    <p><i class="fas fa-phone me-2"></i> +225 XX XX XX XX</p>
+                    <p><i class="fas fa-envelope me-2"></i> contact@islamic-kong.org</p>
+                </address>
+            </div>
+        </div>
+        <hr class="bg-light">
+        <div class="row">
+            <div class="col-md-6">
+                <p>&copy; {{ 'now'|date('Y') }} Portail Islamique de Kong. Tous droits réservés.</p>
+            </div>
+            <div class="col-md-6 text-end">
+                Développé par <a href="https://davetechnology.com" class="text-light" target="_blank" rel="noopener">DaveTechnology</a>
+            </div>
+        </div>
+    </div>
+</footer>

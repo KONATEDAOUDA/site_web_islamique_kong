@@ -1,0 +1,206 @@
+// Import Bootstrap 
+@import '~bootstrap/scss/bootstrap';
+
+// Custom variables 
+$primary: #006838; // Vert islamique 
+$secondary: #b18904; // Or/ocre (couleur traditionnelle) 
+$success: #2e856e; // Vert foncé 
+$info: #17a2b8; // Bleu clair 
+$warning: #e6a817; // Orange/ambre 
+$danger: #9e2b25; // Rouge foncé 
+$light: #f8f9fa; 
+$dark: #343a40;
+
+// Custom styles 
+body { 
+  font-family: 'Poppins', sans-serif; 
+  color: #333; 
+}
+
+// Header & Navigation styles 
+.navbar { 
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  
+  .navbar-brand {
+    font-weight: 700;
+  }
+
+  .nav-link {
+    font-weight: 500;
+    position: relative;
+    
+    &.active {
+      color: #fff !important;
+      
+      &:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: #fff;
+      }
+    }
+  }
+}
+
+// Hero section with background image 
+.hero-section { 
+  background-image: url('../images/kong-mosque.jpg'); // Corrected path
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat;
+
+  .container {
+    z-index: 10;
+    position: relative;
+  }
+}
+
+// Section titles 
+.section-title { 
+  position: relative; 
+  font-weight: 700; 
+  margin-bottom: 1rem; 
+  color: $primary; 
+}
+
+.divider { 
+  width: 60px; 
+  height: 3px; 
+  background-color: $secondary; 
+  margin-bottom: 2rem; 
+}
+
+// Card styles 
+.card { 
+  border: none; 
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1); 
+  transition: transform 0.3s;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+
+  .card-img-top {
+    height: 200px;
+    object-fit: cover;
+  }
+}
+
+// Blog article styles 
+.blog-content { 
+  img { 
+    max-width: 100%; 
+    height: auto; 
+    margin: 1.5rem 0; 
+  }
+
+  blockquote {
+    border-left: 4px solid $primary;
+    padding-left: 1rem;
+    margin-left: 0;
+    font-style: italic;
+    color: #555;
+  }
+}
+
+// Podcast player styles 
+.podcast-player { 
+  audio { 
+    width: 100%; 
+  } 
+}
+
+// Forum styles 
+.forum-thread { 
+  background-color: #fff; 
+  border-radius: 5px; 
+  padding: 15px; 
+  margin-bottom: 15px; 
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); 
+}
+
+.forum-post { 
+  border-bottom: 1px solid #eee; 
+  padding: 15px 0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+// Teacher cards 
+.teacher-card { 
+  img { 
+    border: 4px solid $primary; 
+  } 
+}
+
+// Footer styles 
+footer { 
+  a { 
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+// Custom utility classes 
+.bg-pattern { 
+  background-color: #f9f9f9; 
+  background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23e6e6e6' fill-opacity='0.4' fill-rule='evenodd'%3E%3Cpath d='M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 1.4l2.83 2.83 1.41-1.41L1.41 0H0v1.41zM38.59 40l-2.83-2.83 1.41-1.41L40 38.59V40h-1.41zM40 1.41l-2.83 2.83-1.41-1.41L38.59 0H40v1.41zM20 18.6l2.83-2.83 1.41 1.41L21.41 20l2.83 2.83-1.41 1.41L20 21.41l-2.83 2.83-1.41-1.41L18.59 20l-2.83-2.83 1.41-1.41L20 18.59z'/%3E%3C/g%3E%3C/svg%3E"); 
+}
+
+.text-primary-dark { 
+  color: darken($primary, 10%); 
+}
+
+.text-secondary-dark { 
+  color: darken($secondary, 10%); 
+}
+
+// Islamic decoration elements 
+.islamic-pattern { 
+  background-color: $light; 
+  background-image: url('../images/islamic-pattern.jpg'); // Corrected path
+  background-size: 200px; 
+  background-repeat: repeat; 
+  padding: 40px 0; 
+}
+
+.arabic-calligraphy { 
+  font-family: 'Amiri', serif; 
+}
+
+// Media Queries 
+@media (max-width: 768px) { 
+  .hero-section { 
+    .row { 
+      min-height: 400px !important; 
+    } 
+  }
+
+  .card .card-img-top {
+    height: 180px;
+  }
+}
+
+@media (max-width: 576px) { 
+  .hero-section { 
+    .row { 
+      min-height: 350px !important; 
+    }
+
+    h1 {
+      font-size: 2rem;
+    }
+  }
+
+  .section-title {
+    font-size: 1.75rem;
+  }
+}

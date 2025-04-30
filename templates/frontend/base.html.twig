@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container-fluid p-0">
+        {% block header %}
+            {% include 'frontend/partials/_header.html.twig' %}
+        {% endblock %}
+
+        <main>
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            {% block main %}{% endblock %}
+        </main>
+
+        {% block footer %}
+            {% include 'frontend/partials/_footer.html.twig' %}
+        {% endblock %}
+    </div>
+{% endblock %}
