@@ -59,6 +59,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Archive::class, mappedBy: 'favoredBy')]
     private Collection $favoriteArchives;
 
+    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Podcast::class)]
+    private Collection $podcasts;
+
+    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Archive::class)]
+    private Collection $archives;
+
+    #[ORM\OneToMany(mappedBy: 'author', targetEntity: ForumTopic::class)]
+    private Collection $forumTopics;
+
+    #[ORM\OneToMany(mappedBy: 'author', targetEntity: ForumPost::class)]
+    private Collection $forumPosts;
+
+    #[ORM\OneToMany(mappedBy: 'author', targetEntity: MaitreIslamique::class)]
+    private Collection $maitresIslamiques;
+
     public function __construct()
     {
         $this->articles = new ArrayCollection();
@@ -67,6 +82,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->favoritePodcasts = new ArrayCollection();
         $this->favoriteArchives = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
+        $this->podcasts = new ArrayCollection();
+        $this->archives = new ArrayCollection();
+        $this->forumTopics = new ArrayCollection();
+        $this->forumPosts = new ArrayCollection();
+        $this->maitresIslamiques = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -340,6 +360,151 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->favoriteArchives->removeElement($archive)) {
             $archive->removeFavoredBy($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Podcast>
+     */
+    public function getPodcasts(): Collection
+    {
+        return $this->podcasts;
+    }
+
+    public function addPodcast(Podcast $podcast): static
+    {
+        if (!$this->podcasts->contains($podcast)) {
+            $this->podcasts->add($podcast);
+            $podcast->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removePodcast(Podcast $podcast): static
+    {
+        if ($this->podcasts->removeElement($podcast)) {
+            if ($podcast->getAuthor() === $this) {
+                $podcast->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Archive>
+     */
+    public function getArchives(): Collection
+    {
+        return $this->archives;
+    }
+
+    public function addArchive(Archive $archive): static
+    {
+        if (!$this->archives->contains($archive)) {
+            $this->archives->add($archive);
+            $archive->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeArchive(Archive $archive): static
+    {
+        if ($this->archives->removeElement($archive)) {
+            if ($archive->getAuthor() === $this) {
+                $archive->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ForumTopic>
+     */
+    public function getForumTopics(): Collection
+    {
+        return $this->forumTopics;
+    }
+
+    public function addForumTopic(ForumTopic $forumTopic): static
+    {
+        if (!$this->forumTopics->contains($forumTopic)) {
+            $this->forumTopics->add($forumTopic);
+            $forumTopic->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeForumTopic(ForumTopic $forumTopic): static
+    {
+        if ($this->forumTopics->removeElement($forumTopic)) {
+            if ($forumTopic->getAuthor() === $this) {
+                $forumTopic->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ForumPost>
+     */
+    public function getForumPosts(): Collection
+    {
+        return $this->forumPosts;
+    }
+
+    public function addForumPost(ForumPost $forumPost): static
+    {
+        if (!$this->forumPosts->contains($forumPost)) {
+            $this->forumPosts->add($forumPost);
+            $forumPost->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeForumPost(ForumPost $forumPost): static
+    {
+        if ($this->forumPosts->removeElement($forumPost)) {
+            if ($forumPost->getAuthor() === $this) {
+                $forumPost->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MaitreIslamique>
+     */
+    public function getMaitresIslamiques(): Collection
+    {
+        return $this->maitresIslamiques;
+    }
+
+    public function addMaitreIslamique(MaitreIslamique $maitreIslamique): static
+    {
+        if (!$this->maitresIslamiques->contains($maitreIslamique)) {
+            $this->maitresIslamiques->add($maitreIslamique);
+            $maitreIslamique->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMaitreIslamique(MaitreIslamique $maitreIslamique): static
+    {
+        if ($this->maitresIslamiques->removeElement($maitreIslamique)) {
+            if ($maitreIslamique->getAuthor() === $this) {
+                $maitreIslamique->setAuthor(null);
+            }
         }
 
         return $this;
