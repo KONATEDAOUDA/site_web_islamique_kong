@@ -1,0 +1,565 @@
+{# templates/admin/enseignement/edit.html.twig #}
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Modifier Enseignement - Kong Administration{% endblock %}
+
+{% block page_title %}Modifier l'enseignement{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{{ path('admin_enseignement_index') }}">Enseignements</a></li>
+    <li class="breadcrumb-item active">Modification</li>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <!-- Summernote -->
+    <link rel="stylesheet" href="{{ asset('plugins/summernote/summernote-bs4.min.css') }}">
+    <!-- Select2 -->
+    <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-8">
+            {{ form_start(form, {'attr': {'enctype': 'multipart/form-data', 'id': 'enseignement-form'}}) }}
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-chalkboard-teacher mr-2"></i>Modification de l'enseignement islamique
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        {{ form_label(form.title) }}
+                        {{ form_widget(form.title) }}
+                        {{ form_errors(form.title) }}
+                        <small class="form-text text-muted">Titre clair et descriptif de votre enseignement</small>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form_label(form.category) }}
+                                {{ form_widget(form.category, {'attr': {'id': 'category-select'}}) }}
+                                {{ form_errors(form.category) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form_label(form.level) }}
+                                {{ form_widget(form.level, {'attr': {'id': 'level-select'}}) }}
+                                {{ form_errors(form.level) }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        {{ form_label(form.summary) }}
+                        {{ form_widget(form.summary) }}
+                        {{ form_errors(form.summary) }}
+                        <small class="form-text text-muted">Résumé concis de l'enseignement (sera affiché dans les listes)</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        {{ form_label(form.content) }}
+                        {{ form_widget(form.content, {'attr': {'id': 'summernote'}}) }}
+                        {{ form_errors(form.content) }}
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form_label(form.duration) }}
+                                {{ form_widget(form.duration) }}
+                                {{ form_errors(form.duration) }}
+                                <small class="form-text text-muted">Durée estimée (ex: "45 minutes", "1 heure")</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form_label(form.language) }}
+                                {{ form_widget(form.language) }}
+                                {{ form_errors(form.language) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Prérequis et objectifs pédagogiques -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-graduation-cap mr-2"></i>Aspects pédagogiques
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        {{ form_label(form.prerequisites) }}
+                        {{ form_widget(form.prerequisites) }}
+                        {{ form_errors(form.prerequisites) }}
+                        <small class="form-text text-muted">Connaissances préalables nécessaires pour suivre cet enseignement</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        {{ form_label(form.objectives) }}
+                        {{ form_widget(form.objectives) }}
+                        {{ form_errors(form.objectives) }}
+                        <small class="form-text text-muted">Ce que l'apprenant va acquérir comme connaissances</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        {{ form_label(form.references) }}
+                        {{ form_widget(form.references, {'attr': {'id': 'references-editor'}}) }}
+                        {{ form_errors(form.references) }}
+                        <small class="form-text text-muted">Sources, livres, articles utilisés pour cet enseignement</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Supports et ressources -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-file-alt mr-2"></i>Supports et ressources
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form_label(form.supportFile) }}
+                                {{ form_widget(form.supportFile, {'attr': {'id': 'support-file', 'accept': '.pdf,.doc,.docx'}}) }}
+                                {{ form_errors(form.supportFile) }}
+                                <small class="form-text text-muted">
+                                    <i class="fas fa-info-circle"></i> 
+                                    Document PDF ou Word (max 10MB)
+                                </small>
+                                {# Affichage du fichier existant #}
+                                {% if enseignement.supportFilePath is defined and enseignement.supportFilePath %}
+                                    <div class="mt-2">
+                                        <a href="{{ asset('uploads/enseignements/' ~ enseignement.supportFilePath) }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-file-download mr-1"></i>Fichier actuel
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form_label(form.audioFile) }}
+                                {{ form_widget(form.audioFile, {'attr': {'id': 'audio-file', 'accept': 'audio/*'}}) }}
+                                {{ form_errors(form.audioFile) }}
+                                <small class="form-text text-muted">
+                                    <i class="fas fa-microphone"></i> 
+                                    Enregistrement audio (optionnel, max 50MB)
+                                </small>
+                                {# Affichage du fichier existant #}
+                                {% if enseignement.audioFilePath is defined and enseignement.audioFilePath %}
+                                    <div class="mt-2">
+                                        <audio controls style="width:100%;">
+                                            <source src="{{ asset('uploads/enseignements/' ~ enseignement.audioFilePath) }}">
+                                            Votre navigateur ne supporte pas l'audio.
+                                        </audio>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        {{ form_label(form.tags) }}
+                        {{ form_widget(form.tags, {'attr': {'id': 'tags-input'}}) }}
+                        {{ form_errors(form.tags) }}
+                        <small class="form-text text-muted">Mots-clés pour faciliter la recherche</small>
+                    </div>
+                </div>
+            </div>
+            
+            {{ form_end(form) }}
+        </div>
+        
+        <div class="col-md-4">
+            <!-- Guide de modification -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-lightbulb mr-2"></i>Guide de modification
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="timeline">
+                        <div class="time-label">
+                            <span class="bg-primary">Étapes</span>
+                        </div>
+                        
+                        <div>
+                            <i class="fas fa-1 bg-blue"></i>
+                            <div class="timeline-item">
+                                <h3 class="timeline-header">Vérifier le sujet</h3>
+                                <div class="timeline-body">
+                                    Modifiez le titre, la catégorie ou le niveau si besoin.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <i class="fas fa-2 bg-green"></i>
+                            <div class="timeline-item">
+                                <h3 class="timeline-header">Mettre à jour le contenu</h3>
+                                <div class="timeline-body">
+                                    Complétez ou améliorez le contenu structuré.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <i class="fas fa-3 bg-yellow"></i>
+                            <div class="timeline-item">
+                                <h3 class="timeline-header">Actualiser les supports</h3>
+                                <div class="timeline-body">
+                                    Remplacez ou ajoutez des fichiers, audio ou documents.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <i class="fas fa-4 bg-red"></i>
+                            <div class="timeline-item">
+                                <h3 class="timeline-header">Enregistrer</h3>
+                                <div class="timeline-body">
+                                    Validez vos modifications et enregistrez.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Options de publication -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-cogs mr-2"></i>Options de publication
+                    </h3>
+                </div>
+                <div class="card-body">
+                    {% if form.maitre is defined %}
+                    <div class="form-group">
+                        {{ form_label(form.maitre) }}
+                        {{ form_widget(form.maitre) }}
+                        {{ form_errors(form.maitre) }}
+                        <small class="form-text text-muted">Maître islamique responsable de cet enseignement</small>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="form-check mb-3">
+                        {{ form_widget(form.isPublished) }}
+                        {{ form_label(form.isPublished, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                        {{ form_errors(form.isPublished) }}
+                        <small class="form-text text-muted">L'enseignement sera visible sur le site</small>
+                    </div>
+                    
+                    <div class="form-check mb-3">
+                        {{ form_widget(form.isOpenAccess) }}
+                        {{ form_label(form.isOpenAccess, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                        {{ form_errors(form.isOpenAccess) }}
+                        <small class="form-text text-muted">Si décoché, réservé aux utilisateurs connectés</small>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg" form="enseignement-form">
+                            <i class="fas fa-save mr-2"></i>Enregistrer les modifications
+                        </button>
+                        <button type="button" class="btn btn-info" onclick="previewEnseignement()">
+                            <i class="fas fa-eye mr-2"></i>Aperçu
+                        </button>
+                        <a href="{{ path('admin_enseignement_index') }}" class="btn btn-secondary">
+                            <i class="fas fa-times mr-2"></i>Annuler
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Conseils par catégorie -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-question-circle mr-2"></i>Conseils par catégorie
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div id="category-tips">
+                        <div class="alert alert-info category-tip" data-category="fiqh" style="display: none;">
+                            <h6><i class="fas fa-balance-scale mr-2"></i>Fiqh (Jurisprudence)</h6>
+                            <ul class="mb-0 pl-3">
+                                <li>Citez les sources (Coran, Sunna, Ijma, Qiyas)</li>
+                                <li>Présentez les différentes écoles juridiques</li>
+                                <li>Donnez des exemples pratiques</li>
+                                <li>Expliquez le contexte historique des règles</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="alert alert-primary category-tip" data-category="tafsir" style="display: none;">
+                            <h6><i class="fas fa-book-open mr-2"></i>Tafsir (Exégèse)</h6>
+                            <ul class="mb-0 pl-3">
+                                <li>Mentionnez le contexte de révélation</li>
+                                <li>Expliquez le sens littéral et spirituel</li>
+                                <li>Citez les commentaires des grands exégètes</li>
+                                <li>Établissez des liens avec d'autres versets</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="alert alert-success category-tip" data-category="hadith" style="display: none;">
+                            <h6><i class="fas fa-quote-right mr-2"></i>Hadith</h6>
+                            <ul class="mb-0 pl-3">
+                                <li>Vérifiez l'authenticité des hadiths</li>
+                                <li>Donnez la chaîne de transmission</li>
+                                <li>Expliquez le contexte de la narration</li>
+                                <li>Tirez des leçons pratiques</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="alert alert-warning category-tip" data-category="aqida" style="display: none;">
+                            <h6><i class="fas fa-heart mr-2"></i>Aqida (Croyance)</h6>
+                            <ul class="mb-0 pl-3">
+                                <li>Exposez clairement les fondements</li>
+                                <li>Réfutez les croyances erronées</li>
+                                <li>Utilisez des preuves rationnelles</li>
+                                <li>Adaptez au niveau des apprenants</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="alert alert-secondary category-tip" data-category="" style="display: block;">
+                            <h6><i class="fas fa-info-circle mr-2"></i>Conseils généraux</h6>
+                            <ul class="mb-0 pl-3">
+                                <li>Structurez votre enseignement clairement</li>
+                                <li>Citez vos sources de manière précise</li>
+                                <li>Adaptez le niveau à votre public</li>
+                                <li>Incluez des exemples concrets</li>
+                                <li>Facilitez la mémorisation par des récapitulatifs</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour l'aperçu -->
+    <div class="modal fade" id="previewModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Aperçu de l'enseignement</h4>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="preview-content"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <!-- Summernote -->
+    <script src="{{ asset('plugins/summernote/summernote-bs4.min.js') }}"></script>
+    <!-- Select2 -->
+    <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
+    
+    <script>
+        $(function () {
+            // Summernote pour le contenu principal
+            $('#summernote').summernote({
+                height: 400,
+                lang: 'fr-FR',
+                toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'italic', 'underline', 'clear']],
+                    ['fontname', ['fontname']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']],
+                    ['insert', ['link', 'video']],
+                    ['view', ['fullscreen', 'codeview', 'help']]
+                ]
+            });
+            
+            // Summernote simplifié pour les références
+            $('#references-editor').summernote({
+                height: 200,
+                lang: 'fr-FR',
+                toolbar: [
+                    ['font', ['bold', 'italic']],
+                    ['para', ['ul', 'ol']],
+                    ['insert', ['link']],
+                    ['view', ['codeview']]
+                ]
+            });
+            
+            // Select2 pour les tags
+            $('#tags-input').select2({
+                tags: true,
+                tokenSeparators: [',', ' '],
+                placeholder: "Ajoutez des mots-clés...",
+                allowClear: true
+            });
+            
+            // Conseils selon la catégorie sélectionnée
+            $('#category-select').on('change', function() {
+                const selectedCategory = $(this).val();
+                $('.category-tip').hide();
+                $(`.category-tip[data-category="${selectedCategory}"]`).show();
+                if (!selectedCategory) {
+                    $('.category-tip[data-category=""]').show();
+                }
+            });
+            
+            // Prévisualisation des fichiers
+            $('#support-file').on('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    showFilePreview(file, 'support');
+                }
+            });
+            
+            $('#audio-file').on('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    showFilePreview(file, 'audio');
+                }
+            });
+            
+            // Validation du formulaire
+            $('#enseignement-form').on('submit', function(e) {
+                if (!validateForm()) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        });
+        
+        function showFilePreview(file, type) {
+            const fileName = file.name;
+            const fileSize = formatFileSize(file.size);
+            const iconClass = type === 'audio' ? 'fa-file-audio' : 'fa-file-alt';
+            
+            const preview = `
+                <div class="alert alert-info mt-2 file-preview-${type}">
+                    <i class="fas ${iconClass} mr-2"></i>
+                    <strong>${fileName}</strong> (${fileSize})
+                    <button type="button" class="btn btn-sm btn-outline-danger float-right" 
+                            onclick="clearFilePreview('${type}')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            
+            $(`.file-preview-${type}`).remove();
+            $(`#${type}-file}`).after(preview);
+        }
+        
+        function clearFilePreview(type) {
+            $(`#${type}-file`).val('');
+            $(`.file-preview-${type}`).remove();
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        function validateForm() {
+            let isValid = true;
+            
+            // Vérifier le titre
+            const title = $('#enseignement_title').val().trim();
+            if (!title) {
+                alert('Le titre est obligatoire');
+                $('#enseignement_title').focus();
+                return false;
+            }
+            
+            // Vérifier le contenu
+            const content = $('#summernote').summernote('code');
+            if (!content || content === '<p><br></p>') {
+                alert('Le contenu de l\'enseignement est obligatoire');
+                $('#summernote').summernote('focus');
+                return false;
+            }
+            
+            // Vérifier la catégorie
+            const category = $('#category-select').val();
+            if (!category) {
+                alert('Veuillez sélectionner une catégorie');
+                $('#category-select').focus();
+                return false;
+            }
+            
+            return isValid;
+        }
+        
+        function previewEnseignement() {
+            const title = $('#enseignement_title').val();
+            const summary = $('#enseignement_summary').val();
+            const content = $('#summernote').summernote('code');
+            const category = $('#category-select option:selected').text();
+            const level = $('#level-select option:selected').text();
+            const duration = $('#enseignement_duration').val();
+            const prerequisites = $('#enseignement_prerequisites').val();
+            const objectives = $('#enseignement_objectives').val();
+            
+            const previewHtml = `
+                <div class="enseignement-preview">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <span class="badge badge-primary">${category}</span>
+                            <span class="badge badge-secondary ml-1">${level}</span>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            ${duration ? `<small class="text-muted"><i class="fas fa-clock"></i> ${duration}</small>` : ''}
+                        </div>
+                    </div>
+                    
+                    <h1 class="mb-3">${title}</h1>
+                    
+                    ${summary ? `<div class="alert alert-info"><strong>Résumé :</strong> ${summary}</div>` : ''}
+                    
+                    ${prerequisites ? `
+                        <div class="card mb-3">
+                            <div class="card-header"><h6><i class="fas fa-exclamation-circle"></i> Prérequis</h6></div>
+                            <div class="card-body"><p>${prerequisites}</p></div>
+                        </div>
+                    ` : ''}
+                    
+                    ${objectives ? `
+                        <div class="card mb-3">
+                            <div class="card-header"><h6><i class="fas fa-target"></i> Objectifs pédagogiques</h6></div>
+                            <div class="card-body"><p>${objectives}</p></div>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="content">
+                        ${content}
+                    </div>
+                </div>
+            `;
+            
+            $('#preview-content').html(previewHtml);
+            $('#previewModal').modal('show');
+        }
+    </script>
+{% endblock %}

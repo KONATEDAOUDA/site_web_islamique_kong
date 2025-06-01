@@ -1,9 +1,39 @@
+# config/services.yaml
+
 # This file is the entry point to configure your own services.
 # Files in the packages/ subdirectory configure your dependencies.
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    # Upload directories
+    upload_directory: '%kernel.project_dir%/public/uploads'
+    articles_directory: '%upload_directory%/articles'
+    podcasts_directory: '%upload_directory%/podcasts'
+    archives_directory: '%upload_directory%/archives'
+    enseignements_directory: '%upload_directory%/enseignements'
+    users_directory: '%upload_directory%/users'
+    
+    # Image sizes for thumbnails
+    thumbnail_sizes:
+        small: { width: 150, height: 150 }
+        medium: { width: 400, height: 400 }
+        large: { width: 800, height: 600 }
+    
+    # AdminLTE configuration
+    adminlte:
+        skin: 'blue'
+        layout: 'fixed'
+        brand_logo: '/images/kong-logo.png'
+        brand_text: 'Kong Administration'
+    
+    # Kong specific settings
+    kong:
+        site_name: 'Portail Islamique de Kong'
+        site_description: 'Sauvegarder et valoriser la tradition islamique de Kong'
+        supported_languages: ['fr', 'ar', 'en']
+        default_language: 'fr'
+        pagination_limit: 20
 
 services:
     # default configuration for services in *this* file
@@ -20,5 +50,112 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    # File Upload Service
+    App\Service\FileUploader:
+        arguments:
+            $targetDirectory: '%upload_directory%'
+
+    # Statistics Service
+    App\Service\AdminStatisticsService:
+        arguments:
+            $entityManager: '@doctrine.orm.entity_manager'
+
+    # Image Processing Service
+    App\Service\ImageProcessor:
+        arguments:
+            $uploadDirectory: '%upload_directory%'
+            $thumbnailSizes: '%thumbnail_sizes%'
+
+    # Content Manager Service
+    App\Service\ContentManager:
+        arguments:
+            $fileUploader: '@App\Service\FileUploader'
+            $imageProcessor: '@App\Service\ImageProcessor'
+
+    # Search Service
+    App\Service\SearchService:
+        arguments:
+            $entityManager: '@doctrine.orm.entity_manager'
+
+    # API Services
+    App\Service\ApiResponseService:
+        arguments:
+            $serializer: '@serializer'
+
+    # Notification Service
+    App\Service\NotificationService:
+        arguments:
+            $mailer: '@mailer'
+            $twig: '@twig'
+
+    # Cache Service
+    App\Service\CacheService:
+        arguments:
+            $cache: '@cache.app'
+
+    # Event Listeners
+    App\EventListener\ContentUploadListener:
+        arguments:
+            $slugger: '@Symfony\Component\String\Slugger\SluggerInterface'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: App\Entity\Article, event: prePersist }
+            - { name: doctrine.orm.entity_listener, entity: App\Entity\Article, event: preUpdate }
+            - { name: doctrine.orm.entity_listener, entity: App\Entity\Podcast, event: prePersist }
+            - { name: doctrine.orm.entity_listener, entity: App\Entity\Podcast, event: preUpdate }
+
+    App\EventListener\UserActivityListener:
+        tags:
+            - { name: kernel.event_listener, event: security.interactive_login }
+
+    # Twig Extensions
+    App\Twig\AdminExtension:
+        tags: ['twig.extension']
+
+    App\Twig\KongExtension:
+        arguments:
+            $kongSettings: '%kong%'
+        tags: ['twig.extension']
+
+    # Security Voters
+    App\Security\ArticleVoter:
+        tags: ['security.voter']
+
+    App\Security\PodcastVoter:
+        tags: ['security.voter']
+
+    App\Security\EnseignementVoter:
+        tags: ['security.voter']
+
+    # Command Services
+    App\Command\ImportArchivesCommand:
+        arguments:
+            $entityManager: '@doctrine.orm.entity_manager'
+            $fileUploader: '@App\Service\FileUploader'
+        tags: ['console.command']
+
+    App\Command\GenerateStatisticsCommand:
+        arguments:
+            $statisticsService: '@App\Service\AdminStatisticsService'
+        tags: ['console.command']
+
+# Development services
+when@dev:
+    services:
+        App\Service\DevDataLoader:
+            arguments:
+                $entityManager: '@doctrine.orm.entity_manager'
+                $userPasswordHasher: '@security.user_password_hasher'
+
+# Production services
+when@prod:
+    services:
+        App\Service\ContentCacheService:
+            arguments:
+                $cache: '@cache.adapter.redis'
+
+# Test services
+when@test:
+    services:
+        App\Service\TestDataFactory:
+            arguments:
+                $entityManager: '@doctrine.orm.entity_manager'

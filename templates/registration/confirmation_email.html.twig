@@ -1,0 +1,9 @@
+<h1>Bonjour !</h1>
+
+<p>
+    Veuillez confirmer votre adresse email en cliquant sur le lien suivant :<br><br>
+    <a href="{{ signedUrl|raw }}">Confirmer mon email</a>.<br>
+    {{ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle') }}
+</p>
+
+<p>Cordialement,<br>L'équipe du Portail Islamique de Kong</p>

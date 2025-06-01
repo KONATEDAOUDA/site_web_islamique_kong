@@ -1,0 +1,155 @@
+{# templates/admin/article/index.html.twig #}
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Gestion des Articles - Kong Administration{% endblock %}
+
+{% block page_title %}Gestion des Articles{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active">Articles</li>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Liste des articles</h3>
+                    <div class="card-tools">
+                        <a href="{{ path('admin_article_new') }}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-plus"></i> Nouvel article
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-hover text-nowrap">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Titre</th>
+                                <th>Catégorie</th>
+                                <th>Auteur</th>
+                                <th>Statut</th>
+                                <th>Date de création</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for article in articles %}
+                            <tr>
+                                <td>{{ article.id }}</td>
+                                <td>
+                                    <a href="{{ path('admin_article_show', {id: article.id}) }}">
+                                        {{ article.title|length > 50 ? article.title|slice(0, 50) ~ '...' : article.title }}
+                                    </a>
+                                </td>
+                                <td>
+                                    {% if article.category %}
+                                        <span class="badge badge-info">{{ article.category.name }}</span>
+                                    {% else %}
+                                        <span class="badge badge-secondary">Non catégorisé</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ article.author ? article.author.fullName : 'N/A' }}</td>
+                                <td>
+                                    {% if article.isPublished %}
+                                        <span class="badge badge-success">Publié</span>
+                                    {% else %}
+                                        <span class="badge badge-warning">Brouillon</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ article.createdAt|date('d/m/Y H:i') }}</td>
+                                <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a href="{{ path('admin_article_show', {id: article.id}) }}" 
+                                           class="btn btn-info btn-sm" title="Voir">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{{ path('admin_article_edit', {id: article.id}) }}" 
+                                           class="btn btn-warning btn-sm" title="Modifier">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form method="post" action="{{ path('admin_article_delete', {id: article.id}) }}" 
+                                              style="display: inline-block;" 
+                                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet article ?')">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ article.id) }}">
+                                            <button type="submit" class="btn btn-danger btn-sm" title="Supprimer">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center">
+                                    <div class="empty-state py-4">
+                                        <i class="fas fa-newspaper fa-3x text-muted mb-3"></i>
+                                        <p class="text-muted">Aucun article trouvé</p>
+                                        <a href="{{ path('admin_article_new') }}" class="btn btn-primary">
+                                            <i class="fas fa-plus mr-2"></i>Créer le premier article
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% if articles|length > 0 %}
+                <div class="card-footer clearfix">
+                    <ul class="pagination pagination-sm m-0 float-right">
+                        {# Pagination à implémenter si nécessaire #}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistiques rapides -->
+    <div class="row">
+        <div class="col-md-3">
+            <div class="info-box">
+                <span class="info-box-icon bg-info"><i class="fas fa-newspaper"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Total Articles</span>
+                    <span class="info-box-number">{{ articles|length }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="info-box">
+                <span class="info-box-icon bg-success"><i class="fas fa-check"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Publiés</span>
+                    <span class="info-box-number">
+                        {{ articles|filter(article => article.isPublished)|length }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="info-box">
+                <span class="info-box-icon bg-warning"><i class="fas fa-edit"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Brouillons</span>
+                    <span class="info-box-number">
+                        {{ articles|filter(article => not article.isPublished)|length }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="info-box">
+                <span class="info-box-icon bg-secondary"><i class="fas fa-calendar"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Ce mois</span>
+                    <span class="info-box-number">
+                        {{ articles|filter(article => article.createdAt|date('Y-m') == 'now'|date('Y-m'))|length }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

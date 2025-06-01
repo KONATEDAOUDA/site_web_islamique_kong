@@ -21,8 +21,8 @@ class Params
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $useTerms = null;
 
-    #[ORM\Column]
-    private ?int $realId = null;
+    #[ORM\Column(type: 'string', length: 255, unique: true)]
+    private ?string $realId = null;
 
     public function getId(): ?int
     {
@@ -41,12 +41,12 @@ class Params
         return $this;
     }
 
-    public function getRealId(): ?int
+    public function getRealId():  ?string
     {
         return $this->realId;
     }
 
-    public function setRealId(int $realId): self
+    public function setRealId(?string $realId): self
     {
         $this->realId = $realId;
 

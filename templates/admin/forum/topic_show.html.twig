@@ -1,0 +1,219 @@
+{# templates/admin/forum/topic_show.html.twig #}
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Sujet du Forum - Kong Administration{% endblock %}
+
+{% block page_title %}{{ topic.title }}{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{{ path('admin_forum_index') }}">Forum</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('admin_forum_topics') }}">Sujets</a></li>
+    <li class="breadcrumb-item active">{{ topic.title|slice(0, 40) }}{% if topic.title|length > 40 %}...{% endif %}</li>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <!-- Sujet principal -->
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 class="card-title mb-0">
+                    <i class="fas fa-comments mr-2"></i>{{ topic.title }}
+                </h3>
+                <div class="card-tools">
+                    {% if topic.isPinned %}
+                        <span class="badge badge-primary">Épinglé</span>
+                    {% endif %}
+                    <span class="badge badge-{{ topic.isActive ? 'success' : 'danger' }}">
+                        {{ topic.isActive ? 'Actif' : 'Fermé' }}
+                    </span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="media mb-3">
+                    <div class="media-object mr-3">
+                        {% if topic.author.profilePicture %}
+                            <img src="{{ asset('uploads/users/' ~ topic.author.profilePicture) }}" 
+                                 alt="Avatar" class="img-circle" style="width:50px; height:50px;">
+                        {% else %}
+                            <div class="bg-info rounded-circle d-flex align-items-center justify-content-center"
+                                 style="width:50px; height:50px;">
+                                <i class="fas fa-user text-white"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="media-body">
+                        <h5 class="mt-0 mb-1">{{ topic.author.fullName }}</h5>
+                        <small class="text-muted">
+                            Créé le {{ topic.createdAt|date('d/m/Y H:i') }}
+                        </small>
+                        <div class="mt-3">{{ topic.content|raw }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer d-flex justify-content-between">
+                <div>
+                    <a href="{{ path('admin_forum_topics') }}" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-arrow-left mr-1"></i>Retour à la liste
+                    </a>
+                </div>
+                <div>
+                    <a href="{{ path('admin_forum_topic_edit', {id: topic.id}) }}" class="btn btn-warning btn-sm">
+                        <i class="fas fa-edit"></i> Éditer
+                    </a>
+                    <form method="post" action="{{ path('admin_forum_topic_toggle_status', {id: topic.id}) }}" style="display:inline;">
+                        <input type="hidden" name="_token" value="{{ csrf_token('toggle-status' ~ topic.id) }}">
+                        <button type="submit" class="btn btn-{{ topic.isActive ? 'warning' : 'success' }} btn-sm"
+                                title="{{ topic.isActive ? 'Fermer' : 'Ouvrir' }}">
+                            <i class="fas fa-{{ topic.isActive ? 'lock' : 'unlock' }}"></i>
+                        </button>
+                    </form>
+                    <form method="post" action="{{ path('admin_forum_topic_delete', {id: topic.id}) }}" style="display:inline;"
+                          onsubmit="return confirm('Supprimer ce sujet et tous ses messages ? Cette action est irréversible.');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ topic.id) }}">
+                        <button type="submit" class="btn btn-danger btn-sm" title="Supprimer">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Liste des messages du sujet -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-reply-all mr-2"></i>Messages ({{ topic.posts|length }})
+                </h3>
+            </div>
+            <div class="card-body p-0">
+                {% if topic.posts|length > 0 %}
+                <ul class="list-group list-group-flush">
+                    {% for post in topic.posts %}
+                    <li class="list-group-item{% if not post.isActive %} list-group-item-warning{% endif %}{% if post.isReported %} list-group-item-danger{% endif %}">
+                        <div class="d-flex align-items-start">
+                            <div class="mr-3">
+                                {% if post.author.profilePicture %}
+                                    <img src="{{ asset('uploads/users/' ~ post.author.profilePicture) }}" 
+                                         alt="Avatar" class="img-circle" style="width:40px; height:40px;">
+                                {% else %}
+                                    <div class="bg-info rounded-circle d-flex align-items-center justify-content-center"
+                                         style="width:40px; height:40px;">
+                                        <i class="fas fa-user text-white"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="flex-grow-1">
+                                <div>
+                                    <span class="font-weight-bold">{{ post.author.fullName }}</span>
+                                    <small class="text-muted ml-2">{{ post.createdAt|date('d/m/Y H:i') }}</small>
+                                    {% if post.isReported %}
+                                        <span class="badge badge-danger ml-1">Signalé</span>
+                                    {% endif %}
+                                    {% if not post.isActive %}
+                                        <span class="badge badge-warning ml-1">Modéré</span>
+                                    {% endif %}
+                                </div>
+                                <div class="mt-1">{{ post.content|raw }}</div>
+                            </div>
+                            <div class="ml-3 text-nowrap">
+                                <a href="{{ path('admin_forum_post_show', {id: post.id}) }}" class="btn btn-info btn-sm" title="Voir">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ path('admin_forum_post_edit', {id: post.id}) }}" class="btn btn-warning btn-sm" title="Éditer">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form method="post" action="{{ path('admin_forum_post_toggle_status', {id: post.id}) }}" style="display:inline;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('toggle-status' ~ post.id) }}">
+                                    <button type="submit" class="btn btn-{{ post.isActive ? 'warning' : 'success' }} btn-sm"
+                                            title="{{ post.isActive ? 'Modérer' : 'Activer' }}">
+                                        <i class="fas fa-{{ post.isActive ? 'eye-slash' : 'eye' }}"></i>
+                                    </button>
+                                </form>
+                                {% if post.isReported %}
+                                <form method="post" action="{{ path('admin_forum_post_unreport', {id: post.id}) }}" style="display:inline;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('unreport' ~ post.id) }}">
+                                    <button type="submit" class="btn btn-info btn-sm" title="Lever le signalement">
+                                        <i class="fas fa-flag"></i>
+                                    </button>
+                                </form>
+                                {% endif %}
+                                <form method="post" action="{{ path('admin_forum_post_delete', {id: post.id}) }}" style="display:inline;"
+                                      onsubmit="return confirm('Supprimer ce message ? Cette action est irréversible.');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ post.id) }}">
+                                    <button type="submit" class="btn btn-danger btn-sm" title="Supprimer">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <div class="empty-state py-4 text-center text-muted">
+                    <i class="fas fa-comment-slash fa-2x mb-2"></i>
+                    <p>Aucun message dans ce sujet</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <!-- Informations sur le sujet -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-info-circle mr-2"></i>Informations</h3>
+            </div>
+            <div class="card-body">
+                <div><strong>Auteur :</strong> {{ topic.author.fullName }}</div>
+                <div><strong>Créé le :</strong> {{ topic.createdAt|date('d/m/Y H:i') }}</div>
+                <div><strong>Statut :</strong>
+                    <span class="badge badge-{{ topic.isActive ? 'success' : 'danger' }}">
+                        {{ topic.isActive ? 'Actif' : 'Fermé' }}
+                    </span>
+                    {% if topic.isPinned %}
+                        <span class="badge badge-primary">Épinglé</span>
+                    {% endif %}
+                </div>
+                <div><strong>Messages :</strong> {{ topic.posts|length }}</div>
+                <div><strong>Dernière activité :</strong>
+                    {% if topic.posts|length > 0 %}
+                        {{ topic.posts|last.createdAt|date('d/m/Y H:i') }}
+                    {% else %}
+                        {{ topic.createdAt|date('d/m/Y H:i') }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <!-- Actions rapides -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-cogs mr-2"></i>Actions</h3>
+            </div>
+            <div class="card-body">
+                <a href="{{ path('admin_forum_topics') }}" class="btn btn-secondary btn-block mb-2">
+                    <i class="fas fa-arrow-left mr-1"></i>Retour à la liste des sujets
+                </a>
+                <a href="{{ path('admin_forum_topic_edit', {id: topic.id}) }}" class="btn btn-warning btn-block mb-2">
+                    <i class="fas fa-edit mr-1"></i>Éditer le sujet
+                </a>
+                <form method="post" action="{{ path('admin_forum_topic_toggle_status', {id: topic.id}) }}" style="display:inline-block; width:100%;" class="mb-2">
+                    <input type="hidden" name="_token" value="{{ csrf_token('toggle-status' ~ topic.id) }}">
+                    <button type="submit" class="btn btn-{{ topic.isActive ? 'warning' : 'success' }} btn-block">
+                        <i class="fas fa-{{ topic.isActive ? 'lock' : 'unlock' }} mr-1"></i>
+                        {{ topic.isActive ? 'Fermer' : 'Ouvrir' }} le sujet
+                    </button>
+                </form>
+                <form method="post" action="{{ path('admin_forum_topic_delete', {id: topic.id}) }}" style="display:inline-block; width:100%;"
+                      onsubmit="return confirm('Supprimer ce sujet et tous ses messages ? Cette action est irréversible.');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ topic.id) }}">
+                    <button type="submit" class="btn btn-danger btn-block">
+                        <i class="fas fa-trash mr-1"></i>Supprimer le sujet
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

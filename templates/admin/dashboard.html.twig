@@ -1,0 +1,452 @@
+{# templates/admin/dashboard.html.twig - Version améliorée #}
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Tableau de bord - Kong Administration{% endblock %}
+
+{% block content_header %}
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <i class="fas fa-crown text-warning mr-2"></i>Administration Générale
+                        {% elseif is_granted('ROLE_SUPERVISOR') %}
+                            <i class="fas fa-eye text-info mr-2"></i>Supervision
+                        {% elseif is_granted('ROLE_TEACHER') %}
+                            <i class="fas fa-chalkboard-teacher text-success mr-2"></i>Espace Enseignant
+                        {% elseif is_granted('ROLE_BLOG_MANAGER') %}
+                            <i class="fas fa-newspaper text-primary mr-2"></i>Gestion Blog
+                        {% elseif is_granted('ROLE_ARCHIVE_MANAGER') %}
+                            <i class="fas fa-archive text-secondary mr-2"></i>Gestion Archives
+                        {% else %}
+                            <i class="fas fa-user text-muted mr-2"></i>Espace Personnel
+                        {% endif %}
+                    </h1>
+                    <p class="text-muted">
+                        Bienvenue, {{ app.user.firstname }} {{ app.user.lastname }}
+                    </p>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{{ path('admin_dashboard') }}">Accueil</a></li>
+                        <li class="breadcrumb-item active">Tableau de bord</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% set latestArticles = latestArticles|default([]) %}
+{% set latestPodcasts = latestPodcasts|default([]) %}
+{% set latestArchives = latestArchives|default([]) %}
+{% set latestEnseignements = latestEnseignements|default([]) %}
+{% set latestUsers = latestUsers|default([]) %}
+{% set stats = stats|default({}) %}
+{% set metrics = metrics|default({}) %}
+{% set userPermissions = userPermissions|default({}) %}
+
+{% block content %}
+    <!-- Métriques rapides -->
+    {% if userPermissions.canViewStats or is_granted('ROLE_TEACHER') %}
+    <div class="row">
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-success">
+                <div class="inner">
+                    <h3>{{ metrics.publishedContent ?? 0 }}</h3>
+                    <p>Contenus publiés</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-warning">
+                <div class="inner">
+                    <h3>{{ metrics.pendingContent ?? 0 }}</h3>
+                    <p>En attente</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-info">
+                <div class="inner">
+                    <h3>{{ metrics.thisMonthContent ?? 0 }}</h3>
+                    <p>Ce mois-ci</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-danger">
+                <div class="inner">
+                    <h3>{{ metrics.totalViews ?? 0 }}</h3>
+                    <p>Vues totales</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-eye"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Statistiques détaillées -->
+    <div class="row">
+        {% if userPermissions.canManageArticles %}
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-info">
+                <div class="inner">
+                    <h3>{{ stats.articles ?? 0 }}</h3>
+                    <p>Articles</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-newspaper"></i>
+                </div>
+                <a href="{{ path('admin_article_index') }}" class="small-box-footer">
+                    Plus d'infos <i class="fas fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if userPermissions.canManagePodcasts %}
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-success">
+                <div class="inner">
+                    <h3>{{ stats.podcasts ?? 0 }}</h3>
+                    <p>Podcasts</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-microphone"></i>
+                </div>
+                <a href="{{ path('admin_podcast_index') }}" class="small-box-footer">
+                    Plus d'infos <i class="fas fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if userPermissions.canManageArchives %}
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-warning">
+                <div class="inner">
+                    <h3>{{ stats.archives ?? 0 }}</h3>
+                    <p>Archives</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-archive"></i>
+                </div>
+                <a href="{{ path('admin_archive_index') }}" class="small-box-footer">
+                    Plus d'infos <i class="fas fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if userPermissions.canManageEnseignements %}
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-secondary">
+                <div class="inner">
+                    <h3>{{ stats.enseignements ?? 0 }}</h3>
+                    <p>Enseignements</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+                <a href="{{ path('admin_enseignement_index') }}" class="small-box-footer">
+                    Plus d'infos <i class="fas fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if userPermissions.canManageUsers %}
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-danger">
+                <div class="inner">
+                    <h3>{{ stats.users ?? 0 }}</h3>
+                    <p>Utilisateurs</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <a href="{{ path('admin', {crudController: 'App\\Controller\\Admin\\UserCrudController', crudAction: 'index'}) }}" class="small-box-footer">
+                    Plus d'infos <i class="fas fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Actions rapides -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-bolt mr-2"></i>Actions rapides
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% if userPermissions.canManageArticles %}
+                        <div class="col-md-3">
+                            <a href="{{ path('admin_article_new') }}" class="btn btn-lg btn-primary btn-block mb-3">
+                                <i class="fas fa-plus mr-2"></i>Nouvel Article
+                            </a>
+                        </div>
+                        {% endif %}
+                        
+                        {% if userPermissions.canManagePodcasts %}
+                        <div class="col-md-3">
+                            <a href="{{ path('admin_podcast_new') }}" class="btn btn-lg btn-success btn-block mb-3">
+                                <i class="fas fa-microphone mr-2"></i>Nouveau Podcast
+                            </a>
+                        </div>
+                        {% endif %}
+                        
+                        {% if userPermissions.canManageArchives %}
+                        <div class="col-md-3">
+                            <a href="{{ path('admin_archive_new') }}" class="btn btn-lg btn-warning btn-block mb-3">
+                                <i class="fas fa-archive mr-2"></i>Nouvelle Archive
+                            </a>
+                        </div>
+                        {% endif %}
+                        
+                        {% if userPermissions.canManageEnseignements %}
+                        <div class="col-md-3">
+                            <a href="{{ path('admin_enseignement_new') }}" class="btn btn-lg btn-info btn-block mb-3">
+                                <i class="fas fa-chalkboard-teacher mr-2"></i>Nouvel Enseignement
+                            </a>
+                        </div>
+                        {% endif %}
+                        
+                        {% if userPermissions.canAccessEasyAdmin %}
+                        <div class="col-md-3">
+                            <a href="{{ path('admin') }}" class="btn btn-lg btn-dark btn-block mb-3">
+                                <i class="fas fa-cogs mr-2"></i>EasyAdmin
+                            </a>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="col-md-3">
+                            <a href="{{ path('app_home') }}" class="btn btn-lg btn-outline-secondary btn-block mb-3">
+                                <i class="fas fa-external-link-alt mr-2"></i>Voir le site
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Derniers contenus -->
+    <div class="row">
+        {% if latestArticles|length > 0 %}
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-newspaper mr-2"></i>Derniers articles
+                    </h3>
+                    <div class="card-tools">
+                        <a href="{{ path('admin_article_index') }}" class="btn btn-tool">
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Titre</th>
+                                <th>Statut</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for article in latestArticles %}
+                            <tr>
+                                <td>
+                                    <a href="{{ path('admin_article_show', {id: article.id}) }}">
+                                        {{ article.title|length > 30 ? article.title|slice(0, 30) ~ '...' : article.title }}
+                                    </a>
+                                </td>
+                                <td>
+                                    {% if article.isPublished %}
+                                        <span class="badge badge-success">Publié</span>
+                                    {% else %}
+                                        <span class="badge badge-warning">Brouillon</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ article.createdAt|date('d/m/Y') }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if latestPodcasts|length > 0 %}
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-microphone mr-2"></i>Derniers podcasts
+                    </h3>
+                    <div class="card-tools">
+                        <a href="{{ path('admin_podcast_index') }}" class="btn btn-tool">
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Titre</th>
+                                <th>Type</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for podcast in latestPodcasts %}
+                            <tr>
+                                <td>
+                                    <a href="{{ path('admin_podcast_show', {id: podcast.id}) }}">
+                                        {{ podcast.title|length > 30 ? podcast.title|slice(0, 30) ~ '...' : podcast.title }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <span class="badge badge-{{ podcast.type == 'audio' ? 'info' : 'success' }}">
+                                        {{ podcast.type|upper }}
+                                    </span>
+                                </td>
+                                <td>{{ podcast.createdAt|date('d/m/Y') }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if latestEnseignements|length > 0 %}
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-chalkboard-teacher mr-2"></i>Derniers enseignements
+                    </h3>
+                    <div class="card-tools">
+                        <a href="{{ path('admin_enseignement_index') }}" class="btn btn-tool">
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Titre</th>
+                                <th>Catégorie</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for enseignement in latestEnseignements %}
+                            <tr>
+                                <td>
+                                    <a href="{{ path('admin_enseignement_show', {id: enseignement.id}) }}">
+                                        {{ enseignement.title|length > 30 ? enseignement.title|slice(0, 30) ~ '...' : enseignement.title }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <span class="badge badge-secondary">{{ enseignement.category|upper }}</span>
+                                </td>
+                                <td>{{ enseignement.createdAt|date('d/m/Y') }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if latestArchives|length > 0 %}
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-archive mr-2"></i>Dernières archives
+                    </h3>
+                    <div class="card-tools">
+                        <a href="{{ path('admin_archive_index') }}" class="btn btn-tool">
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Titre</th>
+                                <th>Type</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for archive in latestArchives %}
+                            <tr>
+                                <td>
+                                    <a href="{{ path('admin_archive_show', {id: archive.id}) }}">
+                                        {{ archive.title|length > 30 ? archive.title|slice(0, 30) ~ '...' : archive.title }}
+                                    </a>
+                                </td>
+                                <td>{{ archive.type|upper }}</td>
+                                <td>{{ archive.createdAt|date('d/m/Y') }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Message d'aide contextuel pour les nouveaux utilisateurs -->
+    {% if is_granted('ROLE_TEACHER') and latestPodcasts|length == 0 and latestEnseignements|length == 0 %}
+    <div class="row">
+        <div class="col-12">
+            <div class="callout callout-info">
+                <h5><i class="fas fa-info"></i> Bienvenue dans votre espace enseignant !</h5>
+                Vous pouvez maintenant commencer à partager vos connaissances islamiques en créant des podcasts et des enseignements. 
+                <div class="mt-2">
+                    <a href="{{ path('admin_podcast_new') }}" class="btn btn-sm btn-success mr-2">
+                        <i class="fas fa-microphone mr-1"></i>Premier Podcast
+                    </a>
+                    <a href="{{ path('admin_enseignement_new') }}" class="btn btn-sm btn-info">
+                        <i class="fas fa-chalkboard-teacher mr-1"></i>Premier Enseignement
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}

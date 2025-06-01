@@ -1,0 +1,376 @@
+{# templates/admin/archive/index.html.twig #}
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Gestion des Archives - Kong Administration{% endblock %}
+
+{% block page_title %}Gestion des Archives Historiques{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active">Archives</li>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-archive mr-2"></i>Archives historiques de Kong
+                    </h3>
+                    <div class="card-tools">
+                        <a href="{{ path('admin_archive_new') }}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-plus"></i> Nouvelle archive
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-hover text-nowrap">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Titre</th>
+                                <th>Type</th>
+                                <th>Période</th>
+                                <th>Lieu</th>
+                                <th>Statut</th>
+                                <th>Date d'ajout</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for archive in archives %}
+                            <tr>
+                                <td>{{ archive.id }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        {% if archive.thumbnail %}
+                                            <img src="{{ asset('uploads/archives/' ~ archive.thumbnail) }}" 
+                                                 alt="Thumbnail" class="img-size-32 mr-2 rounded">
+                                        {% else %}
+                                            <div class="bg-secondary rounded d-flex align-items-center justify-content-center mr-2" 
+                                                 style="width: 32px; height: 32px;">
+                                                {% if archive.type == 'manuscript' %}
+                                                    <i class="fas fa-scroll text-white"></i>
+                                                {% elseif archive.type == 'photo' %}
+                                                    <i class="fas fa-image text-white"></i>
+                                                {% elseif archive.type == 'audio' %}
+                                                    <i class="fas fa-volume-up text-white"></i>
+                                                {% elseif archive.type == 'video' %}
+                                                    <i class="fas fa-video text-white"></i>
+                                                {% else %}
+                                                    <i class="fas fa-file text-white"></i>
+                                                {% endif %}
+                                            </div>
+                                        {% endif %}
+                                        <a href="{{ path('admin_archive_show', {id: archive.id}) }}">
+                                            {{ archive.title|length > 40 ? archive.title|slice(0, 40) ~ '...' : archive.title }}
+                                        </a>
+                                    </div>
+                                </td>
+                                <td>
+                                    {% set typeClass = {
+                                        'manuscript': 'warning',
+                                        'photo': 'info',
+                                        'audio': 'success',
+                                        'video': 'primary',
+                                        'article': 'secondary',
+                                        'map': 'dark'
+                                    } %}
+                                    <span class="badge badge-{{ typeClass[archive.type] ?? 'secondary' }}">
+                                        {% if archive.type == 'manuscript' %}
+                                            <i class="fas fa-scroll mr-1"></i>Manuscrit
+                                        {% elseif archive.type == 'photo' %}
+                                            <i class="fas fa-image mr-1"></i>Photo
+                                        {% elseif archive.type == 'audio' %}
+                                            <i class="fas fa-volume-up mr-1"></i>Audio
+                                        {% elseif archive.type == 'video' %}
+                                            <i class="fas fa-video mr-1"></i>Vidéo
+                                        {% elseif archive.type == 'map' %}
+                                            <i class="fas fa-map mr-1"></i>Carte
+                                        {% else %}
+                                            <i class="fas fa-file mr-1"></i>{{ archive.type|upper }}
+                                        {% endif %}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if archive.period %}
+                                        <span class="text-muted">
+                                            <i class="fas fa-history mr-1"></i>{{ archive.period }}
+                                        </span>
+                                    {% else %}
+                                        <span class="text-muted">Non renseigné</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if archive.location %}
+                                        <span class="text-info">
+                                            <i class="fas fa-map-marker-alt mr-1"></i>{{ archive.location }}
+                                        </span>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if archive.isPublished %}
+                                        <span class="badge badge-success">Publié</span>
+                                    {% else %}
+                                        <span class="badge badge-warning">Brouillon</span>
+                                    {% endif %}
+                                    {% if archive.isRestricted %}
+                                        <span class="badge badge-danger ml-1">Restreint</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ archive.createdAt|date('d/m/Y H:i') }}</td>
+                                <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a href="{{ path('admin_archive_show', {id: archive.id}) }}" 
+                                           class="btn btn-info btn-sm" title="Voir">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{{ path('admin_archive_edit', {id: archive.id}) }}" 
+                                           class="btn btn-warning btn-sm" title="Modifier">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form method="post" action="{{ path('admin_archive_delete', {id: archive.id}) }}" 
+                                              style="display: inline-block;" 
+                                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette archive ?')">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ archive.id) }}">
+                                            <button type="submit" class="btn btn-danger btn-sm" title="Supprimer">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="8" class="text-center">
+                                    <div class="empty-state py-4">
+                                        <i class="fas fa-archive fa-3x text-muted mb-3"></i>
+                                        <p class="text-muted">Aucune archive trouvée</p>
+                                        <a href="{{ path('admin_archive_new') }}" class="btn btn-primary">
+                                            <i class="fas fa-plus mr-2"></i>Ajouter la première archive
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistiques par type -->
+    <div class="row">
+        <div class="col-md-2">
+            <div class="info-box">
+                <span class="info-box-icon bg-warning"><i class="fas fa-scroll"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Manuscrits</span>
+                    <span class="info-box-number">
+                        {{ archives|filter(archive => archive.type == 'manuscript')|length }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="info-box">
+                <span class="info-box-icon bg-info"><i class="fas fa-image"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Photos</span>
+                    <span class="info-box-number">
+                        {{ archives|filter(archive => archive.type == 'photo')|length }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="info-box">
+                <span class="info-box-icon bg-success"><i class="fas fa-volume-up"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Audio</span>
+                    <span class="info-box-number">
+                        {{ archives|filter(archive => archive.type == 'audio')|length }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="info-box">
+                <span class="info-box-icon bg-primary"><i class="fas fa-video"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Vidéos</span>
+                    <span class="info-box-number">
+                        {{ archives|filter(archive => archive.type == 'video')|length }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="info-box">
+                <span class="info-box-icon bg-secondary"><i class="fas fa-file"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Articles</span>
+                    <span class="info-box-number">
+                        {{ archives|filter(archive => archive.type == 'article')|length }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="info-box">
+                <span class="info-box-icon bg-dark"><i class="fas fa-map"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Cartes</span>
+                    <span class="info-box-number">
+                        {{ archives|filter(archive => archive.type == 'map')|length }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtres avancés -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card collapsed-card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-filter mr-2"></i>Filtres avancés
+                    </h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form method="get" action="{{ path('admin_archive_index') }}">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Type d'archive</label>
+                                    <select name="type" class="form-control">
+                                        <option value="">Tous les types</option>
+                                        <option value="manuscript">Manuscrit</option>
+                                        <option value="photo">Photographie</option>
+                                        <option value="audio">Document audio</option>
+                                        <option value="video">Document vidéo</option>
+                                        <option value="article">Article historique</option>
+                                        <option value="map">Carte/Plan</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Période historique</label>
+                                    <input type="text" name="period" class="form-control" placeholder="Ex: XIXe siècle">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Lieu</label>
+                                    <input type="text" name="location" class="form-control" placeholder="Kong, région...">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Statut</label>
+                                    <select name="status" class="form-control">
+                                        <option value="">Tous les statuts</option>
+                                        <option value="published">Publié</option>
+                                        <option value="draft">Brouillon</option>
+                                        <option value="restricted">Accès restreint</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Recherche dans le titre/description</label>
+                                    <input type="text" name="search" class="form-control" placeholder="Mots-clés...">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Date d'ajout</label>
+                                    <select name="date_range" class="form-control">
+                                        <option value="">Toutes les dates</option>
+                                        <option value="today">Aujourd'hui</option>
+                                        <option value="week">Cette semaine</option>
+                                        <option value="month">Ce mois</option>
+                                        <option value="year">Cette année</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>&nbsp;</label>
+                                    <div>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-search mr-2"></i>Filtrer
+                                        </button>
+                                        <a href="{{ path('admin_archive_index') }}" class="btn btn-secondary ml-2">
+                                            <i class="fas fa-times mr-2"></i>Reset
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ligne du temps historique -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-clock mr-2"></i>Chronologie des archives
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="timeline">
+                        {% set periods = {} %}
+                        {% for archive in archives %}
+                            {% if archive.period %}
+                                {% set periods = periods|merge({(archive.period): (periods[archive.period] ?? 0) + 1}) %}
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% for period, count in periods %}
+                        <div class="time-label">
+                            <span class="bg-info">{{ period }}</span>
+                        </div>
+                        <div>
+                            <i class="fas fa-archive bg-blue"></i>
+                            <div class="timeline-item">
+                                <h3 class="timeline-header">
+                                    <strong>{{ count }}</strong> archive(s) de cette période
+                                </h3>
+                                <div class="timeline-body">
+                                    {% for archive in archives %}
+                                        {% if archive.period == period %}
+                                        <span class="badge badge-secondary mr-1">{{ archive.title|slice(0, 30) }}...</span>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        
+                        <div>
+                            <i class="fas fa-clock bg-gray"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

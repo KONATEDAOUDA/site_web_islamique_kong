@@ -1,0 +1,27 @@
+{% extends 'frontend/base.html.twig' %} 
+
+{% block title %}Réinitialiser votre mot de passe - Portail Islamique de Kong{% endblock %}
+
+{% block main %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center">
+                    <h2 class="mb-0">Réinitialiser votre mot de passe</h2>
+                </div>
+                <div class="card-body">
+                    {{ form_start(resetForm) }}
+                        {{ form_row(resetForm.plainPassword.first) }}
+                        {{ form_row(resetForm.plainPassword.second) }}
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button class="btn btn-primary">Réinitialiser le mot de passe</button>
+                        </div>
+                    {{ form_end(resetForm) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

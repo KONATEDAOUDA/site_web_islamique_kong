@@ -1,0 +1,373 @@
+{# templates/admin/podcast/edit.html.twig #}
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Modifier Podcast - Kong Administration{% endblock %}
+
+{% block page_title %}Modifier le podcast{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{{ path('admin_podcast_index') }}">Podcasts</a></li>
+    <li class="breadcrumb-item active">Modification</li>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <!-- Summernote -->
+    <link rel="stylesheet" href="{{ asset('plugins/summernote/summernote-bs4.min.css') }}">
+    <!-- Select2 -->
+    <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-8">
+            {{ form_start(form, {'attr': {'enctype': 'multipart/form-data', 'id': 'podcast-form'}}) }}
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-microphone mr-2"></i>Informations du podcast
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        {{ form_label(form.title) }}
+                        {{ form_widget(form.title) }}
+                        {{ form_errors(form.title) }}
+                    </div>
+                    
+                    <div class="form-group">
+                        {{ form_label(form.description) }}
+                        {{ form_widget(form.description, {'attr': {'id': 'summernote'}}) }}
+                        {{ form_errors(form.description) }}
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form_label(form.type) }}
+                                {{ form_widget(form.type, {'attr': {'id': 'podcast-type'}}) }}
+                                {{ form_errors(form.type) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form_label(form.duration) }}
+                                {{ form_widget(form.duration) }}
+                                {{ form_errors(form.duration) }}
+                                <small class="form-text text-muted">Format suggéré: "1h 30min" ou "90 minutes"</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form_label(form.language) }}
+                                {{ form_widget(form.language) }}
+                                {{ form_errors(form.language) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form_label(form.tags) }}
+                                {{ form_widget(form.tags, {'attr': {'id': 'tags-input'}}) }}
+                                {{ form_errors(form.tags) }}
+                                <small class="form-text text-muted">Séparez les tags par des virgules</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Section Fichiers -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-file-audio mr-2"></i>Fichiers et médias
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form_label(form.audioFile) }}
+                                {{ form_widget(form.audioFile, {'attr': {'id': 'audio-file', 'accept': 'audio/*,video/*'}}) }}
+                                {{ form_errors(form.audioFile) }}
+                                <small class="form-text text-muted">
+                                    <i class="fas fa-info-circle"></i> 
+                                    Formats supportés: MP3, MP4, WAV (max 100MB)
+                                </small>
+                                {% if podcast.audioFilePath is defined and podcast.audioFilePath %}
+                                    <div class="mt-2">
+                                        <a href="{{ asset('uploads/podcasts/' ~ podcast.audioFilePath) }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-file-audio mr-1"></i>Fichier actuel
+                                        </a>
+                                    </div>
+                                {% endif %}
+                                <div id="file-preview" class="mt-2" style="display: none;">
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-file-audio mr-2"></i>
+                                        <span id="file-name"></span>
+                                        <button type="button" class="btn btn-sm btn-outline-danger float-right" onclick="clearFile()">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form_label(form.thumbnail) }}
+                                {{ form_widget(form.thumbnail, {'attr': {'id': 'thumbnail-file', 'accept': 'image/*'}}) }}
+                                {{ form_errors(form.thumbnail) }}
+                                <small class="form-text text-muted">Image de couverture (optionnelle)</small>
+                                {% if podcast.thumbnailPath is defined and podcast.thumbnailPath %}
+                                    <div class="mt-2">
+                                        <img src="{{ asset('uploads/podcasts/' ~ podcast.thumbnailPath) }}" alt="Aperçu" class="img-thumbnail" style="max-width: 150px;">
+                                    </div>
+                                {% endif %}
+                                <div id="thumbnail-preview" class="mt-2" style="display: none;">
+                                    <img id="thumbnail-img" src="" alt="Aperçu" class="img-thumbnail" style="max-width: 150px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        {{ form_label(form.externalUrl) }}
+                        {{ form_widget(form.externalUrl, {'attr': {'id': 'external-url'}}) }}
+                        {{ form_errors(form.externalUrl) }}
+                        <small class="form-text text-muted">
+                            <i class="fas fa-link"></i> 
+                            Ou utilisez un lien externe (YouTube, SoundCloud, etc.) au lieu d'un fichier
+                        </small>
+                        {% if podcast.externalUrl is defined and podcast.externalUrl %}
+                            <div class="mt-2">
+                                <a href="{{ podcast.externalUrl }}" target="_blank" class="btn btn-outline-info btn-sm">
+                                    <i class="fas fa-external-link-alt mr-1"></i>Voir le lien externe
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            {{ form_end(form) }}
+        </div>
+        
+        <div class="col-md-4">
+            <!-- Options de publication -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-cogs mr-2"></i>Options de publication
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-check mb-3">
+                        {{ form_widget(form.isPublished) }}
+                        {{ form_label(form.isPublished, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                        {{ form_errors(form.isPublished) }}
+                        <small class="form-text text-muted">Le podcast sera visible sur le site</small>
+                    </div>
+                    
+                    <div class="form-check mb-3">
+                        {{ form_widget(form.isFeatured) }}
+                        {{ form_label(form.isFeatured, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                        {{ form_errors(form.isFeatured) }}
+                        <small class="form-text text-muted">Apparaîtra dans les contenus à la une</small>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg" form="podcast-form">
+                            <i class="fas fa-save mr-2"></i>Enregistrer les modifications
+                        </button>
+                        <a href="{{ path('admin_podcast_index') }}" class="btn btn-secondary">
+                            <i class="fas fa-times mr-2"></i>Annuler
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Aide -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-question-circle mr-2"></i>Conseils
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-lightbulb mr-1"></i> Bonnes pratiques</h6>
+                        <ul class="mb-0 pl-3">
+                            <li>Utilisez un titre descriptif et engageant</li>
+                            <li>Ajoutez une description détaillée avec les points clés</li>
+                            <li>Indiquez la durée pour aider les auditeurs</li>
+                            <li>Utilisez des tags pertinents pour faciliter la recherche</li>
+                            <li>Ajoutez une image de couverture attrayante</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="alert alert-warning">
+                        <h6><i class="fas fa-exclamation-triangle mr-1"></i> Formats supportés</h6>
+                        <small>
+                            <strong>Audio:</strong> MP3, WAV, MP4<br>
+                            <strong>Vidéo:</strong> MP4, MOV<br>
+                            <strong>Taille max:</strong> 100MB
+                        </small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Prévisualisation -->
+            <div class="card" id="preview-card" style="display: none;">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-eye mr-2"></i>Aperçu
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div id="podcast-preview">
+                        <!-- Prévisualisation dynamique du podcast -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <!-- Summernote -->
+    <script src="{{ asset('plugins/summernote/summernote-bs4.min.js') }}"></script>
+    <!-- Select2 -->
+    <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
+    
+    <script>
+        $(function () {
+            // Summernote pour la description
+            $('#summernote').summernote({
+                height: 200,
+                lang: 'fr-FR',
+                toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'italic', 'underline', 'clear']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['insert', ['link']],
+                    ['view', ['fullscreen', 'codeview']]
+                ]
+            });
+            
+            // Select2 pour les tags
+            $('#tags-input').select2({
+                tags: true,
+                tokenSeparators: [',', ' '],
+                placeholder: "Ajoutez des tags...",
+                allowClear: true
+            });
+            
+            // Prévisualisation du fichier audio/vidéo
+            $('#audio-file').on('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    $('#file-name').text(file.name + ' (' + formatFileSize(file.size) + ')');
+                    $('#file-preview').show();
+                    
+                    // Masquer l'URL externe si un fichier est sélectionné
+                    if ($('#external-url').val()) {
+                        if (confirm('Vous avez déjà saisi une URL externe. Voulez-vous la remplacer par ce fichier ?')) {
+                            $('#external-url').val('');
+                        } else {
+                            $(this).val('');
+                            return;
+                        }
+                    }
+                }
+            });
+            
+            // Prévisualisation de l'image
+            $('#thumbnail-file').on('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#thumbnail-img').attr('src', e.target.result);
+                        $('#thumbnail-preview').show();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Validation de l'URL externe
+            $('#external-url').on('input', function() {
+                const url = $(this).val();
+                if (url && $('#audio-file').get(0).files.length > 0) {
+                    if (confirm('Vous avez déjà sélectionné un fichier. Voulez-vous le remplacer par cette URL ?')) {
+                        $('#audio-file').val('');
+                        $('#file-preview').hide();
+                    } else {
+                        $(this).val('');
+                    }
+                }
+            });
+            
+            // Mise à jour de la prévisualisation en temps réel
+            $('#podcast-form input, #podcast-form select, #podcast-form textarea').on('input change', function() {
+                updatePreview();
+            });
+        });
+        
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        function clearFile() {
+            $('#audio-file').val('');
+            $('#file-preview').hide();
+        }
+        
+        function updatePreview() {
+            const title = $('#podcast_title').val();
+            const description = $('#summernote').summernote('code');
+            const type = $('#podcast-type').val();
+            
+            if (title || description) {
+                let preview = '<div class="podcast-preview-item">';
+                if (title) {
+                    preview += '<h5>' + title + '</h5>';
+                }
+                if (type) {
+                    preview += '<span class="badge badge-' + (type === 'audio' ? 'info' : 'success') + '">' + type.toUpperCase() + '</span><br><br>';
+                }
+                if (description && description !== '<p><br></p>') {
+                    preview += '<div class="text-muted small">' + description + '</div>';
+                }
+                preview += '</div>';
+                
+                $('#podcast-preview').html(preview);
+                $('#preview-card').show();
+            } else {
+                $('#preview-card').hide();
+            }
+        }
+        
+        // Validation avant soumission
+        $('#podcast-form').on('submit', function(e) {
+            const audioFile = $('#audio-file').get(0).files.length > 0;
+            const externalUrl = $('#external-url').val().trim();
+            
+            if (!audioFile && !externalUrl) {
+                e.preventDefault();
+                alert('Veuillez soit télécharger un fichier audio/vidéo, soit fournir une URL externe.');
+                return false;
+            }
+        });
+    </script>
+{% endblock %}

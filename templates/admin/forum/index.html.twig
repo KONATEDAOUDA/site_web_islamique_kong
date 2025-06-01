@@ -1,0 +1,446 @@
+{# templates/admin/forum/index.html.twig #}
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Gestion du Forum - Kong Administration{% endblock %}
+
+{% block page_title %}Modération du Forum{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active">Forum</li>
+{% endblock %}
+
+{% block content %}
+    <!-- Vue d'ensemble -->
+    <div class="row">
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-info">
+                <div class="inner">
+                    <h3>{{ topics|length }}</h3>
+                    <p>Sujets total</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <a href="{{ path('admin_forum_topics') }}" class="small-box-footer">
+                    Gérer les sujets <i class="fas fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-success">
+                <div class="inner">
+                    <h3>{{ topics|filter(t => t.isActive)|length }}</h3>
+                    <p>Sujets actifs</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-warning">
+                <div class="inner">
+                    <h3>{{ latestPosts|length }}</h3>
+                    <p>Messages récents</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-comment"></i>
+                </div>
+                <a href="{{ path('admin_forum_posts') }}" class="small-box-footer">
+                    Modérer <i class="fas fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-danger">
+                <div class="inner">
+                    <h3>{{ topics|filter(t => not t.isActive)|length }}</h3>
+                    <p>Sujets fermés</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sujets récents nécessitant une attention -->
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>Sujets nécessitant une attention
+                    </h3>
+                    <div class="card-tools">
+                        <a href="{{ path('admin_forum_topics') }}" class="btn btn-tool">
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Sujet</th>
+                                <th>Auteur</th>
+                                <th>Messages</th>
+                                <th>Dernière activité</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for topic in topics|slice(0, 10) %}
+                            <tr class="{{ not topic.isActive ? 'text-muted' : '' }}">
+                                <td>
+                                    <a href="{{ path('admin_forum_topic_show', {id: topic.id}) }}" 
+                                       class="{{ not topic.isActive ? 'text-muted' : '' }}">
+                                        {{ topic.title|length > 50 ? topic.title|slice(0, 50) ~ '...' : topic.title }}
+                                    </a>
+                                    {% if topic.isPinned %}
+                                        <span class="badge badge-primary ml-1">Épinglé</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        {% if topic.author.profilePicture %}
+                                            <img src="{{ asset('uploads/users/' ~ topic.author.profilePicture) }}" 
+                                                 alt="Avatar" class="img-circle img-size-32 mr-2">
+                                        {% else %}
+                                            <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center mr-2" 
+                                                 style="width: 32px; height: 32px;">
+                                                <i class="fas fa-user text-white"></i>
+                                            </div>
+                                        {% endif %}
+                                        <div>
+                                            <div class="font-weight-bold">{{ topic.author.fullName }}</div>
+                                            <small class="text-muted">{{ topic.createdAt|date('d/m/Y') }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge badge-info">{{ topic.posts|length }}</span>
+                                </td>
+                                <td>
+                                    {% if topic.posts|length > 0 %}
+                                        {{ topic.posts|last.createdAt|date('d/m/Y H:i') }}
+                                    {% else %}
+                                        {{ topic.createdAt|date('d/m/Y H:i') }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if topic.isActive %}
+                                        <span class="badge badge-success">Actif</span>
+                                    {% else %}
+                                        <span class="badge badge-danger">Fermé</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{{ path('admin_forum_topic_show', {id: topic.id}) }}" 
+                                           class="btn btn-info btn-sm" title="Voir">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <form method="post" action="{{ path('admin_forum_topic_toggle_status', {id: topic.id}) }}" 
+                                              style="display: inline-block;">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('toggle-status' ~ topic.id) }}">
+                                            <button type="submit" 
+                                                    class="btn btn-{{ topic.isActive ? 'warning' : 'success' }} btn-sm" 
+                                                    title="{{ topic.isActive ? 'Fermer' : 'Ouvrir' }}">
+                                                <i class="fas fa-{{ topic.isActive ? 'lock' : 'unlock' }}"></i>
+                                            </button>
+                                        </form>
+                                        <form method="post" action="{{ path('admin_forum_topic_delete', {id: topic.id}) }}" 
+                                              style="display: inline-block;" 
+                                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce sujet et tous ses messages ?')">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ topic.id) }}">
+                                            <button type="submit" class="btn btn-danger btn-sm" title="Supprimer">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center">
+                                    <div class="empty-state py-3">
+                                        <i class="fas fa-comments fa-2x text-muted mb-2"></i>
+                                        <p class="text-muted">Aucun sujet de forum</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <!-- Activité récente -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-clock mr-2"></i>Activité récente
+                    </h3>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        {% for post in latestPosts|slice(0, 8) %}
+                        <li class="list-group-item">
+                            <div class="d-flex align-items-start">
+                                <div class="mr-3">
+                                    {% if post.author.profilePicture %}
+                                        <img src="{{ asset('uploads/users/' ~ post.author.profilePicture) }}" 
+                                             alt="Avatar" class="img-circle" style="width: 40px; height: 40px;">
+                                    {% else %}
+                                        <div class="bg-info rounded-circle d-flex align-items-center justify-content-center" 
+                                             style="width: 40px; height: 40px;">
+                                            <i class="fas fa-user text-white"></i>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="font-weight-bold">{{ post.author.fullName }}</div>
+                                    <div class="text-muted small">
+                                        a répondu dans 
+                                        <a href="{{ path('admin_forum_topic_show', {id: post.topic.id}) }}">
+                                            {{ post.topic.title|slice(0, 30) }}...
+                                        </a>
+                                    </div>
+                                    <div class="text-muted small">
+                                        <i class="fas fa-clock mr-1"></i>{{ post.createdAt|date('d/m/Y H:i') }}
+                                    </div>
+                                </div>
+                                <div>
+                                    {% if post.isActive %}
+                                        <span class="badge badge-success">Actif</span>
+                                    {% else %}
+                                        <span class="badge badge-warning">Modéré</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </li>
+                        {% else %}
+                        <li class="list-group-item text-center text-muted">
+                            <i class="fas fa-comment-slash fa-2x mb-2"></i>
+                            <p>Aucune activité récente</p>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{{ path('admin_forum_posts') }}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-list mr-1"></i>Voir tous les messages
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistiques détaillées -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-chart-line mr-2"></i>Activité du forum (7 derniers jours)
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <canvas id="forumActivityChart" style="height: 250px;"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-users mr-2"></i>Utilisateurs les plus actifs
+                    </h3>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Utilisateur</th>
+                                <th>Sujets</th>
+                                <th>Messages</th>
+                                <th>Score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% set activeUsers = {} %}
+                            {% for topic in topics %}
+                                {% set userId = topic.author.id %}
+                                {% set activeUsers = activeUsers|merge({(userId): {
+                                    'user': topic.author,
+                                    'topics': (activeUsers[userId].topics ?? 0) + 1,
+                                    'posts': activeUsers[userId].posts ?? 0
+                                }}) %}
+                            {% endfor %}
+                            {% for post in latestPosts %}
+                                {% set userId = post.author.id %}
+                                {% set activeUsers = activeUsers|merge({(userId): {
+                                    'user': post.author,
+                                    'topics': activeUsers[userId].topics ?? 0,
+                                    'posts': (activeUsers[userId].posts ?? 0) + 1
+                                }}) %}
+                            {% endfor %}
+                            
+                            {% for userId, data in activeUsers|slice(0, 5) %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        {% if data.user.profilePicture %}
+                                            <img src="{{ asset('uploads/users/' ~ data.user.profilePicture) }}" 
+                                                 alt="Avatar" class="img-circle img-size-32 mr-2">
+                                        {% else %}
+                                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center mr-2" 
+                                                 style="width: 32px; height: 32px;">
+                                                <i class="fas fa-user text-white"></i>
+                                            </div>
+                                        {% endif %}
+                                        {{ data.user.fullName }}
+                                    </div>
+                                </td>
+                                <td><span class="badge badge-info">{{ data.topics }}</span></td>
+                                <td><span class="badge badge-success">{{ data.posts }}</span></td>
+                                <td>
+                                    {% set score = (data.topics * 3) + data.posts %}
+                                    <span class="badge badge-{{ score > 10 ? 'warning' : 'secondary' }}">{{ score }}</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions rapides de modération -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-tools mr-2"></i>Actions de modération
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <a href="{{ path('admin_forum_topics') }}?filter=inactive" class="btn btn-warning btn-block">
+                                <i class="fas fa-eye-slash mr-2"></i>Sujets fermés
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ path('admin_forum_posts') }}?filter=reported" class="btn btn-danger btn-block">
+                                <i class="fas fa-flag mr-2"></i>Messages signalés
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ path('admin_forum_posts') }}?filter=recent" class="btn btn-info btn-block">
+                                <i class="fas fa-clock mr-2"></i>Activité récente
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#bulkActionsModal">
+                                <i class="fas fa-cogs mr-2"></i>Actions groupées
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour actions groupées -->
+    <div class="modal fade" id="bulkActionsModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Actions groupées</h4>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="{{ path('admin_forum_bulk_actions') }}">
+                        <div class="form-group">
+                            <label>Action à effectuer</label>
+                            <select name="action" class="form-control" required>
+                                <option value="">Sélectionnez une action</option>
+                                <option value="close_topics">Fermer les sujets sélectionnés</option>
+                                <option value="open_topics">Ouvrir les sujets sélectionnés</option>
+                                <option value="delete_old_topics">Supprimer les sujets anciens (>6 mois)</option>
+                                <option value="moderate_posts">Modérer les messages récents</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Critères (optionnel)</label>
+                            <textarea name="criteria" class="form-control" rows="3" 
+                                      placeholder="Spécifiez les critères pour l'action..."></textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-primary">Exécuter</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <!-- Chart.js -->
+    <script src="{{ asset('plugins/chart.js/Chart.min.js') }}"></script>
+    
+    <script>
+        $(function () {
+            // Graphique d'activité du forum
+            var ctx = document.getElementById('forumActivityChart').getContext('2d');
+            
+            // Données simulées - à remplacer par de vraies données
+            var activityData = {
+                labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+                datasets: [{
+                    label: 'Nouveaux sujets',
+                    data: [3, 5, 2, 8, 4, 6, 7],
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 2
+                }, {
+                    label: 'Nouveaux messages',
+                    data: [12, 19, 8, 15, 10, 18, 14],
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 2
+                }]
+            };
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: activityData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}

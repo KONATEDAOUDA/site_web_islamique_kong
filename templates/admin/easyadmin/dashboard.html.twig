@@ -1,0 +1,29 @@
+{# templates/admin/easyadmin/dashboard.html.twig #}
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title %}Tableau de bord - Kong Administration{% endblock %}
+
+{% block main %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Bienvenue dans l'interface d'administration de Kong</h3>
+                </div>
+                <div class="card-body text-center">
+                    <p>Cette interface vous permet de gérer les différentes entités du site</p>
+                    
+                    <div class="row mt-4">
+                       <ul>
+                            <li><a href="">Gérer les utilisateurs</a></li>
+                            <li><a href="">Gérer les rôles</a></li>
+                            <li><a href="">Gérer les permissions</a></li>
+                            <li><a href="">Gérer les paramètres</a></li>
+                            <li><a href="">Gérer les catégories</a></li>
+                       </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

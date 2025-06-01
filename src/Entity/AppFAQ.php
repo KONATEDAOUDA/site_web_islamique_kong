@@ -53,4 +53,14 @@ class AppFAQ
 
         return $this;
     }
+
+    public function __construct()
+    {
+        // Initialize the createdAt and updatedAt properties
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
+        
+        // Initialize the state property
+        $this->deleted = false;
+    }
 }

@@ -1,0 +1,611 @@
+{# templates/admin/archive/new.html.twig #}
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Nouvelle Archive - Kong Administration{% endblock %}
+
+{% block page_title %}Ajouter une archive historique{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{{ path('admin_archive_index') }}">Archives</a></li>
+    <li class="breadcrumb-item active">Nouvelle</li>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <!-- Summernote -->
+    <link rel="stylesheet" href="{{ asset('plugins/summernote/summernote-bs4.min.css') }}">
+    <!-- Select2 -->
+    <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
+    <!-- Datepicker -->
+    <link rel="stylesheet" href="{{ asset('plugins/daterangepicker/daterangepicker.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-8">
+            {{ form_start(form, {'attr': {'enctype': 'multipart/form-data', 'id': 'archive-form'}}) }}
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-archive mr-2"></i>Nouvelle archive historique
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        {{ form_label(form.title) }}
+                        {{ form_widget(form.title) }}
+                        {{ form_errors(form.title) }}
+                        <small class="form-text text-muted">Titre descriptif du document historique</small>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form_label(form.type) }}
+                                {{ form_widget(form.type, {'attr': {'id': 'type-select'}}) }}
+                                {{ form_errors(form.type) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form_label(form.language) }}
+                                {{ form_widget(form.language) }}
+                                {{ form_errors(form.language) }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        {{ form_label(form.description) }}
+                        {{ form_widget(form.description, {'attr': {'id': 'summernote'}}) }}
+                        {{ form_errors(form.description) }}
+                    </div>
+                    
+                    <div class="form-group">
+                        {{ form_label(form.historicalContext) }}
+                        {{ form_widget(form.historicalContext) }}
+                        {{ form_errors(form.historicalContext) }}
+                        <small class="form-text text-muted">Contexte et importance historique de ce document</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Informations historiques -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-history mr-2"></i>Contexte historique
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form_label(form.period) }}
+                                {{ form_widget(form.period) }}
+                                {{ form_errors(form.period) }}
+                                <small class="form-text text-muted">Ex: "XIXe siècle", "1800-1900", "Empire de Kong"</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form_label(form.originalDate) }}
+                                {{ form_widget(form.originalDate, {'attr': {'id': 'original-date'}}) }}
+                                {{ form_errors(form.originalDate) }}
+                                <small class="form-text text-muted">Date approximative du document original</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form_label(form.location) }}
+                                {{ form_widget(form.location) }}
+                                {{ form_errors(form.location) }}
+                                <small class="form-text text-muted">Lieu géographique lié à l'archive</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form_label(form.source) }}
+                                {{ form_widget(form.source) }}
+                                {{ form_errors(form.source) }}
+                                <small class="form-text text-muted">Provenance du document (collection, institution)</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Fichiers et médias -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-folder-open mr-2"></i>Fichiers et médias
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form_label(form.archiveFile) }}
+                                {{ form_widget(form.archiveFile, {'attr': {'id': 'archive-file'}}) }}
+                                {{ form_errors(form.archiveFile) }}
+                                <small class="form-text text-muted">
+                                    <i class="fas fa-info-circle"></i> 
+                                    Formats acceptés: PDF, images, audio, vidéo, documents Word (max 50MB)
+                                </small>
+                                <div id="file-preview" class="mt-2" style="display: none;"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form_label(form.thumbnail) }}
+                                {{ form_widget(form.thumbnail, {'attr': {'id': 'thumbnail-file', 'accept': 'image/*'}}) }}
+                                {{ form_errors(form.thumbnail) }}
+                                <small class="form-text text-muted">Image de prévisualisation</small>
+                                <div id="thumbnail-preview" class="mt-2" style="display: none;">
+                                    <img id="thumbnail-img" src="" alt="Aperçu" class="img-thumbnail" style="max-width: 150px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        {{ form_label(form.tags) }}
+                        {{ form_widget(form.tags, {'attr': {'id': 'tags-input'}}) }}
+                        {{ form_errors(form.tags) }}
+                        <small class="form-text text-muted">Mots-clés pour faciliter la recherche et la classification</small>
+                    </div>
+                </div>
+            </div>
+            
+            {{ form_end(form) }}
+        </div>
+        
+        <div class="col-md-4">
+            <!-- Guide par type d'archive -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-compass mr-2"></i>Guide par type
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div id="type-guides">
+                        <div class="alert alert-warning type-guide" data-type="manuscript" style="display: none;">
+                            <h6><i class="fas fa-scroll mr-2"></i>Manuscrit</h6>
+                            <ul class="mb-0 pl-3">
+                                <li>Indiquez l'auteur si connu</li>
+                                <li>Précisez l'état de conservation</li>
+                                <li>Mentionnez le type d'écriture (Maghribi, Soudani...)</li>
+                                <li>Décrivez le support (papier, parchemin...)</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="alert alert-info type-guide" data-type="photo" style="display: none;">
+                            <h6><i class="fas fa-image mr-2"></i>Photographie</h6>
+                            <ul class="mb-0 pl-3">
+                                <li>Datez la prise de vue si possible</li>
+                                <li>Identifiez les personnes ou lieux</li>
+                                <li>Précisez le photographe si connu</li>
+                                <li>Décrivez le contexte de la photo</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="alert alert-success type-guide" data-type="audio" style="display: none;">
+                            <h6><i class="fas fa-volume-up mr-2"></i>Document audio</h6>
+                            <ul class="mb-0 pl-3">
+                                <li>Précisez la langue parlée</li>
+                                <li>Identifiez l'orateur si possible</li>
+                                <li>Indiquez la durée et la qualité</li>
+                                <li>Contextualisez l'enregistrement</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="alert alert-primary type-guide" data-type="video" style="display: none;">
+                            <h6><i class="fas fa-video mr-2"></i>Document vidéo</h6>
+                            <ul class="mb-0 pl-3">
+                                <li>Décrivez la scène filmée</li>
+                                <li>Datez l'événement</li>
+                                <li>Précisez la durée</li>
+                                <li>Identifiez les participants</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="alert alert-secondary type-guide" data-type="article" style="display: none;">
+                            <h6><i class="fas fa-file mr-2"></i>Article historique</h6>
+                            <ul class="mb-0 pl-3">
+                                <li>Citez l'auteur et la publication</li>
+                                <li>Indiquez la date de publication</li>
+                                <li>Résumez le contenu principal</li>
+                                <li>Évaluez la fiabilité des sources</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="alert alert-dark type-guide" data-type="map" style="display: none;">
+                            <h6><i class="fas fa-map mr-2"></i>Carte/Plan</h6>
+                            <ul class="mb-0 pl-3">
+                                <li>Précisez l'échelle et l'orientation</li>
+                                <li>Identifiez le cartographe</li>
+                                <li>Datez la création de la carte</li>
+                                <li>Expliquez son importance historique</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="alert alert-light type-guide" data-type="" style="display: block;">
+                            <h6><i class="fas fa-info-circle mr-2"></i>Conseils généraux</h6>
+                            <ul class="mb-0 pl-3">
+                                <li>Soyez précis dans vos descriptions</li>
+                                <li>Vérifiez l'exactitude des informations</li>
+                                <li>Respectez les droits d'auteur</li>
+                                <li>Utilisez un langage accessible</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Options de publication -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-cogs mr-2"></i>Options de publication
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-check mb-3">
+                        {{ form_widget(form.isPublished) }}
+                        {{ form_label(form.isPublished, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                        {{ form_errors(form.isPublished) }}
+                        <small class="form-text text-muted">L'archive sera visible sur le site</small>
+                    </div>
+                    
+                    <div class="form-check mb-3">
+                        {{ form_widget(form.isRestricted) }}
+                        {{ form_label(form.isRestricted, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                        {{ form_errors(form.isRestricted) }}
+                        <small class="form-text text-muted">Réservé aux utilisateurs connectés</small>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg" form="archive-form">
+                            <i class="fas fa-save mr-2"></i>Créer l'archive
+                        </button>
+                        <button type="button" class="btn btn-info" onclick="previewArchive()">
+                            <i class="fas fa-eye mr-2"></i>Aperçu
+                        </button>
+                        <a href="{{ path('admin_archive_index') }}" class="btn btn-secondary">
+                            <i class="fas fa-times mr-2"></i>Annuler
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Informations de classification -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-tags mr-2"></i>Classification
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Suggestions de tags :</label>
+                        <div class="tag-suggestions">
+                            <span class="badge badge-outline-primary tag-suggestion" data-tag="Kong">Kong</span>
+                            <span class="badge badge-outline-primary tag-suggestion" data-tag="Islam">Islam</span>
+                            <span class="badge badge-outline-primary tag-suggestion" data-tag="Histoire">Histoire</span>
+                            <span class="badge badge-outline-primary tag-suggestion" data-tag="Côte d'Ivoire">Côte d'Ivoire</span>
+                            <span class="badge badge-outline-primary tag-suggestion" data-tag="Manuscrit">Manuscrit</span>
+                            <span class="badge badge-outline-primary tag-suggestion" data-tag="Empire">Empire</span>
+                            <span class="badge badge-outline-primary tag-suggestion" data-tag="Commerce">Commerce</span>
+                            <span class="badge badge-outline-primary tag-suggestion" data-tag="Madrasa">Madrasa</span>
+                            <span class="badge badge-outline-primary tag-suggestion" data-tag="Mosquée">Mosquée</span>
+                            <span class="badge badge-outline-primary tag-suggestion" data-tag="Érudits">Érudits</span>
+                        </div>
+                        <small class="form-text text-muted">Cliquez sur un tag pour l'ajouter</small>
+                    </div>
+                    
+                    <div class="progress mt-3">
+                        <div id="completion-bar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                    </div>
+                    <small class="text-muted">Complétude du formulaire: <span id="completion-percent">0</span>%</small>
+                </div>
+            </div>
+            
+            <!-- Aide pour la datation -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-calendar-alt mr-2"></i>Aide pour la datation
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="timeline">
+                        <div class="time-label">
+                            <span class="bg-primary">Périodes clés de Kong</span>
+                        </div>
+                        
+                        <div>
+                            <i class="fas fa-star bg-yellow"></i>
+                            <div class="timeline-item">
+                                <span class="time"><i class="fas fa-clock"></i> XVIIe s.</span>
+                                <h3 class="timeline-header">Fondation de Kong</h3>
+                                <div class="timeline-body">
+                                    Établissement de la ville par les commerçants dioula
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <i class="fas fa-crown bg-green"></i>
+                            <div class="timeline-item">
+                                <span class="time"><i class="fas fa-clock"></i> XVIIIe s.</span>
+                                <h3 class="timeline-header">Apogée de l'Empire</h3>
+                                <div class="timeline-body">
+                                    Expansion territoriale et rayonnement culturel
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <i class="fas fa-flag bg-red"></i>
+                            <div class="timeline-item">
+                                <span class="time"><i class="fas fa-clock"></i> 1895</span>
+                                <h3 class="timeline-header">Colonisation française</h3>
+                                <div class="timeline-body">
+                                    Fin de l'indépendance de Kong
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour l'aperçu -->
+    <div class="modal fade" id="previewModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Aperçu de l'archive</h4>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="preview-content"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <!-- Summernote -->
+    <script src="{{ asset('plugins/summernote/summernote-bs4.min.js') }}"></script>
+    <!-- Select2 -->
+    <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
+    <!-- Date picker -->
+    <script src="{{ asset('plugins/moment/moment.min.js') }}"></script>
+    <script src="{{ asset('plugins/daterangepicker/daterangepicker.js') }}"></script>
+    
+    <script>
+        $(function () {
+            // Summernote
+            $('#summernote').summernote({
+                height: 300,
+                lang: 'fr-FR',
+                toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'italic', 'underline', 'clear']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['insert', ['link']],
+                    ['view', ['fullscreen', 'codeview']]
+                ]
+            });
+            
+            // Select2 pour les tags
+            $('#tags-input').select2({
+                tags: true,
+                tokenSeparators: [',', ' '],
+                placeholder: "Ajoutez des mots-clés...",
+                allowClear: true
+            });
+            
+            // Date picker
+            $('#original-date').daterangepicker({
+                singleDatePicker: true,
+                showDropdowns: true,
+                minYear: 1600,
+                maxYear: parseInt(moment().format('YYYY'),10),
+                locale: {
+                    format: 'DD/MM/YYYY',
+                    cancelLabel: 'Effacer'
+                }
+            });
+            
+            // Guide selon le type sélectionné
+            $('#type-select').on('change', function() {
+                const selectedType = $(this).val();
+                $('.type-guide').hide();
+                $(`.type-guide[data-type="${selectedType}"]`).show();
+                if (!selectedType) {
+                    $('.type-guide[data-type=""]').show();
+                }
+                updateCompletion();
+            });
+            
+            // Suggestions de tags
+            $('.tag-suggestion').on('click', function() {
+                const tag = $(this).data('tag');
+                const currentTags = $('#tags-input').val();
+                const tagsArray = currentTags ? currentTags.split(',') : [];
+                
+                if (!tagsArray.includes(tag)) {
+                    tagsArray.push(tag);
+                    $('#tags-input').val(tagsArray.join(',')).trigger('change');
+                }
+            });
+            
+            // Prévisualisation des fichiers
+            $('#archive-file').on('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    showFilePreview(file);
+                    updateCompletion();
+                }
+            });
+            
+            $('#thumbnail-file').on('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#thumbnail-img').attr('src', e.target.result);
+                        $('#thumbnail-preview').show();
+                    };
+                    reader.readAsDataURL(file);
+                    updateCompletion();
+                }
+            });
+            
+            // Surveillance des champs pour la barre de progression
+            $('#archive-form input, #archive-form select, #archive-form textarea').on('input change', function() {
+                updateCompletion();
+            });
+            
+            updateCompletion();
+        });
+        
+        function showFilePreview(file) {
+            const fileName = file.name;
+            const fileSize = formatFileSize(file.size);
+            const fileType = file.type;
+            
+            let iconClass = 'fa-file';
+            if (fileType.startsWith('image/')) iconClass = 'fa-file-image';
+            else if (fileType.startsWith('audio/')) iconClass = 'fa-file-audio';
+            else if (fileType.startsWith('video/')) iconClass = 'fa-file-video';
+            else if (fileType.includes('pdf')) iconClass = 'fa-file-pdf';
+            
+            const preview = `
+                <div class="alert alert-info">
+                    <i class="fas ${iconClass} mr-2"></i>
+                    <strong>${fileName}</strong><br>
+                    <small class="text-muted">Taille: ${fileSize} | Type: ${fileType}</small>
+                    <button type="button" class="btn btn-sm btn-outline-danger float-right" 
+                            onclick="clearFilePreview()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            
+            $('#file-preview').html(preview).show();
+        }
+        
+        function clearFilePreview() {
+            $('#archive-file').val('');
+            $('#file-preview').hide();
+            updateCompletion();
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        function updateCompletion() {
+            const fields = [
+                'archive_title',
+                'archive_type',
+                'archive_description',
+                'archive_period',
+                'archive_location',
+                'archive_source'
+            ];
+            
+            let completed = 0;
+            let total = fields.length + 2; // +2 pour les fichiers
+            
+            fields.forEach(function(field) {
+                if ($('#' + field).val() && $('#' + field).val().trim()) {
+                    completed++;
+                }
+            });
+            
+            // Vérifier les fichiers
+            if ($('#archive-file')[0].files.length > 0) completed++;
+            if ($('#thumbnail-file')[0].files.length > 0) completed++;
+            
+            const percentage = Math.round((completed / total) * 100);
+            $('#completion-percent').text(percentage);
+            $('#completion-bar').css('width', percentage + '%');
+            
+            // Couleur de la barre selon le pourcentage
+            $('#completion-bar').removeClass('bg-danger bg-warning bg-success');
+            if (percentage < 50) $('#completion-bar').addClass('bg-danger');
+            else if (percentage < 80) $('#completion-bar').addClass('bg-warning');
+            else $('#completion-bar').addClass('bg-success');
+        }
+        
+        function previewArchive() {
+            const title = $('#archive_title').val();
+            const type = $('#type-select option:selected').text();
+            const description = $('#summernote').summernote('code');
+            const period = $('#archive_period').val();
+            const location = $('#archive_location').val();
+            const source = $('#archive_source').val();
+            const context = $('#archive_historicalContext').val();
+            
+            const previewHtml = `
+                <div class="archive-preview">
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <span class="badge badge-primary">${type}</span>
+                            ${period ? `<span class="badge badge-secondary ml-1">${period}</span>` : ''}
+                        </div>
+                        <div class="col-md-4 text-right">
+                            ${location ? `<small class="text-muted"><i class="fas fa-map-marker-alt"></i> ${location}</small>` : ''}
+                        </div>
+                    </div>
+                    
+                    <h1 class="mb-3">${title}</h1>
+                    
+                    <div class="description mb-4">
+                        ${description}
+                    </div>
+                    
+                    ${context ? `
+                        <div class="card mb-3">
+                            <div class="card-header"><h6><i class="fas fa-history"></i> Contexte historique</h6></div>
+                            <div class="card-body"><p>${context}</p></div>
+                        </div>
+                    ` : ''}
+                    
+                    ${source ? `
+                        <div class="alert alert-info">
+                            <strong><i class="fas fa-archive"></i> Source :</strong> ${source}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            $('#preview-content').html(previewHtml);
+            $('#previewModal').modal('show');
+        }
+    </script>
+{% endblock %}

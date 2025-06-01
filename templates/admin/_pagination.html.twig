@@ -1,0 +1,33 @@
+{# templates/admin/_pagination.html.twig #}
+{% if pagination is defined and pagination is not empty and pagination.pages > 1 %}
+<nav aria-label="Pagination">
+    <ul class="pagination justify-content-center my-2">
+        {# Previous Page #}
+        <li class="page-item {% if pagination.current == 1 %}disabled{% endif %}">
+            <a class="page-link" href="{{ path(app.request.attributes.get('_route'), app.request.query.all | merge({page: pagination.current - 1})) }}" aria-label="Précédent">
+                <span aria-hidden="true">&laquo;</span>
+                <span class="sr-only">Précédent</span>
+            </a>
+        </li>
+        
+        {# Page Numbers #}
+        {% for page in 1..pagination.pages %}
+            {% if page == 1 or page == pagination.pages or (page >= pagination.current - 2 and page <= pagination.current + 2) %}
+                <li class="page-item {% if page == pagination.current %}active{% endif %}">
+                    <a class="page-link" href="{{ path(app.request.attributes.get('_route'), app.request.query.all | merge({page: page})) }}">{{ page }}</a>
+                </li>
+            {% elseif page == pagination.current - 3 or page == pagination.current + 3 %}
+                <li class="page-item disabled"><span class="page-link">…</span></li>
+            {% endif %}
+        {% endfor %}
+        
+        {# Next Page #}
+        <li class="page-item {% if pagination.current == pagination.pages %}disabled{% endif %}">
+            <a class="page-link" href="{{ path(app.request.attributes.get('_route'), app.request.query.all | merge({page: pagination.current + 1})) }}" aria-label="Suivant">
+                <span aria-hidden="true">&raquo;</span>
+                <span class="sr-only">Suivant</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+{% endif %}

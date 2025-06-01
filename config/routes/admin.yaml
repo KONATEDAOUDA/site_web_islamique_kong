@@ -1,0 +1,27 @@
+# config/routes/admin.yaml
+
+# Routes pour l'administration AdminLTE
+
+admin_dashboard:
+    resource: App\Controller\Admin\AdminController
+    type: attribute
+
+admin_articles:
+    resource: App\Controller\Admin\ArticleController
+    type: attribute
+
+admin_podcasts:
+    resource: App\Controller\Admin\PodcastController
+    type: attribute
+
+admin_archives:
+    resource: App\Controller\Admin\ArchiveController
+    type: attribute
+
+admin_enseignements:
+    resource: App\Controller\Admin\EnseignementController
+    type: attribute
+
+admin_forum:
+    resource: App\Controller\Admin\ForumController
+    type: attribute

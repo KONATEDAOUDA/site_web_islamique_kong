@@ -34,6 +34,16 @@ class ForumPost
     #[ORM\Column]
     private bool $isApproved = false;
 
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $editedAt = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?User $editedBy = null;
+
+    #[ORM\Column(length: 45, nullable: true)]
+    private ?string $ipAddress = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -97,4 +107,38 @@ class ForumPost
 
         return $this;
     }
+
+    public function getEditedAt(): ?\DateTimeImmutable
+    {
+        return $this->editedAt;
+    }
+
+    public function setEditedAt(?\DateTimeImmutable $editedAt): self
+    {
+        $this->editedAt = $editedAt;
+        return $this;
+    }
+
+    public function getEditedBy(): ?User
+    {
+        return $this->editedBy;
+    }
+
+    public function setEditedBy(?User $editedBy): self
+    {
+        $this->editedBy = $editedBy;
+        return $this;
+    }
+
+    public function getIpAddress(): ?string
+    {
+        return $this->ipAddress;
+    }
+
+    public function setIpAddress(?string $ipAddress): self
+    {
+        $this->ipAddress = $ipAddress;
+        return $this;
+    }
+
 }

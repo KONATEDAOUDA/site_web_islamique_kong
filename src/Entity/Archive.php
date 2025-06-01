@@ -57,6 +57,21 @@ class Archive
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $historicalContext = null;
 
+    #[ORM\Column(type: 'integer', options: ['default' => 0])]
+    private int $viewCount = 0;
+
+    #[ORM\Column(type: 'integer', options: ['default' => 0])]
+    private int $downloadCount = 0;
+
+    #[ORM\Column(type: 'bigint', nullable: true)]
+    private ?int $fileSize = null;
+
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $fileMimeType = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $originalFileName = null;
+
     public function __construct()
     {
         $this->favoredBy = new ArrayCollection();
@@ -227,6 +242,73 @@ class Archive
     {
         $this->historicalContext = $historicalContext;
 
+        return $this;
+    }
+
+    public function getViewCount(): int
+    {
+        return $this->viewCount;
+    }
+
+    public function setViewCount(int $viewCount): self
+    {
+        $this->viewCount = $viewCount;
+        return $this;
+    }
+
+    public function incrementViewCount(): self
+    {
+        $this->viewCount++;
+        return $this;
+    }
+
+    public function getDownloadCount(): int
+    {
+        return $this->downloadCount;
+    }
+
+    public function setDownloadCount(int $downloadCount): self
+    {
+        $this->downloadCount = $downloadCount;
+        return $this;
+    }
+
+    public function incrementDownloadCount(): self
+    {
+        $this->downloadCount++;
+        return $this;
+    }
+
+    public function getFileSize(): ?int
+    {
+        return $this->fileSize;
+    }
+
+    public function setFileSize(?int $fileSize): self
+    {
+        $this->fileSize = $fileSize;
+        return $this;
+    }
+
+    public function getFileMimeType(): ?string
+    {
+        return $this->fileMimeType;
+    }
+
+    public function setFileMimeType(?string $fileMimeType): self
+    {
+        $this->fileMimeType = $fileMimeType;
+        return $this;
+    }
+
+    public function getOriginalFileName(): ?string
+    {
+        return $this->originalFileName;
+    }
+
+    public function setOriginalFileName(?string $originalFileName): self
+    {
+        $this->originalFileName = $originalFileName;
         return $this;
     }
 }

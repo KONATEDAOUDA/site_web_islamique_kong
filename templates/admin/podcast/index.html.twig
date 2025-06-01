@@ -1,0 +1,278 @@
+{# templates/admin/podcast/index.html.twig #}
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Gestion des Podcasts - Kong Administration{% endblock %}
+
+{% block page_title %}Gestion des Podcasts{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active">Podcasts</li>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-microphone mr-2"></i>Liste des podcasts
+                    </h3>
+                    <div class="card-tools">
+                        <a href="{{ path('admin_podcast_new') }}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-plus"></i> Nouveau podcast
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-hover text-nowrap">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Titre</th>
+                                <th>Type</th>
+                                <th>Auteur</th>
+                                <th>Durée</th>
+                                <th>Statut</th>
+                                <th>Date de création</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for podcast in podcasts %}
+                            <tr>
+                                <td>{{ podcast.id }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        {% if podcast.thumbnail %}
+                                            <img src="{{ asset('uploads/podcasts/' ~ podcast.thumbnail) }}" 
+                                                 alt="Thumbnail" class="img-size-32 mr-2 rounded">
+                                        {% else %}
+                                            <div class="bg-secondary rounded d-flex align-items-center justify-content-center mr-2" 
+                                                 style="width: 32px; height: 32px;">
+                                                <i class="fas fa-microphone text-white"></i>
+                                            </div>
+                                        {% endif %}
+                                        <a href="{{ path('admin_podcast_show', {id: podcast.id}) }}">
+                                            {{ podcast.title|length > 40 ? podcast.title|slice(0, 40) ~ '...' : podcast.title }}
+                                        </a>
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if podcast.type == 'audio' %}
+                                        <span class="badge badge-info">
+                                            <i class="fas fa-volume-up mr-1"></i>Audio
+                                        </span>
+                                    {% else %}
+                                        <span class="badge badge-success">
+                                            <i class="fas fa-video mr-1"></i>Vidéo
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ podcast.author ? podcast.author.fullName : 'N/A' }}</td>
+                                <td>
+                                    {% if podcast.duration %}
+                                        <span class="text-muted">
+                                            <i class="fas fa-clock mr-1"></i>{{ podcast.duration }}
+                                        </span>
+                                    {% else %}
+                                        <span class="text-muted">Non renseigné</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if podcast.isPublished %}
+                                        <span class="badge badge-success">Publié</span>
+                                    {% else %}
+                                        <span class="badge badge-warning">Brouillon</span>
+                                    {% endif %}
+                                    {% if podcast.isFeatured %}
+                                        <span class="badge badge-primary ml-1">À la une</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ podcast.createdAt|date('d/m/Y H:i') }}</td>
+                                <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a href="{{ path('admin_podcast_show', {id: podcast.id}) }}" 
+                                           class="btn btn-info btn-sm" title="Voir">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        {% if is_granted('ROLE_ADMIN') or podcast.author == app.user %}
+                                        <a href="{{ path('admin_podcast_edit', {id: podcast.id}) }}" 
+                                           class="btn btn-warning btn-sm" title="Modifier">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form method="post" action="{{ path('admin_podcast_delete', {id: podcast.id}) }}" 
+                                              style="display: inline-block;" 
+                                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce podcast ?')">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ podcast.id) }}">
+                                            <button type="submit" class="btn btn-danger btn-sm" title="Supprimer">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="8" class="text-center">
+                                    <div class="empty-state py-4">
+                                        <i class="fas fa-microphone fa-3x text-muted mb-3"></i>
+                                        <p class="text-muted">Aucun podcast trouvé</p>
+                                        <a href="{{ path('admin_podcast_new') }}" class="btn btn-primary">
+                                            <i class="fas fa-plus mr-2"></i>Créer le premier podcast
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% if podcasts|length > 0 %}
+                <div class="card-footer clearfix">
+                    <div class="float-left">
+                        <small class="text-muted">
+                            {{ podcasts|length }} podcast(s) trouvé(s)
+                        </small>
+                    </div>
+                    <ul class="pagination pagination-sm m-0 float-right">
+                        {# Pagination à implémenter si nécessaire #}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistiques rapides -->
+    <div class="row">
+        <div class="col-md-3">
+            <div class="info-box">
+                <span class="info-box-icon bg-info"><i class="fas fa-microphone"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Total Podcasts</span>
+                    <span class="info-box-number">{{ podcasts|length }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="info-box">
+                <span class="info-box-icon bg-success"><i class="fas fa-volume-up"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Audio</span>
+                    <span class="info-box-number">
+                        {{ podcasts|filter(podcast => podcast.type == 'audio')|length }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="info-box">
+                <span class="info-box-icon bg-warning"><i class="fas fa-video"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Vidéo</span>
+                    <span class="info-box-number">
+                        {{ podcasts|filter(podcast => podcast.type == 'video')|length }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="info-box">
+                <span class="info-box-icon bg-secondary"><i class="fas fa-check"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Publiés</span>
+                    <span class="info-box-number">
+                        {{ podcasts|filter(podcast => podcast.isPublished)|length }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtres rapides -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card collapsed-card">
+                <div class="card-header">
+                    <h3 class="card-title">Filtres</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Type</label>
+                                <select class="form-control filter-type">
+                                    <option value="">Tous les types</option>
+                                    <option value="audio">Audio</option>
+                                    <option value="video">Vidéo</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Statut</label>
+                                <select class="form-control filter-status">
+                                    <option value="">Tous les statuts</option>
+                                    <option value="published">Publié</option>
+                                    <option value="draft">Brouillon</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Recherche</label>
+                                <input type="text" class="form-control filter-search" placeholder="Titre du podcast...">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>&nbsp;</label>
+                                <div>
+                                    <button type="button" class="btn btn-primary btn-block" onclick="applyFilters()">
+                                        <i class="fas fa-search mr-2"></i>Filtrer
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        function applyFilters() {
+            // Logique de filtrage côté client
+            const typeFilter = document.querySelector('.filter-type').value;
+            const statusFilter = document.querySelector('.filter-status').value;
+            const searchFilter = document.querySelector('.filter-search').value.toLowerCase();
+            
+            const rows = document.querySelectorAll('tbody tr');
+            
+            rows.forEach(row => {
+                if (row.cells.length === 1) return; // Skip empty state row
+                
+                const type = row.cells[2].textContent.toLowerCase().includes('audio') ? 'audio' : 'video';
+                const status = row.cells[5].textContent.toLowerCase().includes('publié') ? 'published' : 'draft';
+                const title = row.cells[1].textContent.toLowerCase();
+                
+                let show = true;
+                
+                if (typeFilter && type !== typeFilter) show = false;
+                if (statusFilter && status !== statusFilter) show = false;
+                if (searchFilter && !title.includes(searchFilter)) show = false;
+                
+                row.style.display = show ? '' : 'none';
+            });
+        }
+    </script>
+{% endblock %}

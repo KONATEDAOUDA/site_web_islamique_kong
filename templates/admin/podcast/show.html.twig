@@ -1,0 +1,287 @@
+{# templates/admin/podcast/show.html.twig #}
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}{{ podcast.title }} - Kong Administration{% endblock %}
+
+{% block page_title %}{{ podcast.title }}{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{{ path('admin_podcast_index') }}">Podcasts</a></li>
+    <li class="breadcrumb-item active">{{ podcast.title|slice(0, 40) }}{% if podcast.title|length > 40 %}...{% endif %}</li>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <!-- Informations principales -->
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 class="card-title mb-0">
+                    <i class="fas fa-microphone mr-2"></i>{{ podcast.title }}
+                </h3>
+                <div class="card-tools">
+                    <span class="badge badge-{{ podcast.isPublished ? 'success' : 'warning' }}">
+                        {{ podcast.isPublished ? 'Publié' : 'Brouillon' }}
+                    </span>
+                    {% if podcast.isFeatured %}
+                        <span class="badge badge-primary ml-1">À la une</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="mb-2">
+                    {% if podcast.type %}
+                        <span class="badge badge-{{ podcast.type == 'audio' ? 'info' : 'success' }}">{{ podcast.type|upper }}</span>
+                    {% endif %}
+                    {% if podcast.duration %}
+                        <span class="badge badge-light ml-1"><i class="fas fa-clock"></i> {{ podcast.duration }}</span>
+                    {% endif %}
+                    {% if podcast.language %}
+                        <span class="badge badge-light ml-1"><i class="fas fa-language"></i> {{ podcast.language }}</span>
+                    {% endif %}
+                </div>
+                {% if podcast.tags %}
+                <div class="mb-2">
+                    <i class="fas fa-tags mr-1"></i>
+                    {% for tag in podcast.tags|split(',') %}
+                        <span class="badge badge-secondary mr-1">{{ tag|trim }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% if podcast.thumbnailPath %}
+                <div class="mb-3">
+                    <img src="{{ asset('uploads/podcasts/' ~ podcast.thumbnailPath) }}" alt="Couverture" class="img-thumbnail" style="max-width: 250px;">
+                </div>
+                {% endif %}
+                {% if podcast.description %}
+                    <div class="mb-3 podcast-description">
+                        {{ podcast.description|raw }}
+                    </div>
+                {% endif %}
+                <div class="mb-3">
+                    {% if podcast.audioFilePath %}
+                        <audio controls style="width:100%;">
+                            <source src="{{ asset('uploads/podcasts/' ~ podcast.audioFilePath) }}">
+                            Votre navigateur ne supporte pas l'audio.
+                        </audio>
+                    {% elseif podcast.externalUrl %}
+                        {% if podcast.externalUrl matches '/youtube|youtu\.be|soundcloud|mp3|mp4|wav/i' %}
+                            <div class="embed-responsive embed-responsive-16by9">
+                                <iframe class="embed-responsive-item" src="{{ podcast.externalUrl }}" allowfullscreen></iframe>
+                            </div>
+                        {% else %}
+                            <a href="{{ podcast.externalUrl }}" target="_blank" class="btn btn-outline-info">
+                                <i class="fas fa-external-link-alt mr-1"></i>Écouter le podcast
+                            </a>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-md-6">
+                        <small class="text-muted">
+                            <i class="fas fa-calendar mr-1"></i>
+                            Créé le {{ podcast.createdAt|date('d/m/Y à H:i') }}
+                            {% if podcast.updatedAt %}
+                                <br><i class="fas fa-edit mr-1"></i>
+                                Modifié le {{ podcast.updatedAt|date('d/m/Y à H:i') }}
+                            {% endif %}
+                        </small>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <a href="{{ path('admin_podcast_edit', {id: podcast.id}) }}" class="btn btn-warning btn-sm">
+                            <i class="fas fa-edit mr-1"></i>Modifier
+                        </a>
+                        <a href="{{ path('admin_podcast_index') }}" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-arrow-left mr-1"></i>Retour à la liste
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Fin card principale -->
+    </div>
+    <div class="col-md-4">
+        <!-- Informations complémentaires -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-info-circle mr-2"></i>Informations</h3>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm table-borderless">
+                    <tr>
+                        <td><strong>Statut :</strong></td>
+                        <td>
+                            <span class="badge badge-{{ podcast.isPublished ? 'success' : 'warning' }}">
+                                {{ podcast.isPublished ? 'Publié' : 'Brouillon' }}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>À la une :</strong></td>
+                        <td>
+                            <span class="badge badge-{{ podcast.isFeatured ? 'primary' : 'secondary' }}">
+                                {{ podcast.isFeatured ? 'Oui' : 'Non' }}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Durée :</strong></td>
+                        <td>{{ podcast.duration ?? '-' }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Langue :</strong></td>
+                        <td>{{ podcast.language ?? '-' }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Créé le :</strong></td>
+                        <td>{{ podcast.createdAt|date('d/m/Y H:i') }}</td>
+                    </tr>
+                    {% if podcast.updatedAt %}
+                    <tr>
+                        <td><strong>Modifié le :</strong></td>
+                        <td>{{ podcast.updatedAt|date('d/m/Y H:i') }}</td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                        <td><strong>Tags :</strong></td>
+                        <td>
+                            {% if podcast.tags %}
+                                {% for tag in podcast.tags|split(',') %}
+                                    <span class="badge badge-secondary mr-1">{{ tag|trim }}</span>
+                                {% endfor %}
+                            {% else %}
+                                <span class="text-muted">Aucun</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <!-- Actions -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-cogs mr-2"></i>Actions</h3>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ path('admin_podcast_edit', {id: podcast.id}) }}" class="btn btn-warning btn-block">
+                        <i class="fas fa-edit mr-2"></i>Modifier
+                    </a>
+                    {% if podcast.isPublished %}
+                    <a href="{{ path('app_podcast_show', {slug: podcast.slug}) }}" class="btn btn-success btn-block" target="_blank">
+                        <i class="fas fa-external-link-alt mr-2"></i>Voir sur le site
+                    </a>
+                    {% endif %}
+                    <button type="button" class="btn btn-info btn-block" onclick="sharePodcast()">
+                        <i class="fas fa-share mr-2"></i>Partager
+                    </button>
+                    <form method="post" action="{{ path('admin_podcast_delete', {id: podcast.id}) }}" style="display:inline;" onsubmit="return confirm('Supprimer ce podcast ? Cette action est irréversible.');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ podcast.id) }}">
+                        <button type="submit" class="btn btn-danger btn-block">
+                            <i class="fas fa-trash mr-2"></i>Supprimer
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Statistiques -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-chart-bar mr-2"></i>Statistiques
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="description-block border-right">
+                            <span class="description-percentage text-success">
+                                <i class="fas fa-eye"></i>
+                            </span>
+                            <h5 class="description-header">{{ podcast.viewCount ?? 0 }}</h5>
+                            <span class="description-text">VUES</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="description-block">
+                            <span class="description-percentage text-info">
+                                <i class="fas fa-heart"></i>
+                            </span>
+                            <h5 class="description-header">{{ podcast.favoriteCount ?? 0 }}</h5>
+                            <span class="description-text">FAVORIS</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="progress-group mt-3">
+                    <span class="progress-text">Engagement</span>
+                    <span class="float-right">
+                        <b>{{ ((podcast.favoriteCount ?? 0) / ((podcast.viewCount ?? 1) * 10) * 100)|round(1) }}%</b>
+                    </span>
+                    <div class="progress progress-sm">
+                        <div class="progress-bar bg-success" 
+                             style="width: {{ ((podcast.favoriteCount ?? 0) / ((podcast.viewCount ?? 1) * 10) * 100)|round(1) }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Podcasts connexes -->
+        {% if related_podcasts is defined and related_podcasts|length > 0 %}
+        <div class="card mt-3">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-link mr-2"></i>Podcasts connexes
+                </h3>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for related in related_podcasts|slice(0, 5) %}
+                    <li class="list-group-item">
+                        <a href="{{ path('admin_podcast_show', {id: related.id}) }}" class="text-decoration-none">
+                            <div class="d-flex align-items-center">
+                                {% if related.thumbnailPath %}
+                                    <img src="{{ asset('uploads/podcasts/' ~ related.thumbnailPath) }}" 
+                                         alt="Image" class="rounded mr-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                {% else %}
+                                    <div class="bg-secondary rounded d-flex align-items-center justify-content-center mr-3" 
+                                         style="width: 50px; height: 50px;">
+                                        <i class="fas fa-microphone text-white"></i>
+                                    </div>
+                                {% endif %}
+                                <div>
+                                    <div class="font-weight-bold">
+                                        {{ related.title|length > 30 ? related.title|slice(0, 30) ~ '...' : related.title }}
+                                    </div>
+                                    <small class="text-muted">{{ related.createdAt|date('d/m/Y') }}</small>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        function sharePodcast() {
+            if (navigator.share) {
+                navigator.share({
+                    title: '{{ podcast.title|e('js') }}',
+                    text: '{{ podcast.description|striptags|slice(0, 100)|e('js') }}',
+                    url: window.location.href
+                });
+            } else {
+                navigator.clipboard.writeText(window.location.href).then(function() {
+                    alert('Lien copié dans le presse-papiers !');
+                });
+            }
+        }
+    </script>
+{% endblock %}

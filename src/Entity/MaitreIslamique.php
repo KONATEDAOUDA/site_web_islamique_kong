@@ -60,6 +60,9 @@ class MaitreIslamique
     #[ORM\OneToMany(mappedBy: 'maitre', targetEntity: Enseignement::class, orphanRemoval: true)]
     private Collection $enseignementsList;
 
+    #[ORM\Column]
+    private ?bool $isAlive = null;
+
     public function __construct()
     {
         $this->enseignementsList = new ArrayCollection();
@@ -247,6 +250,18 @@ class MaitreIslamique
                 $enseignement->setMaitre(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isAlive(): ?bool
+    {
+        return $this->isAlive;
+    }
+
+    public function setIsAlive(bool $isAlive): static
+    {
+        $this->isAlive = $isAlive;
 
         return $this;
     }

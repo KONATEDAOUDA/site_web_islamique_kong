@@ -1,0 +1,182 @@
+{# templates/admin/forum/post_show.html.twig #}
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Message du Forum - Kong Administration{% endblock %}
+
+{% block page_title %}Détail du message{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{{ path('admin_forum_index') }}">Forum</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('admin_forum_topics') }}">Sujets</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('admin_forum_topic_show', {id: post.topic.id}) }}">{{ post.topic.title|slice(0, 40) }}{% if post.topic.title|length > 40 %}...{% endif %}</a></li>
+    <li class="breadcrumb-item active">Message</li>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-comment mr-2"></i>Message du forum
+                </h3>
+                <div class="card-tools">
+                    {% if post.isActive %}
+                        <span class="badge badge-success">Actif</span>
+                    {% else %}
+                        <span class="badge badge-warning">Modéré</span>
+                    {% endif %}
+                    {% if post.isReported %}
+                        <span class="badge badge-danger ml-1">Signalé</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="media mb-3">
+                    <div class="media-object mr-3">
+                        {% if post.author.profilePicture %}
+                            <img src="{{ asset('uploads/users/' ~ post.author.profilePicture) }}" 
+                                 alt="Avatar" class="img-circle" style="width:50px; height:50px;">
+                        {% else %}
+                            <div class="bg-info rounded-circle d-flex align-items-center justify-content-center"
+                                 style="width:50px; height:50px;">
+                                <i class="fas fa-user text-white"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="media-body">
+                        <h5 class="mt-0 mb-1">{{ post.author.fullName }}</h5>
+                        <small class="text-muted">
+                            Posté le {{ post.createdAt|date('d/m/Y H:i') }}
+                            {% if post.updatedAt and post.updatedAt > post.createdAt %}
+                                <br><i class="fas fa-edit mr-1"></i>Modifié le {{ post.updatedAt|date('d/m/Y H:i') }}
+                            {% endif %}
+                        </small>
+                        <div class="mt-3">
+                            {{ post.content|raw }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <a href="{{ path('admin_forum_topic_show', {id: post.topic.id}) }}" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-arrow-left mr-1"></i>Retour au sujet
+                        </a>
+                    </div>
+                    <div>
+                        <form method="post" action="{{ path('admin_forum_post_delete', {id: post.id}) }}" style="display:inline;"
+                              onsubmit="return confirm('Supprimer ce message ? Cette action est irréversible.');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ post.id) }}">
+                            <button type="submit" class="btn btn-danger btn-sm" title="Supprimer">
+                                <i class="fas fa-trash"></i> Supprimer
+                            </button>
+                        </form>
+                        <a href="{{ path('admin_forum_post_edit', {id: post.id}) }}" class="btn btn-warning btn-sm">
+                            <i class="fas fa-edit"></i> Éditer
+                        </a>
+                        <form method="post" action="{{ path('admin_forum_post_toggle_status', {id: post.id}) }}" style="display:inline;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('toggle-status' ~ post.id) }}">
+                            <button type="submit" class="btn btn-{{ post.isActive ? 'warning' : 'success' }} btn-sm"
+                                    title="{{ post.isActive ? 'Modérer' : 'Rendre actif' }}">
+                                <i class="fas fa-{{ post.isActive ? 'eye-slash' : 'eye' }}"></i>
+                            </button>
+                        </form>
+                        {% if post.isReported %}
+                        <form method="post" action="{{ path('admin_forum_post_unreport', {id: post.id}) }}" style="display:inline;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('unreport' ~ post.id) }}">
+                            <button type="submit" class="btn btn-info btn-sm" title="Lever le signalement">
+                                <i class="fas fa-flag"></i>
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Historique des modifications -->
+        {% if post.history is defined and post.history|length > 0 %}
+        <div class="card mt-3">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-history mr-2"></i>Historique des modifications
+                </h3>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    {% for edit in post.history %}
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <i class="fas fa-edit mr-1"></i>
+                                {{ edit.updatedAt|date('d/m/Y H:i') }}
+                                par {{ edit.editor.fullName }}
+                            </div>
+                            <a href="{{ path('admin_forum_post_history_show', {id: edit.id}) }}" class="btn btn-link btn-sm">Voir</a>
+                        </div>
+                        <div class="text-muted small">{{ edit.summary }}</div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <div class="col-md-4">
+        <!-- Infos sur le sujet -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-info-circle mr-2"></i>Sujet</h3>
+            </div>
+            <div class="card-body">
+                <div>
+                    <strong>Titre :</strong>
+                    <a href="{{ path('admin_forum_topic_show', {id: post.topic.id}) }}">{{ post.topic.title }}</a>
+                </div>
+                <div>
+                    <strong>Statut :</strong>
+                    <span class="badge badge-{{ post.topic.isActive ? 'success' : 'danger' }}">
+                        {{ post.topic.isActive ? 'Actif' : 'Fermé' }}
+                    </span>
+                    {% if post.topic.isPinned %}
+                        <span class="badge badge-primary">Épinglé</span>
+                    {% endif %}
+                </div>
+                <div>
+                    <strong>Messages :</strong> {{ post.topic.posts|length }}
+                </div>
+                <div>
+                    <strong>Créé le :</strong> {{ post.topic.createdAt|date('d/m/Y H:i') }}
+                </div>
+            </div>
+        </div>
+        <!-- Infos sur l'auteur du message -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-user mr-2"></i>Auteur du message</h3>
+            </div>
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    {% if post.author.profilePicture %}
+                        <img src="{{ asset('uploads/users/' ~ post.author.profilePicture) }}" 
+                             alt="Avatar" class="img-circle img-size-32 mr-2">
+                    {% else %}
+                        <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center mr-2" 
+                             style="width: 32px; height: 32px;">
+                            <i class="fas fa-user text-white"></i>
+                        </div>
+                    {% endif %}
+                    <div>
+                        <div class="font-weight-bold">{{ post.author.fullName }}</div>
+                        <small class="text-muted">Inscrit le {{ post.author.createdAt|date('d/m/Y') }}</small>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <strong>Messages :</strong> {{ post.author.forumPostsCount ?? post.author.posts|length ?? 1 }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

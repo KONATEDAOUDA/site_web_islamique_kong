@@ -6,18 +6,27 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\Table(name: '`user`')]
+#[UniqueEntity(fields: ['email'], message: 'Cette adresse email est déjà utilisée')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    use TimestampableEntity;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Assert\NotBlank(message: "L'email est obligatoire")]
+    #[Assert\Email(message: "L'email '{{ value }}' n'est pas valide")]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -30,34 +39,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 100)]
+    #[Assert\NotBlank(message: "Le prénom est obligatoire")]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 100)]
+    #[Assert\NotBlank(message: "Le nom est obligatoire")]
     private ?string $lastName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $profilePicture = null;
 
-    #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
+    #[ORM\Column(type: 'boolean')]
+    private bool $isVerified = false;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $updatedAt = null;
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Favorite::class, orphanRemoval: true)]
+    private Collection $favorites;
 
     #[ORM\OneToMany(mappedBy: 'author', targetEntity: Article::class)]
     private Collection $articles;
 
     #[ORM\OneToMany(mappedBy: 'author', targetEntity: Comment::class)]
     private Collection $comments;
-
-    #[ORM\ManyToMany(targetEntity: Article::class, mappedBy: 'favoredBy')]
-    private Collection $favoriteArticles;
-
-    #[ORM\ManyToMany(targetEntity: Podcast::class, mappedBy: 'favoredBy')]
-    private Collection $favoritePodcasts;
-
-    #[ORM\ManyToMany(targetEntity: Archive::class, mappedBy: 'favoredBy')]
-    private Collection $favoriteArchives;
 
     #[ORM\OneToMany(mappedBy: 'author', targetEntity: Podcast::class)]
     private Collection $podcasts;
@@ -74,14 +76,41 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'author', targetEntity: MaitreIslamique::class)]
     private Collection $maitresIslamiques;
 
+    #[ORM\Column(length: 20)]
+    private ?string $phone = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $bio = null;
+
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $location = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $lastLoginAt = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $lastActivityAt = null;
+
+    #[ORM\Column(length: 45, nullable: true)]
+    private ?string $lastLoginIp = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $lastLoginUserAgent = null;
+
+    #[ORM\Column(type: 'integer', options: ['default' => 0])]
+    private int $loginCount = 0;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $passwordChangedAt = null;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $mustChangePassword = false;
+
     public function __construct()
     {
+        $this->favorites = new ArrayCollection();
         $this->articles = new ArrayCollection();
         $this->comments = new ArrayCollection();
-        $this->favoriteArticles = new ArrayCollection();
-        $this->favoritePodcasts = new ArrayCollection();
-        $this->favoriteArchives = new ArrayCollection();
-        $this->createdAt = new \DateTimeImmutable();
         $this->podcasts = new ArrayCollection();
         $this->archives = new ArrayCollection();
         $this->forumTopics = new ArrayCollection();
@@ -106,23 +135,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
-     */
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
     }
 
-    /**
-     * @see UserInterface
-     */
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
@@ -135,9 +155,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @see PasswordAuthenticatedUserInterface
-     */
     public function getPassword(): string
     {
         return $this->password;
@@ -150,13 +167,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @see UserInterface
-     */
     public function eraseCredentials(): void
     {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        // Clear any temporary sensitive data
     }
 
     public function getFirstName(): ?string
@@ -200,26 +213,43 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function isVerified(): bool
     {
-        return $this->createdAt;
+        return $this->isVerified;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    public function setIsVerified(bool $isVerified): static
     {
-        $this->createdAt = $createdAt;
+        $this->isVerified = $isVerified;
 
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTimeImmutable
+    /**
+     * @return Collection<int, Favorite>
+     */
+    public function getFavorites(): Collection
     {
-        return $this->updatedAt;
+        return $this->favorites;
     }
 
-    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
+    public function addFavorite(Favorite $favorite): static
     {
-        $this->updatedAt = $updatedAt;
+        if (!$this->favorites->contains($favorite)) {
+            $this->favorites->add($favorite);
+            $favorite->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFavorite(Favorite $favorite): static
+    {
+        if ($this->favorites->removeElement($favorite)) {
+            if ($favorite->getUser() === $this) {
+                $favorite->setUser(null);
+            }
+        }
 
         return $this;
     }
@@ -245,7 +275,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeArticle(Article $article): static
     {
         if ($this->articles->removeElement($article)) {
-            // set the owning side to null (unless already changed)
             if ($article->getAuthor() === $this) {
                 $article->setAuthor(null);
             }
@@ -275,91 +304,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeComment(Comment $comment): static
     {
         if ($this->comments->removeElement($comment)) {
-            // set the owning side to null (unless already changed)
             if ($comment->getAuthor() === $this) {
                 $comment->setAuthor(null);
             }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Article>
-     */
-    public function getFavoriteArticles(): Collection
-    {
-        return $this->favoriteArticles;
-    }
-
-    public function addFavoriteArticle(Article $article): static
-    {
-        if (!$this->favoriteArticles->contains($article)) {
-            $this->favoriteArticles->add($article);
-            $article->addFavoredBy($this);
-        }
-
-        return $this;
-    }
-
-    public function removeFavoriteArticle(Article $article): static
-    {
-        if ($this->favoriteArticles->removeElement($article)) {
-            $article->removeFavoredBy($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Podcast>
-     */
-    public function getFavoritePodcasts(): Collection
-    {
-        return $this->favoritePodcasts;
-    }
-
-    public function addFavoritePodcast(Podcast $podcast): static
-    {
-        if (!$this->favoritePodcasts->contains($podcast)) {
-            $this->favoritePodcasts->add($podcast);
-            $podcast->addFavoredBy($this);
-        }
-
-        return $this;
-    }
-
-    public function removeFavoritePodcast(Podcast $podcast): static
-    {
-        if ($this->favoritePodcasts->removeElement($podcast)) {
-            $podcast->removeFavoredBy($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Archive>
-     */
-    public function getFavoriteArchives(): Collection
-    {
-        return $this->favoriteArchives;
-    }
-
-    public function addFavoriteArchive(Archive $archive): static
-    {
-        if (!$this->favoriteArchives->contains($archive)) {
-            $this->favoriteArchives->add($archive);
-            $archive->addFavoredBy($this);
-        }
-
-        return $this;
-    }
-
-    public function removeFavoriteArchive(Archive $archive): static
-    {
-        if ($this->favoriteArchives->removeElement($archive)) {
-            $archive->removeFavoredBy($this);
         }
 
         return $this;
@@ -507,6 +454,123 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             }
         }
 
+        return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(string $phone): static
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    public function getBio(): ?string
+    {
+        return $this->bio;
+    }
+
+    public function setBio(?string $bio): self
+    {
+        $this->bio = $bio;
+        return $this;
+    }
+
+    public function getLocation(): ?string
+    {
+        return $this->location;
+    }
+
+    public function setLocation(?string $location): self
+    {
+        $this->location = $location;
+        return $this;
+    }
+    
+    public function getLastLoginAt(): ?\DateTimeImmutable
+    {
+        return $this->lastLoginAt;
+    }
+
+    public function setLastLoginAt(?\DateTimeImmutable $lastLoginAt): self
+    {
+        $this->lastLoginAt = $lastLoginAt;
+        return $this;
+    }
+
+    public function getLastActivityAt(): ?\DateTimeImmutable
+    {
+        return $this->lastActivityAt;
+    }
+
+    public function setLastActivityAt(?\DateTimeImmutable $lastActivityAt): self
+    {
+        $this->lastActivityAt = $lastActivityAt;
+        return $this;
+    }
+
+    public function getLastLoginIp(): ?string
+    {
+        return $this->lastLoginIp;
+    }
+
+    public function setLastLoginIp(?string $lastLoginIp): self
+    {
+        $this->lastLoginIp = $lastLoginIp;
+        return $this;
+    }
+
+    public function getLastLoginUserAgent(): ?string
+    {
+        return $this->lastLoginUserAgent;
+    }
+
+    public function setLastLoginUserAgent(?string $lastLoginUserAgent): self
+    {
+        $this->lastLoginUserAgent = $lastLoginUserAgent;
+        return $this;
+    }
+
+    public function getLoginCount(): int
+    {
+        return $this->loginCount;
+    }
+
+    public function setLoginCount(int $loginCount): self
+    {
+        $this->loginCount = $loginCount;
+        return $this;
+    }
+
+    public function incrementLoginCount(): self
+    {
+        $this->loginCount++;
+        return $this;
+    }
+
+    public function getPasswordChangedAt(): ?\DateTimeImmutable
+    {
+        return $this->passwordChangedAt;
+    }
+
+    public function setPasswordChangedAt(?\DateTimeImmutable $passwordChangedAt): self
+    {
+        $this->passwordChangedAt = $passwordChangedAt;
+        return $this;
+    }
+
+    public function getMustChangePassword(): bool
+    {
+        return $this->mustChangePassword;
+    }
+
+    public function setMustChangePassword(bool $mustChangePassword): self
+    {
+        $this->mustChangePassword = $mustChangePassword;
         return $this;
     }
 }

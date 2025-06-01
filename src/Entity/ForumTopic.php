@@ -48,6 +48,12 @@ class ForumTopic
     #[ORM\Column]
     private int $viewCount = 0;
 
+    #[ORM\Column(type: 'integer', options: ['default' => 0])]
+    private int $replyCount = 0;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $lastPostAt = null;
+
     public function __construct()
     {
         $this->posts = new ArrayCollection();
@@ -190,6 +196,34 @@ class ForumTopic
     {
         $this->viewCount++;
 
+        return $this;
+    }
+
+    public function getReplyCount(): int
+    {
+        return $this->replyCount;
+    }
+
+    public function setReplyCount(int $replyCount): self
+    {
+        $this->replyCount = $replyCount;
+        return $this;
+    }
+
+    public function incrementReplyCount(): self
+    {
+        $this->replyCount++;
+        return $this;
+    }
+
+    public function getLastPostAt(): ?\DateTimeImmutable
+    {
+        return $this->lastPostAt;
+    }
+
+    public function setLastPostAt(?\DateTimeImmutable $lastPostAt): self
+    {
+        $this->lastPostAt = $lastPostAt;
         return $this;
     }
 }

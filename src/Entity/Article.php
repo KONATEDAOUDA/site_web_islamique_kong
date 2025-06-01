@@ -56,6 +56,24 @@ class Article
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'favoriteArticles')]
     private Collection $favoredBy;
 
+    #[ORM\Column(type: 'integer', options: ['default' => 0])]
+    private int $viewCount = 0;
+
+    #[ORM\Column(type: 'integer', options: ['default' => 0])]
+    private int $favoriteCount = 0;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $featuredImageThumbnail = null;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $readingTime = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $metaDescription = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $publishedAt = null;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
@@ -230,4 +248,83 @@ class Article
 
         return $this;
     }
+
+    public function getViewCount(): int
+    {
+        return $this->viewCount;
+    }
+
+    public function setViewCount(int $viewCount): self
+    {
+        $this->viewCount = $viewCount;
+        return $this;
+    }
+
+    public function incrementViewCount(): self
+    {
+        $this->viewCount++;
+        return $this;
+    }
+
+    public function getFavoriteCount(): int
+    {
+        return $this->favoriteCount;
+    }
+
+    public function setFavoriteCount(int $favoriteCount): self
+    {
+        $this->favoriteCount = $favoriteCount;
+        return $this;
+    }
+
+    public function incrementFavoriteCount(): self
+    {
+        $this->favoriteCount++;
+        return $this;
+    }
+
+    public function getFeaturedImageThumbnail(): ?string
+    {
+        return $this->featuredImageThumbnail;
+    }
+
+    public function setFeaturedImageThumbnail(?string $featuredImageThumbnail): self
+    {
+        $this->featuredImageThumbnail = $featuredImageThumbnail;
+        return $this;
+    }
+
+    public function getReadingTime(): ?int
+    {
+        return $this->readingTime;
+    }
+
+    public function setReadingTime(?int $readingTime): self
+    {
+        $this->readingTime = $readingTime;
+        return $this;
+    }
+
+    public function getMetaDescription(): ?string
+    {
+        return $this->metaDescription;
+    }
+
+    public function setMetaDescription(?string $metaDescription): self
+    {
+        $this->metaDescription = $metaDescription;
+        return $this;
+    }
+
+    public function getPublishedAt(): ?\DateTimeImmutable
+    {
+        return $this->publishedAt;
+    }
+
+    public function setPublishedAt(?\DateTimeImmutable $publishedAt): self
+    {
+        $this->publishedAt = $publishedAt;
+        return $this;
+    }
 }
+

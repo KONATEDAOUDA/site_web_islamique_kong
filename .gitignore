@@ -58,3 +58,10 @@ node_modules/
 # Embedded web-server pid file
 /.web-server-pid
 node_modules
+
+
+tasks.sh
+
+###> liip/imagine-bundle ###
+/public/media/cache/
+###< liip/imagine-bundle ###

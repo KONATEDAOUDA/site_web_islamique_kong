@@ -46,6 +46,18 @@ class Enseignement
     #[ORM\Column]
     private bool $isPublished = false;
 
+    #[ORM\Column(type: 'integer', options: ['default' => 0])]
+    private int $viewCount = 0;
+
+    #[ORM\Column(type: 'integer', options: ['default' => 0])]
+    private int $completionCount = 0;
+
+    #[ORM\Column(type: 'bigint', nullable: true)]
+    private ?int $supportFileSize = null;
+
+    #[ORM\Column(type: 'bigint', nullable: true)]
+    private ?int $audioFileSize = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -169,4 +181,61 @@ class Enseignement
 
         return $this;
     }
+
+    public function getViewCount(): int
+    {
+        return $this->viewCount;
+    }
+
+    public function setViewCount(int $viewCount): self
+    {
+        $this->viewCount = $viewCount;
+        return $this;
+    }
+
+    public function incrementViewCount(): self
+    {
+        $this->viewCount++;
+        return $this;
+    }
+
+    public function getCompletionCount(): int
+    {
+        return $this->completionCount;
+    }
+
+    public function setCompletionCount(int $completionCount): self
+    {
+        $this->completionCount = $completionCount;
+        return $this;
+    }
+
+    public function incrementCompletionCount(): self
+    {
+        $this->completionCount++;
+        return $this;
+    }
+
+    public function getSupportFileSize(): ?int
+    {
+        return $this->supportFileSize;
+    }
+
+    public function setSupportFileSize(?int $supportFileSize): self
+    {
+        $this->supportFileSize = $supportFileSize;
+        return $this;
+    }
+
+    public function getAudioFileSize(): ?int
+    {
+        return $this->audioFileSize;
+    }
+
+    public function setAudioFileSize(?int $audioFileSize): self
+    {
+        $this->audioFileSize = $audioFileSize;
+        return $this;
+    }
+
 }

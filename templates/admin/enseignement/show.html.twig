@@ -1,0 +1,445 @@
+{# templates/admin/enseignement/show.html.twig #}
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}{{ enseignement.title }} - Kong Administration{% endblock %}
+
+{% block page_title %}{{ enseignement.title }}{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{{ path('admin_enseignement_index') }}">Enseignements</a></li>
+    <li class="breadcrumb-item active">{{ enseignement.title|slice(0, 30) }}{% if enseignement.title|length > 30 %}...{% endif %}</li>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <!-- Contenu principal de l'enseignement -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-chalkboard-teacher mr-2"></i>{{ enseignement.title }}
+                </h3>
+                <div class="card-tools">
+                    <span class="badge badge-{{ enseignement.isPublished ? 'success' : 'warning' }}">
+                        {{ enseignement.isPublished ? 'Publié' : 'Brouillon' }}
+                    </span>
+                    {% if enseignement.isOpenAccess %}
+                        <span class="badge badge-info ml-1">Accès libre</span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="card-body">
+                <div class="mb-2">
+                    {% if enseignement.category %}
+                        <span class="badge badge-primary">{{ enseignement.category.name }}</span>
+                    {% endif %}
+                    {% if enseignement.level %}
+                        <span class="badge badge-secondary ml-1">{{ enseignement.level }}</span>
+                    {% endif %}
+                    {% if enseignement.duration %}
+                        <span class="badge badge-light ml-1"><i class="fas fa-clock"></i> {{ enseignement.duration }}</span>
+                    {% endif %}
+                    {% if enseignement.language %}
+                        <span class="badge badge-light ml-1"><i class="fas fa-language"></i> {{ enseignement.language }}</span>
+                    {% endif %}
+                </div>
+
+                {% if enseignement.summary %}
+                <div class="alert alert-info">
+                    <h5><i class="fas fa-info-circle mr-2"></i>Résumé</h5>
+                    {{ enseignement.summary }}
+                </div>
+                {% endif %}
+
+                {% if enseignement.prerequisites %}
+                <div class="alert alert-warning">
+                    <h6><i class="fas fa-exclamation-circle mr-2"></i>Prérequis</h6>
+                    {{ enseignement.prerequisites }}
+                </div>
+                {% endif %}
+
+                {% if enseignement.objectives %}
+                <div class="alert alert-success">
+                    <h6><i class="fas fa-bullseye mr-2"></i>Objectifs pédagogiques</h6>
+                    {{ enseignement.objectives }}
+                </div>
+                {% endif %}
+
+                <div class="enseignement-content mt-3">
+                    {{ enseignement.content|raw }}
+                </div>
+
+                {% if enseignement.references %}
+                <div class="mt-4">
+                    <h6><i class="fas fa-book mr-2"></i>Références</h6>
+                    <div>{{ enseignement.references|raw }}</div>
+                </div>
+                {% endif %}
+                
+                {% if enseignement.tags %}
+                <div class="mt-4">
+                    <h6><i class="fas fa-tags mr-2"></i>Tags</h6>
+                    {% for tag in enseignement.tags|split(',') %}
+                        <span class="badge badge-secondary mr-1">{{ tag|trim }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <hr>
+                
+                {% if enseignement.supportFilePath %}
+                <div class="mb-2">
+                    <a href="{{ asset('uploads/enseignements/' ~ enseignement.supportFilePath) }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-file-download mr-1"></i>Support à télécharger
+                    </a>
+                </div>
+                {% endif %}
+                {% if enseignement.audioFilePath %}
+                <div class="mb-2">
+                    <audio controls style="width:100%;">
+                        <source src="{{ asset('uploads/enseignements/' ~ enseignement.audioFilePath) }}">
+                        Votre navigateur ne supporte pas l'audio.
+                    </audio>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-md-6">
+                        <small class="text-muted">
+                            <i class="fas fa-calendar mr-1"></i>
+                            Créé le {{ enseignement.createdAt|date('d/m/Y à H:i') }}
+                            {% if enseignement.updatedAt %}
+                                <br><i class="fas fa-edit mr-1"></i>
+                                Modifié le {{ enseignement.updatedAt|date('d/m/Y à H:i') }}
+                            {% endif %}
+                        </small>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <a href="{{ path('admin_enseignement_edit', {id: enseignement.id}) }}" class="btn btn-warning btn-sm">
+                            <i class="fas fa-edit mr-1"></i>Modifier
+                        </a>
+                        <a href="{{ path('admin_enseignement_index') }}" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-arrow-left mr-1"></i>Retour à la liste
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Commentaires -->
+        {% if enseignement.comments is defined and enseignement.comments|length > 0 %}
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-comments mr-2"></i>Commentaires ({{ enseignement.comments|length }})
+                </h3>
+            </div>
+            <div class="card-body">
+                {% for comment in enseignement.comments|slice(0, 5) %}
+                <div class="media mb-3">
+                    <div class="media-object mr-3">
+                        {% if comment.author.profilePicture %}
+                            <img src="{{ asset('uploads/users/' ~ comment.author.profilePicture) }}" 
+                                 alt="Avatar" class="img-circle" style="width: 50px; height: 50px;">
+                        {% else %}
+                            <div class="bg-info rounded-circle d-flex align-items-center justify-content-center" 
+                                 style="width: 50px; height: 50px;">
+                                <i class="fas fa-user text-white"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="media-body">
+                        <h6 class="mt-0">
+                            {{ comment.author.fullName }}
+                            <small class="text-muted ml-2">{{ comment.createdAt|date('d/m/Y H:i') }}</small>
+                            {% if comment.isApproved %}
+                                <span class="badge badge-success badge-sm ml-1">Approuvé</span>
+                            {% else %}
+                                <span class="badge badge-warning badge-sm ml-1">En attente</span>
+                            {% endif %}
+                        </h6>
+                        <p>{{ comment.content }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                {% if enseignement.comments|length > 5 %}
+                <div class="text-center">
+                    <a href="#" class="btn btn-outline-primary btn-sm">
+                        Voir tous les commentaires ({{ enseignement.comments|length }})
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="col-md-4">
+        <!-- Informations de l'enseignement -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-info-circle mr-2"></i>Informations
+                </h3>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm table-borderless">
+                    {% if enseignement.maitre %}
+                    <tr>
+                        <td><strong>Maître :</strong></td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                {% if enseignement.maitre.profilePicture %}
+                                    <img src="{{ asset('uploads/users/' ~ enseignement.maitre.profilePicture) }}" 
+                                         alt="Avatar" class="img-circle img-size-32 mr-2">
+                                {% else %}
+                                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center mr-2" 
+                                         style="width: 32px; height: 32px;">
+                                        <i class="fas fa-user text-white"></i>
+                                    </div>
+                                {% endif %}
+                                {{ enseignement.maitre.fullName }}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                        <td><strong>Catégorie :</strong></td>
+                        <td>
+                            {% if enseignement.category %}
+                                <span class="badge badge-info">{{ enseignement.category.name }}</span>
+                            {% else %}
+                                <span class="text-muted">Non catégorisé</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Niveau :</strong></td>
+                        <td>
+                            {% if enseignement.level %}
+                                <span class="badge badge-secondary">{{ enseignement.level }}</span>
+                            {% else %}
+                                <span class="text-muted">Non spécifié</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Statut :</strong></td>
+                        <td>
+                            <span class="badge badge-{{ enseignement.isPublished ? 'success' : 'warning' }}">
+                                {{ enseignement.isPublished ? 'Publié' : 'Brouillon' }}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Accès :</strong></td>
+                        <td>
+                            <span class="badge badge-{{ enseignement.isOpenAccess ? 'info' : 'secondary' }}">
+                                {{ enseignement.isOpenAccess ? 'Libre' : 'Réservé' }}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Créé le :</strong></td>
+                        <td>{{ enseignement.createdAt|date('d/m/Y H:i') }}</td>
+                    </tr>
+                    {% if enseignement.updatedAt %}
+                    <tr>
+                        <td><strong>Modifié le :</strong></td>
+                        <td>{{ enseignement.updatedAt|date('d/m/Y H:i') }}</td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                        <td><strong>Commentaires :</strong></td>
+                        <td>
+                            <span class="badge badge-secondary">{{ enseignement.comments|length }}</span>
+                            {% if enseignement.comments|filter(c => not c.isApproved)|length > 0 %}
+                                <span class="badge badge-warning ml-1">
+                                    {{ enseignement.comments|filter(c => not c.isApproved)|length }} en attente
+                                </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Actions -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-cogs mr-2"></i>Actions
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ path('admin_enseignement_edit', {id: enseignement.id}) }}" class="btn btn-warning btn-block">
+                        <i class="fas fa-edit mr-2"></i>Modifier l'enseignement
+                    </a>
+                    {% if enseignement.isPublished %}
+                    <a href="{{ path('app_enseignement_show', {slug: enseignement.slug}) }}" class="btn btn-success btn-block" target="_blank">
+                        <i class="fas fa-external-link-alt mr-2"></i>Voir sur le site
+                    </a>
+                    {% endif %}
+                    <button type="button" class="btn btn-info btn-block" onclick="shareEnseignement()">
+                        <i class="fas fa-share mr-2"></i>Partager
+                    </button>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary btn-block dropdown-toggle" type="button" data-toggle="dropdown">
+                            <i class="fas fa-ellipsis-h mr-2"></i>Plus d'actions
+                        </button>
+                        <div class="dropdown-menu w-100">
+                            <a class="dropdown-item" href="#" onclick="duplicateEnseignement({{ enseignement.id }})">
+                                <i class="fas fa-copy mr-2"></i>Dupliquer
+                            </a>
+                            {% if enseignement.supportFilePath %}
+                            <a class="dropdown-item" href="{{ asset('uploads/enseignements/' ~ enseignement.supportFilePath) }}" target="_blank">
+                                <i class="fas fa-file-download mr-2"></i>Télécharger le support
+                            </a>
+                            {% endif %}
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="#" onclick="deleteEnseignement({{ enseignement.id }})">
+                                <i class="fas fa-trash mr-2"></i>Supprimer
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Statistiques -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-chart-bar mr-2"></i>Statistiques
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="description-block border-right">
+                            <span class="description-percentage text-success">
+                                <i class="fas fa-eye"></i>
+                            </span>
+                            <h5 class="description-header">{{ enseignement.viewCount ?? 0 }}</h5>
+                            <span class="description-text">VUES</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="description-block">
+                            <span class="description-percentage text-info">
+                                <i class="fas fa-heart"></i>
+                            </span>
+                            <h5 class="description-header">{{ enseignement.favoriteCount ?? 0 }}</h5>
+                            <span class="description-text">FAVORIS</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="progress-group mt-3">
+                    <span class="progress-text">Engagement</span>
+                    <span class="float-right">
+                        <b>{{ ((enseignement.comments|length * 5 + (enseignement.favoriteCount ?? 0) * 2) / (enseignement.viewCount ?? 1 * 100))|round(1) }}%</b>
+                    </span>
+                    <div class="progress progress-sm">
+                        <div class="progress-bar bg-success" 
+                             style="width: {{ ((enseignement.comments|length * 5 + (enseignement.favoriteCount ?? 0) * 2) / (enseignement.viewCount ?? 1 * 100))|round(1) }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Enseignements connexes -->
+        {% if related_enseignements is defined and related_enseignements|length > 0 %}
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-link mr-2"></i>Enseignements connexes
+                </h3>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for related in related_enseignements|slice(0, 5) %}
+                    <li class="list-group-item">
+                        <a href="{{ path('admin_enseignement_show', {id: related.id}) }}" class="text-decoration-none">
+                            <div class="d-flex align-items-center">
+                                {% if related.supportFilePath %}
+                                    <i class="fas fa-file-alt text-primary mr-3" style="font-size: 2em;"></i>
+                                {% else %}
+                                    <div class="bg-secondary rounded d-flex align-items-center justify-content-center mr-3" 
+                                         style="width: 50px; height: 50px;">
+                                        <i class="fas fa-chalkboard-teacher text-white"></i>
+                                    </div>
+                                {% endif %}
+                                <div>
+                                    <div class="font-weight-bold">
+                                        {{ related.title|length > 30 ? related.title|slice(0, 30) ~ '...' : related.title }}
+                                    </div>
+                                    <small class="text-muted">{{ related.createdAt|date('d/m/Y') }}</small>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        function shareEnseignement() {
+            if (navigator.share) {
+                navigator.share({
+                    title: '{{ enseignement.title|e('js') }}',
+                    text: '{{ enseignement.summary|default('Enseignement intéressant')|e('js') }}',
+                    url: window.location.href
+                });
+            } else {
+                navigator.clipboard.writeText(window.location.href).then(function() {
+                    alert('Lien copié dans le presse-papiers !');
+                });
+            }
+        }
+        
+        function duplicateEnseignement(id) {
+            if (confirm('Voulez-vous dupliquer cet enseignement ?')) {
+                fetch(`/admin/enseignements/${id}/duplicate`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type': 'application/json',
+                    },
+                }).then(response => response.json())
+                  .then(data => {
+                      if (data.success) {
+                          window.location.href = `/admin/enseignements/${data.newEnseignementId}/edit`;
+                      } else {
+                          alert('Erreur lors de la duplication');
+                      }
+                  });
+            }
+        }
+        
+        function deleteEnseignement(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cet enseignement ? Cette action est irréversible.')) {
+                fetch(`/admin/enseignements/${id}/delete`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                }).then(() => {
+                    window.location.href = '/admin/enseignements';
+                });
+            }
+        }
+    </script>
+{% endblock %}

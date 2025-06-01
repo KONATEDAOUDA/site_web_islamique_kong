@@ -1,0 +1,150 @@
+{# templates/admin/article/new.html.twig #}
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Nouvel Article - Kong Administration{% endblock %}
+
+{% block page_title %}Créer un nouvel article{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{{ path('admin_article_index') }}">Articles</a></li>
+    <li class="breadcrumb-item active">Nouveau</li>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <!-- Summernote -->
+    <link rel="stylesheet" href="{{ asset('plugins/summernote/summernote-bs4.min.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-8">
+            {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Informations de l'article</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        {{ form_label(form.title) }}
+                        {{ form_widget(form.title) }}
+                        {{ form_errors(form.title) }}
+                    </div>
+                    
+                    <div class="form-group">
+                        {{ form_label(form.excerpt) }}
+                        {{ form_widget(form.excerpt) }}
+                        {{ form_errors(form.excerpt) }}
+                        <small class="form-text text-muted">Ce résumé sera affiché dans la liste des articles</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        {{ form_label(form.content) }}
+                        {{ form_widget(form.content, {'attr': {'id': 'summernote'}}) }}
+                        {{ form_errors(form.content) }}
+                    </div>
+                    
+                    <div class="form-group">
+                        {{ form_label(form.metaDescription) }}
+                        {{ form_widget(form.metaDescription) }}
+                        {{ form_errors(form.metaDescription) }}
+                        <small class="form-text text-muted">Description pour le référencement (SEO)</small>
+                    </div>
+                </div>
+            </div>
+            
+            {{ form_end(form) }}
+        </div>
+        
+        <div class="col-md-4">
+            <!-- Options de publication -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Publication</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        {{ form_widget(form.category) }}
+                        {{ form_errors(form.category) }}
+                    </div>
+                    
+                    <div class="form-group">
+                        {{ form_label(form.tags) }}
+                        {{ form_widget(form.tags) }}
+                        {{ form_errors(form.tags) }}
+                        <small class="form-text text-muted">Séparez les tags par des virgules</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        {{ form_label(form.featuredImage) }}
+                        {{ form_widget(form.featuredImage) }}
+                        {{ form_errors(form.featuredImage) }}
+                        <small class="form-text text-muted">Image principale de l'article</small>
+                    </div>
+                    
+                    <div class="form-check mb-3">
+                        {{ form_widget(form.isPublished) }}
+                        {{ form_label(form.isPublished, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                        {{ form_errors(form.isPublished) }}
+                    </div>
+                    
+                    <div class="form-check mb-3">
+                        {{ form_widget(form.isFeatured) }}
+                        {{ form_label(form.isFeatured, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                        {{ form_errors(form.isFeatured) }}
+                    </div>
+                </div>
+                
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save mr-2"></i>Enregistrer
+                    </button>
+                    <a href="{{ path('admin_article_index') }}" class="btn btn-secondary">
+                        <i class="fas fa-times mr-2"></i>Annuler
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Aide -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Aide</h3>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-info-circle text-info mr-2"></i>Le titre doit être accrocheur</li>
+                        <li><i class="fas fa-info-circle text-info mr-2"></i>Le résumé apparaît dans les listes</li>
+                        <li><i class="fas fa-info-circle text-info mr-2"></i>Les tags améliorent la recherche</li>
+                        <li><i class="fas fa-info-circle text-info mr-2"></i>L'image doit être au format JPG, PNG ou WebP</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <!-- Summernote -->
+    <script src="{{ asset('plugins/summernote/summernote-bs4.min.js') }}"></script>
+    <script>
+        $(function () {
+            // Summernote
+            $('#summernote').summernote({
+                height: 300,
+                lang: 'fr-FR',
+                toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'italic', 'underline', 'clear']],
+                    ['fontname', ['fontname']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']],
+                    ['insert', ['link', 'picture', 'video']],
+                    ['view', ['fullscreen', 'codeview', 'help']]
+                ]
+            });
+        });
+    </script>
+{% endblock %}

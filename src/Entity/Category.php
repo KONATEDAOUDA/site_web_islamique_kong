@@ -36,6 +36,8 @@ class Category
     public function __construct()
     {
         $this->articles = new ArrayCollection();
+        // Initialize the state property
+        $this->deleted = false;
     }
 
     public function getId(): ?int

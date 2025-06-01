@@ -1,0 +1,5 @@
+verify_email.error.signature_not_valid: "Le lien de vérification ne correspond pas à votre compte ou a expiré. Veuillez demander un nouveau lien."
+verify_email.error.user_not_found: "Le lien de vérification ne correspond pas à aucun compte existant."
+verify_email.error.user_not_verified: "Votre compte n'est pas encore vérifié. Veuillez vérifier votre adresse e-mail."
+verify_email.error.user_already_verified: "Votre adresse e-mail a déjà été vérifiée."
+verify_email.error.token_not_found: "Le lien de vérification ne correspond pas à aucun compte existant."

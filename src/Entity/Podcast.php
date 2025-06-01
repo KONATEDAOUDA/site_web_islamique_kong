@@ -50,6 +50,21 @@ class Podcast
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'favoritePodcasts')]
     private Collection $favoredBy;
+    
+    #[ORM\Column(type: 'integer', options: ['default' => 0])]
+    private int $viewCount = 0;
+
+    #[ORM\Column(type: 'integer', options: ['default' => 0])]
+    private int $downloadCount = 0;
+
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $calculatedDuration = null;
+
+    #[ORM\Column(type: 'bigint', nullable: true)]
+    private ?int $fileSize = null;
+
+    #[ORM\Column(length: 500, nullable: true)]
+    private ?string $externalUrl = null;
 
     public function __construct()
     {
@@ -199,5 +214,73 @@ class Podcast
 
         return $this;
     }
+
+    public function getViewCount(): int
+    {
+        return $this->viewCount;
+    }
+
+    public function setViewCount(int $viewCount): self
+    {
+        $this->viewCount = $viewCount;
+        return $this;
+    }
+
+    public function incrementViewCount(): self
+    {
+        $this->viewCount++;
+        return $this;
+    }
+
+    public function getDownloadCount(): int
+    {
+        return $this->downloadCount;
+    }
+
+    public function setDownloadCount(int $downloadCount): self
+    {
+        $this->downloadCount = $downloadCount;
+        return $this;
+    }
+
+    public function incrementDownloadCount(): self
+    {
+        $this->downloadCount++;
+        return $this;
+    }
+
+    public function getCalculatedDuration(): ?string
+    {
+        return $this->calculatedDuration;
+    }
+
+    public function setCalculatedDuration(?string $calculatedDuration): self
+    {
+        $this->calculatedDuration = $calculatedDuration;
+        return $this;
+    }
+
+    public function getFileSize(): ?int
+    {
+        return $this->fileSize;
+    }
+
+    public function setFileSize(?int $fileSize): self
+    {
+        $this->fileSize = $fileSize;
+        return $this;
+    }
+
+    public function getExternalUrl(): ?string
+    {
+        return $this->externalUrl;
+    }
+
+    public function setExternalUrl(?string $externalUrl): self
+    {
+        $this->externalUrl = $externalUrl;
+        return $this;
+    }
+
 }
 

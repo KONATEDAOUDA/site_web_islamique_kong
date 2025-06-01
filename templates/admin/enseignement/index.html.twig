@@ -1,0 +1,465 @@
+{# templates/admin/enseignement/index.html.twig #}
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Gestion des Enseignements - Kong Administration{% endblock %}
+
+{% block page_title %}Gestion des Enseignements Islamiques{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active">Enseignements</li>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-chalkboard-teacher mr-2"></i>Enseignements islamiques
+                    </h3>
+                    <div class="card-tools">
+                        <a href="{{ path('admin_enseignement_new') }}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-plus"></i> Nouvel enseignement
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-hover text-nowrap">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Titre</th>
+                                <th>Catégorie</th>
+                                <th>Niveau</th>
+                                <th>Maître</th>
+                                <th>Durée</th>
+                                <th>Statut</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for enseignement in enseignements %}
+                            <tr>
+                                <td>{{ enseignement.id }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-primary rounded d-flex align-items-center justify-content-center mr-2" 
+                                             style="width: 32px; height: 32px;">
+                                            {% if enseignement.category == 'fiqh' %}
+                                                <i class="fas fa-balance-scale text-white"></i>
+                                            {% elseif enseignement.category == 'tafsir' %}
+                                                <i class="fas fa-book-open text-white"></i>
+                                            {% elseif enseignement.category == 'hadith' %}
+                                                <i class="fas fa-quote-right text-white"></i>
+                                            {% elseif enseignement.category == 'aqida' %}
+                                                <i class="fas fa-heart text-white"></i>
+                                            {% elseif enseignement.category == 'sira' %}
+                                                <i class="fas fa-user text-white"></i>
+                                            {% elseif enseignement.category == 'recitation' %}
+                                                <i class="fas fa-microphone text-white"></i>
+                                            {% else %}
+                                                <i class="fas fa-graduation-cap text-white"></i>
+                                            {% endif %}
+                                        </div>
+                                        <a href="{{ path('admin_enseignement_show', {id: enseignement.id}) }}">
+                                            {{ enseignement.title|length > 40 ? enseignement.title|slice(0, 40) ~ '...' : enseignement.title }}
+                                        </a>
+                                    </div>
+                                </td>
+                                <td>
+                                    {% set categoryClasses = {
+                                        'fiqh': 'success',
+                                        'tafsir': 'primary',
+                                        'hadith': 'info',
+                                        'aqida': 'danger',
+                                        'sira': 'warning',
+                                        'histoire': 'secondary',
+                                        'arabe': 'dark',
+                                        'recitation': 'light',
+                                        'ethique': 'success',
+                                        'sciences': 'info'
+                                    } %}
+                                    {% set categoryLabels = {
+                                        'fiqh': 'Fiqh',
+                                        'tafsir': 'Tafsir',
+                                        'hadith': 'Hadith',
+                                        'aqida': 'Aqida',
+                                        'sira': 'Sira',
+                                        'histoire': 'Histoire',
+                                        'arabe': 'Arabe',
+                                        'recitation': 'Récitation',
+                                        'ethique': 'Éthique',
+                                        'sciences': 'Sciences'
+                                    } %}
+                                    <span class="badge badge-{{ categoryClasses[enseignement.category] ?? 'secondary' }}">
+                                        {{ categoryLabels[enseignement.category] ?? enseignement.category|upper }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% set levelClasses = {
+                                        'beginner': 'success',
+                                        'intermediate': 'warning',
+                                        'advanced': 'danger',
+                                        'expert': 'dark'
+                                    } %}
+                                    {% set levelLabels = {
+                                        'beginner': 'Débutant',
+                                        'intermediate': 'Intermédiaire',
+                                        'advanced': 'Avancé',
+                                        'expert': 'Expert'
+                                    } %}
+                                    <span class="badge badge-{{ levelClasses[enseignement.level] ?? 'secondary' }}">
+                                        {{ levelLabels[enseignement.level] ?? enseignement.level }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if enseignement.maitre %}
+                                        <div class="d-flex align-items-center">
+                                            {% if enseignement.maitre.user and enseignement.maitre.user.profilePicture %}
+                                                <img src="{{ asset('uploads/users/' ~ enseignement.maitre.user.profilePicture) }}" 
+                                                     alt="Photo" class="img-circle img-size-32 mr-2">
+                                            {% else %}
+                                                <div class="bg-info rounded-circle d-flex align-items-center justify-content-center mr-2" 
+                                                     style="width: 32px; height: 32px;">
+                                                    <i class="fas fa-user text-white"></i>
+                                                </div>
+                                            {% endif %}
+                                            <div>
+                                                <div class="font-weight-bold">
+                                                    {{ enseignement.maitre.user ? enseignement.maitre.user.fullName : enseignement.maitre.name }}
+                                                </div>
+                                                {% if enseignement.maitre.speciality %}
+                                                    <small class="text-muted">{{ enseignement.maitre.speciality }}</small>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        <span class="text-muted">Non assigné</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if enseignement.duration %}
+                                        <span class="text-muted">
+                                            <i class="fas fa-clock mr-1"></i>{{ enseignement.duration }}
+                                        </span>
+                                    {% else %}
+                                        <span class="text-muted">Non renseigné</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if enseignement.isPublished %}
+                                        <span class="badge badge-success">Publié</span>
+                                    {% else %}
+                                        <span class="badge badge-warning">Brouillon</span>
+                                    {% endif %}
+                                    {% if not enseignement.isOpenAccess %}
+                                        <span class="badge badge-info ml-1">Restreint</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ enseignement.createdAt|date('d/m/Y H:i') }}</td>
+                                <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a href="{{ path('admin_enseignement_show', {id: enseignement.id}) }}" 
+                                           class="btn btn-info btn-sm" title="Voir">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        {% if is_granted('ROLE_ADMIN') or (enseignement.maitre and enseignement.maitre.user == app.user) %}
+                                        <a href="{{ path('admin_enseignement_edit', {id: enseignement.id}) }}" 
+                                           class="btn btn-warning btn-sm" title="Modifier">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form method="post" action="{{ path('admin_enseignement_delete', {id: enseignement.id}) }}" 
+                                              style="display: inline-block;" 
+                                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet enseignement ?')">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ enseignement.id) }}">
+                                            <button type="submit" class="btn btn-danger btn-sm" title="Supprimer">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="9" class="text-center">
+                                    <div class="empty-state py-4">
+                                        <i class="fas fa-chalkboard-teacher fa-3x text-muted mb-3"></i>
+                                        <p class="text-muted">Aucun enseignement trouvé</p>
+                                        <a href="{{ path('admin_enseignement_new') }}" class="btn btn-primary">
+                                            <i class="fas fa-plus mr-2"></i>Créer le premier enseignement
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistiques par catégorie -->
+    <div class="row">
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-success">
+                <div class="inner">
+                    <h3>{{ enseignements|filter(e => e.category == 'fiqh')|length }}</h3>
+                    <p>Fiqh (Jurisprudence)</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-balance-scale"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-primary">
+                <div class="inner">
+                    <h3>{{ enseignements|filter(e => e.category == 'tafsir')|length }}</h3>
+                    <p>Tafsir (Exégèse)</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-book-open"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-info">
+                <div class="inner">
+                    <h3>{{ enseignements|filter(e => e.category == 'hadith')|length }}</h3>
+                    <p>Hadith</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-quote-right"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-danger">
+                <div class="inner">
+                    <h3>{{ enseignements|filter(e => e.category == 'aqida')|length }}</h3>
+                    <p>Aqida (Croyance)</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Répartition par niveau -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-chart-pie mr-2"></i>Répartition par niveau
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <canvas id="levelChart" style="height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-chart-bar mr-2"></i>Répartition par catégorie
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <canvas id="categoryChart" style="height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtres par catégorie et niveau -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card collapsed-card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-filter mr-2"></i>Filtres pédagogiques
+                    </h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form method="get" action="{{ path('admin_enseignement_index') }}">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Catégorie</label>
+                                    <select name="category" class="form-control">
+                                        <option value="">Toutes les catégories</option>
+                                        <option value="fiqh">Fiqh (Jurisprudence)</option>
+                                        <option value="tafsir">Tafsir (Exégèse)</option>
+                                        <option value="hadith">Hadith</option>
+                                        <option value="aqida">Aqida (Croyance)</option>
+                                        <option value="sira">Sira (Biographie du Prophète)</option>
+                                        <option value="histoire">Histoire islamique</option>
+                                        <option value="arabe">Langue arabe</option>
+                                        <option value="recitation">Récitation coranique</option>
+                                        <option value="ethique">Éthique et spiritualité</option>
+                                        <option value="sciences">Sciences islamiques</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Niveau</label>
+                                    <select name="level" class="form-control">
+                                        <option value="">Tous les niveaux</option>
+                                        <option value="beginner">Débutant</option>
+                                        <option value="intermediate">Intermédiaire</option>
+                                        <option value="advanced">Avancé</option>
+                                        <option value="expert">Expert/Spécialisé</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Maître</label>
+                                    <select name="maitre" class="form-control">
+                                        <option value="">Tous les maîtres</option>
+                                        {% for maitre in maitres|default([]) %}
+                                        <option value="{{ maitre.id }}">
+                                            {{ maitre.user ? maitre.user.fullName : maitre.name }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Statut</label>
+                                    <select name="status" class="form-control">
+                                        <option value="">Tous les statuts</option>
+                                        <option value="published">Publié</option>
+                                        <option value="draft">Brouillon</option>
+                                        <option value="restricted">Accès restreint</option>
+                                        <option value="open">Accès libre</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Recherche</label>
+                                    <input type="text" name="search" class="form-control" placeholder="Titre, mots-clés...">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Langue</label>
+                                    <select name="language" class="form-control">
+                                        <option value="">Toutes les langues</option>
+                                        <option value="fr">Français</option>
+                                        <option value="ar">Arabe</option>
+                                        <option value="en">Anglais</option>
+                                        <option value="fr-ar">Bilingue Fr-Ar</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>&nbsp;</label>
+                                    <div>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-search mr-2"></i>Filtrer
+                                        </button>
+                                        <a href="{{ path('admin_enseignement_index') }}" class="btn btn-secondary ml-2">
+                                            <i class="fas fa-times mr-2"></i>Reset
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <!-- Chart.js -->
+    <script src="{{ asset('plugins/chart.js/Chart.min.js') }}"></script>
+    
+    <script>
+        $(function () {
+            // Graphique des niveaux
+            var levelCtx = document.getElementById('levelChart').getContext('2d');
+            var levelData = {
+                {% set levels = {} %}
+                {% for enseignement in enseignements %}
+                    {% set levels = levels|merge({(enseignement.level): (levels[enseignement.level] ?? 0) + 1}) %}
+                {% endfor %}
+                
+                labels: [
+                    {% for level, count in levels %}
+                    '{{ level == "beginner" ? "Débutant" : (level == "intermediate" ? "Intermédiaire" : (level == "advanced" ? "Avancé" : "Expert")) }}',
+                    {% endfor %}
+                ],
+                datasets: [{
+                    data: [{% for level, count in levels %}{{ count }},{% endfor %}],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545', '#343a40']
+                }]
+            };
+            
+            new Chart(levelCtx, {
+                type: 'doughnut',
+                data: levelData,
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: true
+                }
+            });
+            
+            // Graphique des catégories
+            var categoryCtx = document.getElementById('categoryChart').getContext('2d');
+            var categoryData = {
+                {% set categories = {} %}
+                {% for enseignement in enseignements %}
+                    {% set categories = categories|merge({(enseignement.category): (categories[enseignement.category] ?? 0) + 1}) %}
+                {% endfor %}
+                
+                labels: [
+                    {% for category, count in categories %}
+                    '{{ category|upper }}',
+                    {% endfor %}
+                ],
+                datasets: [{
+                    data: [{% for category, count in categories %}{{ count }},{% endfor %}],
+                    backgroundColor: [
+                        '#007bff', '#28a745', '#17a2b8', '#dc3545', 
+                        '#ffc107', '#6c757d', '#343a40', '#e83e8c'
+                    ]
+                }]
+            };
+            
+            new Chart(categoryCtx, {
+                type: 'bar',
+                data: categoryData,
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}
