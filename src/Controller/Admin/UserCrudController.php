@@ -2,7 +2,9 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Role;
 use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -11,6 +13,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 
@@ -21,16 +26,18 @@ class UserCrudController extends AbstractCrudController
         return User::class;
     }
 
+    public function __construct(EntityManagerInterface $em) {
+        $this->em = $em;
+    }
     public function configureFields(string $pageName): iterable
     {
-        $roles = [
-            'Administrateur' => 'ROLE_ADMIN',
-            'Superviseur' => 'ROLE_SUPERVISOR',
-            'Gestionnaire de Blog' => 'ROLE_BLOG_MANAGER',
-            'Enseignant' => 'ROLE_TEACHER',
-            'Gestionnaire des Archives' => 'ROLE_ARCHIVE_MANAGER',
-            'Utilisateur' => 'ROLE_USER',
-        ];
+        // Récupérer dynamiquement tous les rôles de la table
+        $roleRepo = $this->em->getRepository(Role::class);
+        $roleEntities = $roleRepo->findAll();
+        $roles = [];
+        foreach ($roleEntities as $role) {
+            $roles[$role->getLabel()] = $role->getRoleName();
+        }
 
         return [
             IdField::new('id')->hideOnForm(),
@@ -56,9 +63,19 @@ class UserCrudController extends AbstractCrudController
                 ->allowMultipleChoices()
                 ->renderExpanded(),
             BooleanField::new('isVerified', 'Vérifié'),
-            BooleanField::new('isActive', 'Actif'),
+            TextField::new('phone', 'Téléphone'),
+            TextEditorField::new('bio', 'Biographie'),
+            TextField::new('location', 'Localisation'),
+            DateTimeField::new('lastLoginAt', 'Dernière connexion')->hideOnForm(),
+            DateTimeField::new('lastActivityAt', 'Dernière activité')->hideOnForm(),
+            TextField::new('lastLoginIp', 'IP de connexion')->hideOnForm(),
+            TextField::new('lastLoginUserAgent', 'User-Agent de connexion')->hideOnForm(),
+            IntegerField::new('loginCount', 'Nombre de connexions')->hideOnForm(),
+            DateTimeField::new('passwordChangedAt', 'Changement de mot de passe')->hideOnForm(),
+            BooleanField::new('mustChangePassword', 'Doit changer de mot de passe'),
             DateTimeField::new('createdAt', 'Créé le')->hideOnForm(),
             DateTimeField::new('updatedAt', 'Mis à jour le')->hideOnForm(),
+
         ];
     }
 }

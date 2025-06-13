@@ -106,6 +106,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private bool $mustChangePassword = false;
 
+    #[ORM\ManyToMany(targetEntity: Role::class)]
+    private Collection $customRoles;
+
     public function __construct()
     {
         $this->favorites = new ArrayCollection();
@@ -116,6 +119,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->forumTopics = new ArrayCollection();
         $this->forumPosts = new ArrayCollection();
         $this->maitresIslamiques = new ArrayCollection();
+        $this->customRoles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -143,11 +147,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        $roles[] = 'ROLE_USER';
-
+        foreach ($this->getCustomRoles() as $role) {
+            $roles[] = $role->getRoleName();
+        }
         return array_unique($roles);
     }
-
+    
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
@@ -571,6 +576,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setMustChangePassword(bool $mustChangePassword): self
     {
         $this->mustChangePassword = $mustChangePassword;
+        return $this;
+    }
+
+    public function getCustomRoles(): Collection { return $this->customRoles; }
+
+    public function addCustomRole(Role $role): self
+    {
+        if (!$this->customRoles->contains($role)) {
+            $this->customRoles[] = $role;
+        }
+        return $this;
+    }
+    public function removeCustomRole(Role $role): self
+    {
+        $this->customRoles->removeElement($role);
         return $this;
     }
 }

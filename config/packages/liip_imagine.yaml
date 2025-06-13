@@ -1,0 +1,4 @@
+liip_imagine:
+    # ... votre configuration existante
+    twig:
+        mode: lazy # AJOUTEZ CETTE LIGNE

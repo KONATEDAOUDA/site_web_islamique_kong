@@ -27,7 +27,7 @@ class EnseignementController extends AbstractController
     public function index(): Response
     {
         // Si l'utilisateur n'est pas admin, ne montrer que ses propres enseignements
-        if ($this->isGranted('ROLE_ADMIN')) {
+        if ($this->isGranted('ROLE_DAVE_SUPER_ADMIN_2108')) {
             $enseignements = $this->enseignementRepository->findBy([], ['createdAt' => 'DESC']);
         } else {
             // Récupérer le maître islamique associé à l'utilisateur
@@ -50,7 +50,7 @@ class EnseignementController extends AbstractController
         $enseignement = new Enseignement();
         
         // Si l'utilisateur n'est pas admin, associer automatiquement son profil de maître
-        if (!$this->isGranted('ROLE_ADMIN')) {
+        if (!$this->isGranted('ROLE_DAVE_SUPER_ADMIN_2108')) {
             $maitre = $this->maitreRepository->findOneBy(['user' => $this->getUser()]);
             if ($maitre) {
                 $enseignement->setMaitre($maitre);
@@ -80,7 +80,7 @@ class EnseignementController extends AbstractController
     public function show(Enseignement $enseignement): Response
     {
         // Vérifier les droits d'accès
-        if (!$this->isGranted('ROLE_ADMIN') && 
+        if (!$this->isGranted('ROLE_DAVE_SUPER_ADMIN_2108') && 
             (!$enseignement->getMaitre() || $enseignement->getMaitre()->getUser() !== $this->getUser())) {
             throw $this->createAccessDeniedException();
         }
@@ -94,7 +94,7 @@ class EnseignementController extends AbstractController
     public function edit(Request $request, Enseignement $enseignement): Response
     {
         // Vérifier les droits de modification
-        if (!$this->isGranted('ROLE_ADMIN') && 
+        if (!$this->isGranted('ROLE_DAVE_SUPER_ADMIN_2108') && 
             (!$enseignement->getMaitre() || $enseignement->getMaitre()->getUser() !== $this->getUser())) {
             throw $this->createAccessDeniedException();
         }
@@ -120,7 +120,7 @@ class EnseignementController extends AbstractController
     public function delete(Request $request, Enseignement $enseignement): Response
     {
         // Vérifier les droits de suppression
-        if (!$this->isGranted('ROLE_ADMIN') && 
+        if (!$this->isGranted('ROLE_DAVE_SUPER_ADMIN_2108') && 
             (!$enseignement->getMaitre() || $enseignement->getMaitre()->getUser() !== $this->getUser())) {
             throw $this->createAccessDeniedException();
         }

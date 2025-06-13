@@ -46,20 +46,23 @@ class ArticleVoter extends Voter implements VoterInterface
     private function canView(Article $article, User $user): bool
     {
         return in_array('ROLE_BLOG_MANAGER', $user->getRoles()) 
-            || in_array('ROLE_ADMIN', $user->getRoles())
+            || in_array('ROLE_SUPERVISOR', $user->getRoles())
+            || in_array('ROLE_DAVE_SUPER_ADMIN_2108', $user->getRoles())
             || $article->getAuthor() === $user;
     }
 
     private function canEdit(Article $article, User $user): bool
     {
         return in_array('ROLE_BLOG_MANAGER', $user->getRoles()) 
-            || in_array('ROLE_ADMIN', $user->getRoles())
+            || in_array('ROLE_SUPERVISOR', $user->getRoles())
+            || in_array('ROLE_DAVE_SUPER_ADMIN_2108', $user->getRoles())
             || $article->getAuthor() === $user;
     }
 
     private function canDelete(Article $article, User $user): bool
     {
-        return in_array('ROLE_ADMIN', $user->getRoles()) 
-            || (in_array('ROLE_BLOG_MANAGER', $user->getRoles()) && $article->getAuthor() === $user);
+        return in_array('ROLE_DAVE_SUPER_ADMIN_2108', $user->getRoles()) 
+            || (in_array('ROLE_BLOG_MANAGER', $user->getRoles()) && $article->getAuthor() === $user)
+            || (in_array('ROLE_SUPERVISOR', $user->getRoles()) && $article->getAuthor() === $user);
     }
 }

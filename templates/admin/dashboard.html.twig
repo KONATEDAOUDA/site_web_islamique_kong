@@ -9,16 +9,21 @@
             <div class="row mb-2">
                 <div class="col-sm-6">
                     <h1 class="m-0">
-                        {% if is_granted('ROLE_ADMIN') %}
+                        {% if is_granted('ROLE_DAVE_SUPER_ADMIN_2108') %}
                             <i class="fas fa-crown text-warning mr-2"></i>Administration Générale
+
                         {% elseif is_granted('ROLE_SUPERVISOR') %}
                             <i class="fas fa-eye text-info mr-2"></i>Supervision
+
                         {% elseif is_granted('ROLE_TEACHER') %}
                             <i class="fas fa-chalkboard-teacher text-success mr-2"></i>Espace Enseignant
+
                         {% elseif is_granted('ROLE_BLOG_MANAGER') %}
                             <i class="fas fa-newspaper text-primary mr-2"></i>Gestion Blog
+
                         {% elseif is_granted('ROLE_ARCHIVE_MANAGER') %}
                             <i class="fas fa-archive text-secondary mr-2"></i>Gestion Archives
+
                         {% else %}
                             <i class="fas fa-user text-muted mr-2"></i>Espace Personnel
                         {% endif %}

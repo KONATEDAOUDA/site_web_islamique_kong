@@ -1,0 +1,251 @@
+{% extends 'frontend/base.html.twig' %}
+
+{% block title %}{{ podcast.title }} - Kong{% endblock %}
+
+{% block main %}
+<div class="container my-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-white px-0">
+            <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('app_podcast_index') }}">Podcasts</a></li>
+            <li class="breadcrumb-item active" aria-current="page">
+                {{ podcast.title|length > 40 ? podcast.title|slice(0, 40) ~ '...' : podcast.title }}
+            </li>
+        </ol>
+    </nav>
+
+    <article class="podcast-article">
+        <header class="mb-4">
+            <div class="row">
+                <div class="col-md-4">
+                    {% if podcast.thumbnail %}
+                        <img src="{{ asset('uploads/podcasts/thumbnails/' ~ podcast.thumbnail) }}" 
+                             alt="{{ podcast.title }}" 
+                             class="img-fluid rounded shadow-sm podcast-cover">
+                    {% else %}
+                        <div class="podcast-cover-placeholder d-flex align-items-center justify-content-center bg-light rounded">
+                            <i class="fas fa-microphone fa-3x text-muted"></i>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="col-md-8">
+                    <h1 class="display-5 mb-3">{{ podcast.title }}</h1>
+                    
+                    <div class="podcast-meta mb-3">
+                        <span class="badge badge-{{ podcast.type == 'audio' ? 'info' : 'success' }} mr-2">
+                            <i class="fas fa-{{ podcast.type == 'audio' ? 'volume-up' : 'video' }} mr-1"></i>
+                            {{ podcast.type|upper }}
+                        </span>
+                        
+                        {% if podcast.duration %}
+                        <span class="text-muted mr-3">
+                            <i class="fas fa-clock mr-1"></i>{{ podcast.duration }}
+                        </span>
+                        {% endif %}
+                        
+                        {% if podcast.language %}
+                        <span class="text-muted mr-3">
+                            <i class="fas fa-language mr-1"></i>
+                            {% if podcast.language == 'fr' %}Français{% elseif podcast.language == 'ar' %}العربية{% else %}English{% endif %}
+                        </span>
+                        {% endif %}
+                        
+                        <span class="text-muted">
+                            <i class="fas fa-user mr-1"></i>{{ podcast.author.firstName ~ ' ' ~ podcast.author.lastName }}
+                        </span>
+                    </div>
+                    
+                    <div class="podcast-stats mb-3">
+                        <small class="text-muted">
+                            <i class="fas fa-eye mr-1"></i>{{ podcast.viewCount }} vues
+                            {% if podcast.downloadCount > 0 %}
+                                | <i class="fas fa-download mr-1"></i>{{ podcast.downloadCount }} téléchargements
+                            {% endif %}
+                            {% if podcast.isFeatured %}
+                                | <span class="badge badge-warning"><i class="fas fa-star mr-1"></i>À la une</span>
+                            {% endif %}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Lecteur multimédia -->
+        <section class="podcast-player mb-4">
+            <div class="card">
+                <div class="card-body">
+                    {% if podcast.externalUrl %}
+                        <!-- Lien externe (YouTube, SoundCloud, etc.) -->
+                        <div class="external-player">
+                            {% if 'youtube.com' in podcast.externalUrl or 'youtu.be' in podcast.externalUrl %}
+                                <!-- YouTube player -->
+                                {% set youtube_id = podcast.externalUrl|split('v=')|last|split('&')|first %}
+                                {% if 'youtu.be' in podcast.externalUrl %}
+                                    {% set youtube_id = podcast.externalUrl|split('youtu.be/')|last|split('?')|first %}
+                                {% endif %}
+                                <div class="embed-responsive embed-responsive-16by9">
+                                    <iframe class="embed-responsive-item" 
+                                            src="https://www.youtube.com/embed/{{ youtube_id }}" 
+                                            allowfullscreen></iframe>
+                                </div>
+                            {% else %}
+                                <!-- Autres liens externes -->
+                                <div class="text-center">
+                                    <a href="{{ podcast.externalUrl }}" target="_blank" class="btn btn-primary btn-lg">
+                                        <i class="fas fa-external-link-alt mr-2"></i>Écouter sur la plateforme externe
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% elseif podcast.filePath %}
+                        <!-- Lecteur local -->
+                        <div class="local-player">
+                            {% if podcast.type == 'audio' %}
+                                <audio controls class="w-100">
+                                    <source src="{{ asset('uploads/podcasts/' ~ podcast.filePath) }}" type="audio/mpeg">
+                                    Votre navigateur ne supporte pas l'élément audio.
+                                </audio>
+                            {% else %}
+                                <video controls class="w-100" style="max-height: 400px;">
+                                    <source src="{{ asset('uploads/podcasts/' ~ podcast.filePath) }}" type="video/mp4">
+                                    Votre navigateur ne supporte pas l'élément vidéo.
+                                </video>
+                            {% endif %}
+                            
+                            {% if podcast.type == 'audio' %}
+                            <div class="text-center mt-3">
+                                <a href="{{ asset('uploads/podcasts/' ~ podcast.filePath) }}" 
+                                   download="{{ podcast.title }}" 
+                                   class="btn btn-outline-primary"
+                                   onclick="incrementDownload({{ podcast.id }})">
+                                    <i class="fas fa-download mr-2"></i>Télécharger
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+
+        <!-- Description -->
+        <section class="mb-4">
+            <h3>Description</h3>
+            <div class="podcast-description">
+                {{ podcast.description|raw }}
+            </div>
+        </section>
+
+        <!-- Tags -->
+        {% if podcast.tags|length > 0 %}
+        <section class="mb-4">
+            <h5><i class="fas fa-tags mr-2"></i>Tags</h5>
+            {% for tag in podcast.tags %}
+                <span class="badge badge-secondary mr-1">{{ tag }}</span>
+            {% endfor %}
+        </section>
+        {% endif %}
+
+        <!-- Informations -->
+        <footer class="mt-5 pt-3 border-top">
+            <div class="row">
+                <div class="col-md-6">
+                    <small class="text-muted">
+                        Publié le {{ podcast.publishedAt ? podcast.publishedAt|date('d/m/Y à H:i') : podcast.createdAt|date('d/m/Y à H:i') }}
+                        {% if podcast.updatedAt %}
+                            | Modifié le {{ podcast.updatedAt|date('d/m/Y à H:i') }}
+                        {% endif %}
+                    </small>
+                </div>
+                <div class="col-md-6 text-md-right">
+                    <button class="btn btn-outline-primary btn-sm" onclick="sharePodcast()">
+                        <i class="fas fa-share-alt mr-1"></i>Partager
+                    </button>
+                    {% if podcast.fileSize %}
+                    <small class="text-muted ml-3">
+                        Taille: {{ (podcast.fileSize / 1024 / 1024)|number_format(1) }} MB
+                    </small>
+                    {% endif %}
+                </div>
+            </div>
+        </footer>
+    </article>
+
+    <!-- Podcasts similaires -->
+    <section class="mt-5">
+        <h4>Autres podcasts</h4>
+        <div class="row">
+            {# Ici vous pouvez afficher d'autres podcasts du même auteur ou de la même catégorie #}
+        </div>
+    </section>
+</div>
+
+<style>
+.podcast-cover,
+.podcast-cover-placeholder {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+}
+
+.podcast-cover-placeholder {
+    background-color: #f8f9fa;
+}
+
+.podcast-description {
+    line-height: 1.6;
+}
+
+.podcast-player audio,
+.podcast-player video {
+    border-radius: 0.375rem;
+}
+
+@media (max-width: 768px) {
+    .podcast-cover,
+    .podcast-cover-placeholder {
+        height: 200px;
+        margin-bottom: 1rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        function sharePodcast() {
+            if (navigator.share) {
+                navigator.share({
+                    title: '{{ podcast.title|e('js') }}',
+                    text: 'Écoutez ce podcast: {{ podcast.title|e('js') }}',
+                    url: window.location.href
+                });
+            } else {
+                navigator.clipboard.writeText(window.location.href).then(function() {
+                    alert('Lien copié dans le presse-papiers !');
+                }, function() {
+                    // Fallback
+                    const textArea = document.createElement('textarea');
+                    textArea.value = window.location.href;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    alert('Lien copié dans le presse-papiers !');
+                });
+            }
+        }
+
+        function incrementDownload(podcastId) {
+            // Appel AJAX pour incrémenter le compteur de téléchargements
+            fetch(`/podcasts/${podcastId}/download`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+        }
+    </script>
+{% endblock %}

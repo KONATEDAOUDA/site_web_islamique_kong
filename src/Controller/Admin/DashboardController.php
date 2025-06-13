@@ -11,6 +11,7 @@ use App\Entity\Contact;
 use App\Entity\ForumPost;
 use App\Entity\ForumTopic;
 use App\Entity\MaitreIslamique;
+use App\Entity\Role;
 use Symfony\Component\HttpFoundation\Response;
 use EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -21,7 +22,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
-#[IsGranted('ROLE_ADMIN')]
+#[IsGranted('ROLE_DAVE_SUPER_ADMIN_2108')]
 class DashboardController extends AbstractDashboardController
 { 
     public function index(): Response
@@ -64,5 +65,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section('Utilisateurs');
         yield MenuItem::linkToCrud('Maitres Islamiques', 'fa fa-book', MaitreIslamique::class);
         yield MenuItem::linkToCrud('Utilisateurs', 'fa fa-users', User::class);
+        yield MenuItem::linkToCrud('Roles', 'fa fa-user', Role::class);
     }
 }

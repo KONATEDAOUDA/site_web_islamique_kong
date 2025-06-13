@@ -19,10 +19,9 @@
 {% endblock %}
 
 {% block content %}
+    {{ form_start(form, {'attr': {'enctype': 'multipart/form-data', 'id': 'podcast-form'}}) }}
     <div class="row">
         <div class="col-md-8">
-            {{ form_start(form, {'attr': {'enctype': 'multipart/form-data', 'id': 'podcast-form'}}) }}
-            
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">
@@ -98,9 +97,9 @@
                                     <i class="fas fa-info-circle"></i> 
                                     Formats supportés: MP3, MP4, WAV (max 100MB)
                                 </small>
-                                {% if podcast.audioFilePath is defined and podcast.audioFilePath %}
+                                {% if podcast.filePath is defined and podcast.filePath %}
                                     <div class="mt-2">
-                                        <a href="{{ asset('uploads/podcasts/' ~ podcast.audioFilePath) }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                        <a href="{{ asset('uploads/podcasts/' ~ podcast.filePath) }}" target="_blank" class="btn btn-outline-primary btn-sm">
                                             <i class="fas fa-file-audio mr-1"></i>Fichier actuel
                                         </a>
                                     </div>
@@ -122,9 +121,9 @@
                                 {{ form_widget(form.thumbnail, {'attr': {'id': 'thumbnail-file', 'accept': 'image/*'}}) }}
                                 {{ form_errors(form.thumbnail) }}
                                 <small class="form-text text-muted">Image de couverture (optionnelle)</small>
-                                {% if podcast.thumbnailPath is defined and podcast.thumbnailPath %}
+                                {% if podcast.thumbnail is defined and podcast.thumbnail %}
                                     <div class="mt-2">
-                                        <img src="{{ asset('uploads/podcasts/' ~ podcast.thumbnailPath) }}" alt="Aperçu" class="img-thumbnail" style="max-width: 150px;">
+                                        <img src="{{ asset('uploads/podcasts/' ~ podcast.thumbnail) }}" alt="Aperçu" class="img-thumbnail" style="max-width: 150px;">
                                     </div>
                                 {% endif %}
                                 <div id="thumbnail-preview" class="mt-2" style="display: none;">
@@ -152,8 +151,6 @@
                     </div>
                 </div>
             </div>
-            
-            {{ form_end(form) }}
         </div>
         
         <div class="col-md-4">
@@ -182,7 +179,7 @@
                     <hr>
                     
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-success btn-lg" form="podcast-form">
+                        <button type="submit" class="btn btn-success btn-lg mb-2">
                             <i class="fas fa-save mr-2"></i>Enregistrer les modifications
                         </button>
                         <a href="{{ path('admin_podcast_index') }}" class="btn btn-secondary">
@@ -237,6 +234,10 @@
             </div>
         </div>
     </div>
+    
+    {# Rendre les champs cachés restants #}
+    {{ form_rest(form) }}
+    {{ form_end(form, {'render_rest': false}) }}
 {% endblock %}
 
 {% block javascripts %}

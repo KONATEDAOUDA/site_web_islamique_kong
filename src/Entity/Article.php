@@ -15,7 +15,6 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 #[ORM\HasLifecycleCallbacks]
 class Article
 {
-
     use StateEntity;
     use TimestampableEntity;
 
@@ -33,7 +32,7 @@ class Article
     #[ORM\Column(type: Types::TEXT)]
     private ?string $content = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $excerpt = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -47,6 +46,12 @@ class Article
     #[ORM\JoinColumn(nullable: false)]
     private ?Category $category = null;
     
+    #[ORM\Column(type: 'boolean')]
+    private bool $isFeatured = false;
+
+    #[ORM\Column(type: 'json')]
+    private array $tags = [];
+
     #[ORM\Column]
     private bool $isPublished = false;
 
@@ -74,6 +79,14 @@ class Article
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $publishedAt = null;
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'created_by_id', referencedColumnName: 'id', nullable: true)]
+    private ?User $createdByUser = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'modfied_by_id', referencedColumnName: 'id', nullable: true)]
+    private ?User $modifiedByUser = null;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
@@ -100,7 +113,6 @@ class Article
     public function setTitle(string $title): static
     {
         $this->title = $title;
-
         return $this;
     }
 
@@ -112,7 +124,6 @@ class Article
     public function setSlug(string $slug): static
     {
         $this->slug = $slug;
-
         return $this;
     }
 
@@ -131,7 +142,6 @@ class Article
     public function setContent(string $content): static
     {
         $this->content = $content;
-
         return $this;
     }
 
@@ -143,7 +153,6 @@ class Article
     public function setExcerpt(string $excerpt): static
     {
         $this->excerpt = $excerpt;
-
         return $this;
     }
 
@@ -155,7 +164,6 @@ class Article
     public function setThumbnail(?string $thumbnail): static
     {
         $this->thumbnail = $thumbnail;
-
         return $this;
     }
 
@@ -167,7 +175,6 @@ class Article
     public function setAuthor(?User $author): static
     {
         $this->author = $author;
-
         return $this;
     }
 
@@ -179,19 +186,39 @@ class Article
     public function setCategory(?Category $category): static
     {
         $this->category = $category;
-
         return $this;
     }
     
+    public function isFeatured(): bool
+    {
+        return $this->isFeatured;
+    }
+
+    public function setIsFeatured(bool $isFeatured): self
+    {
+        $this->isFeatured = $isFeatured;
+        return $this;
+    }
+
     public function isIsPublished(): bool
     {
         return $this->isPublished;
     }
 
+    public function getTags(): array
+    {
+        return $this->tags;
+    }
+
+    public function setTags(array $tags): self
+    {
+        $this->tags = $tags;
+        return $this;
+    }
+
     public function setIsPublished(bool $isPublished): static
     {
         $this->isPublished = $isPublished;
-
         return $this;
     }
 
@@ -209,19 +236,16 @@ class Article
             $this->comments->add($comment);
             $comment->setArticle($this);
         }
-
         return $this;
     }
 
     public function removeComment(Comment $comment): static
     {
         if ($this->comments->removeElement($comment)) {
-            // set the owning side to null (unless already changed)
             if ($comment->getArticle() === $this) {
                 $comment->setArticle(null);
             }
         }
-
         return $this;
     }
 
@@ -238,14 +262,12 @@ class Article
         if (!$this->favoredBy->contains($user)) {
             $this->favoredBy->add($user);
         }
-
         return $this;
     }
 
     public function removeFavoredBy(User $user): static
     {
         $this->favoredBy->removeElement($user);
-
         return $this;
     }
 
@@ -326,5 +348,32 @@ class Article
         $this->publishedAt = $publishedAt;
         return $this;
     }
-}
 
+    public function getCreatedByUser(): ?User
+    {
+        return $this->createdByUser;
+    }
+
+    public function setCreatedByUser(?User $createdByUser): self
+    {
+        $this->createdByUser = $createdByUser;
+        return $this;
+    }
+
+    public function getModifiedByUser(): ?User
+    {
+        return $this->modifiedByUser;
+    }
+
+    public function setModifiedByUser(?User $modifiedByUser): self
+    {
+        $this->modifiedByUser = $modifiedByUser;
+        return $this;
+    }
+
+    // Méthode helper pour obtenir l'image principale (compatibilité)
+    public function getFeaturedImage(): ?string
+    {
+        return $this->thumbnail;
+    }
+}

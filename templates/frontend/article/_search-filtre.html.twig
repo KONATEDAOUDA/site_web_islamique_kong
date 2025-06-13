@@ -1,0 +1,20 @@
+<div class="row mb-3 align-items-center">
+    <div class="col-md-3">
+        <label for="category" class="form-label">Catégorie</label>
+        <select class="form-select" id="category" onchange="location.href=this.value">
+            <option value="{{ path('app_blog_index') }}">Toutes les catégories</option>
+            {% for category in categories %}
+                <option value="{{ path('app_blog_category', {slug: category.slug}) }}">{{ category.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-6">
+        <strong>Filtre par mot</strong>
+        <form action="{{ path('app_blog_index') }}" method="get">
+            <div class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="Rechercher un article" value="{{ app.request.query.get('q')|default('') }}">
+                <button type="submit" class="btn btn-primary">Rechercher</button>
+            </div>
+        </form>
+    </div>
+</div>

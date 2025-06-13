@@ -138,7 +138,7 @@ class AdminStatisticsService
         ];
 
         // Statistiques pour les gestionnaires de blog
-        if (in_array('ROLE_BLOG_MANAGER', $userRoles) || in_array('ROLE_ADMIN', $userRoles)) {
+        if (in_array('ROLE_BLOG_MANAGER', $userRoles) || in_array('ROLE_DAVE_SUPER_ADMIN_2108', $userRoles)) {
             $stats['articles'] = [
                 'authored' => $this->articleRepository->count(['author' => $user]),
                 'published' => $this->articleRepository->count(['author' => $user, 'isPublished' => true]),
@@ -148,8 +148,8 @@ class AdminStatisticsService
         }
 
         // Statistiques pour les enseignants
-        if (in_array('ROLE_TEACHER', $userRoles) || in_array('ROLE_ADMIN', $userRoles)) {
-            $maitre = $this->maitreRepository->findOneBy(['user' => $user]);
+        if (in_array('ROLE_TEACHER', $userRoles) || in_array('ROLE_DAVE_SUPER_ADMIN_2108', $userRoles)) {
+           $maitre = $this->maitreRepository->findOneBy(['author' => $user]);
             
             $stats['podcasts'] = [
                 'authored' => $this->podcastRepository->count(['author' => $user]),

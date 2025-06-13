@@ -269,13 +269,13 @@ class KongExtension extends AbstractExtension
         $roles = $user->getRoles();
 
         $permissions = [
-            'articles' => ['ROLE_ADMIN', 'ROLE_BLOG_MANAGER', 'ROLE_SUPERVISOR'],
-            'podcasts' => ['ROLE_ADMIN', 'ROLE_TEACHER', 'ROLE_SUPERVISOR'],
-            'archives' => ['ROLE_ADMIN', 'ROLE_ARCHIVE_MANAGER', 'ROLE_SUPERVISOR'],
-            'enseignements' => ['ROLE_ADMIN', 'ROLE_TEACHER', 'ROLE_SUPERVISOR'],
-            'forum' => ['ROLE_ADMIN', 'ROLE_SUPERVISOR'],
-            'users' => ['ROLE_ADMIN'],
-            'settings' => ['ROLE_ADMIN'],
+            'articles' => ['ROLE_DAVE_SUPER_ADMIN_2108', 'ROLE_BLOG_MANAGER', 'ROLE_SUPERVISOR'],
+            'podcasts' => ['ROLE_DAVE_SUPER_ADMIN_2108', 'ROLE_TEACHER', 'ROLE_SUPERVISOR'],
+            'archives' => ['ROLE_DAVE_SUPER_ADMIN_2108', 'ROLE_ARCHIVE_MANAGER', 'ROLE_SUPERVISOR'],
+            'enseignements' => ['ROLE_DAVE_SUPER_ADMIN_2108', 'ROLE_TEACHER', 'ROLE_SUPERVISOR'],
+            'forum' => ['ROLE_DAVE_SUPER_ADMIN_2108', 'ROLE_SUPERVISOR'],
+            'users' => ['ROLE_DAVE_SUPER_ADMIN_2108'],
+            'settings' => ['ROLE_DAVE_SUPER_ADMIN_2108'],
         ];
 
         if (!isset($permissions[$resource])) {

@@ -8,7 +8,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Traits\StateEntity;
-use Gedmo\Timestampable\Traits\TimestampableEntity; 
+use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[ORM\Entity(repositoryClass: PodcastRepository::class)]
@@ -23,19 +24,24 @@ class Podcast
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\NotBlank(message: 'Le titre est obligatoire')]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
     private ?string $slug = null;
 
+    #[Assert\NotBlank(message: 'La description est obligatoire')]
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
+    #[Assert\NotBlank(message: 'Le type est obligatoire')]
+    #[Assert\Choice(choices: ['audio', 'video'], message: 'Le type doit être audio ou video')]
     #[ORM\Column(length: 255)]
-    private ?string $type = null; // 'audio' ou 'video'
+    private ?string $type = null; // 'audio' or 'video'
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $filePath = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -66,6 +72,21 @@ class Podcast
     #[ORM\Column(length: 500, nullable: true)]
     private ?string $externalUrl = null;
 
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $duration = null;
+
+    #[ORM\Column(type: 'boolean')]
+    private bool $isFeatured = false;
+
+    #[ORM\Column(type: 'json')]
+    private array $tags = [];
+
+    #[ORM\Column(length: 10, nullable: true)]
+    private ?string $language = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $publishedAt = null;
+
     public function __construct()
     {
         $this->favoredBy = new ArrayCollection();
@@ -91,7 +112,6 @@ class Podcast
     public function setTitle(string $title): static
     {
         $this->title = $title;
-
         return $this;
     }
 
@@ -103,7 +123,6 @@ class Podcast
     public function setSlug(string $slug): static
     {
         $this->slug = $slug;
-
         return $this;
     }
 
@@ -122,7 +141,6 @@ class Podcast
     public function setDescription(string $description): static
     {
         $this->description = $description;
-
         return $this;
     }
 
@@ -133,13 +151,11 @@ class Podcast
 
     public function setType(string $type): static
     {
-        // Valider que le type est soit 'audio' soit 'video'
         if (!in_array($type, ['audio', 'video'])) {
             throw new \InvalidArgumentException("Le type doit être 'audio' ou 'video'");
         }
         
         $this->type = $type;
-
         return $this;
     }
 
@@ -148,10 +164,9 @@ class Podcast
         return $this->filePath;
     }
 
-    public function setFilePath(string $filePath): static
+    public function setFilePath(?string $filePath): static
     {
         $this->filePath = $filePath;
-
         return $this;
     }
 
@@ -163,7 +178,6 @@ class Podcast
     public function setThumbnail(?string $thumbnail): static
     {
         $this->thumbnail = $thumbnail;
-
         return $this;
     }
 
@@ -175,7 +189,6 @@ class Podcast
     public function setAuthor(?User $author): static
     {
         $this->author = $author;
-
         return $this;
     }
 
@@ -187,7 +200,6 @@ class Podcast
     public function setIsPublished(bool $isPublished): static
     {
         $this->isPublished = $isPublished;
-
         return $this;
     }
 
@@ -204,14 +216,12 @@ class Podcast
         if (!$this->favoredBy->contains($user)) {
             $this->favoredBy->add($user);
         }
-
         return $this;
     }
 
     public function removeFavoredBy(User $user): static
     {
         $this->favoredBy->removeElement($user);
-
         return $this;
     }
 
@@ -282,5 +292,58 @@ class Podcast
         return $this;
     }
 
-}
+    public function getDuration(): ?string
+    {
+        return $this->duration;
+    }
 
+    public function setDuration(?string $duration): self
+    {
+        $this->duration = $duration;
+        return $this;
+    }
+
+    public function isFeatured(): bool
+    {
+        return $this->isFeatured;
+    }
+
+    public function setIsFeatured(bool $isFeatured): self
+    {
+        $this->isFeatured = $isFeatured;
+        return $this;
+    }
+
+    public function getTags(): array
+    {
+        return $this->tags;
+    }
+
+    public function setTags(array $tags): self
+    {
+        $this->tags = $tags;
+        return $this;
+    }
+
+    public function getLanguage(): ?string
+    {
+        return $this->language;
+    }
+
+    public function setLanguage(?string $language): self
+    {
+        $this->language = $language;
+        return $this;
+    }
+
+    public function getPublishedAt(): ?\DateTimeImmutable
+    {
+        return $this->publishedAt;
+    }
+
+    public function setPublishedAt(?\DateTimeImmutable $publishedAt): self
+    {
+        $this->publishedAt = $publishedAt;
+        return $this;
+    }
+}

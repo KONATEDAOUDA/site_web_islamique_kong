@@ -43,6 +43,10 @@ class Enseignement
     #[ORM\JoinColumn(nullable: false)]
     private ?MaitreIslamique $maitre = null;
 
+    #[ORM\ManyToOne(inversedBy: 'enseignement')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $author = null;
+    
     #[ORM\Column]
     private bool $isPublished = false;
 
@@ -170,6 +174,17 @@ class Enseignement
         return $this;
     }
 
+    public function getAuthor(): ?User
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(?User $author): static
+    {
+        $this->author = $author;
+
+        return $this;
+    }
     public function isIsPublished(): bool
     {
         return $this->isPublished;

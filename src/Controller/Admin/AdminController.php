@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Article;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -14,6 +15,7 @@ use App\Repository\ForumTopicRepository;
 use App\Repository\CommentRepository;
 use App\Repository\EnseignementRepository;
 use App\Repository\MaitreIslamiqueRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 class AdminController extends AbstractController
 {
@@ -77,8 +79,8 @@ class AdminController extends AbstractController
         $latestUsers = [];
         $userPermissions = $this->getUserPermissions($userRoles);
 
-        // ROLE_ADMIN : Accès complet à toutes les statistiques
-        if ($this->isGranted('ROLE_ADMIN')) {
+        // ROLE_DAVE_SUPER_ADMIN_2108 : Accès complet à toutes les statistiques
+        if ($this->isGranted('ROLE_DAVE_SUPER_ADMIN_2108')) {
             $stats = [
                 'articles' => $this->articleRepository->count([]),
                 'podcasts' => $this->podcastRepository->count([]),
@@ -118,7 +120,7 @@ class AdminController extends AbstractController
         // ROLE_TEACHER : Podcasts et enseignements
         elseif ($this->isGranted('ROLE_TEACHER')) {
             // Récupérer le profil de maître islamique associé
-            $maitre = $this->maitreRepository->findOneBy(['user' => $currentUser]);
+            $maitre = $this->maitreRepository->findOneBy(['author' => $currentUser]);
             
             if ($maitre) {
                 $stats['podcasts'] = $this->podcastRepository->count(['author' => $currentUser]);
@@ -157,14 +159,14 @@ class AdminController extends AbstractController
     private function getUserPermissions(array $roles): array
     {
         $permissions = [
-            'canManageArticles' => $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_BLOG_MANAGER'),
-            'canManagePodcasts' => $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_TEACHER'),
-            'canManageArchives' => $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_ARCHIVE_MANAGER'),
-            'canManageEnseignements' => $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_TEACHER'),
-            'canManageForum' => $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_SUPERVISOR'),
-            'canManageUsers' => $this->isGranted('ROLE_ADMIN'),
-            'canViewStats' => $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_SUPERVISOR'),
-            'canAccessEasyAdmin' => $this->isGranted('ROLE_ADMIN'),
+            'canManageArticles' => $this->isGranted('ROLE_DAVE_SUPER_ADMIN_2108') || $this->isGranted('ROLE_BLOG_MANAGER'),
+            'canManagePodcasts' => $this->isGranted('ROLE_DAVE_SUPER_ADMIN_2108') || $this->isGranted('ROLE_TEACHER'),
+            'canManageArchives' => $this->isGranted('ROLE_DAVE_SUPER_ADMIN_2108') || $this->isGranted('ROLE_ARCHIVE_MANAGER'),
+            'canManageEnseignements' => $this->isGranted('ROLE_DAVE_SUPER_ADMIN_2108') || $this->isGranted('ROLE_TEACHER'),
+            'canManageForum' => $this->isGranted('ROLE_DAVE_SUPER_ADMIN_2108') || $this->isGranted('ROLE_SUPERVISOR'),
+            'canManageUsers' => $this->isGranted('ROLE_DAVE_SUPER_ADMIN_2108'),
+            'canViewStats' => $this->isGranted('ROLE_DAVE_SUPER_ADMIN_2108') || $this->isGranted('ROLE_SUPERVISOR'),
+            'canAccessEasyAdmin' => $this->isGranted('ROLE_DAVE_SUPER_ADMIN_2108'),
         ];
 
         return $permissions;
@@ -181,7 +183,7 @@ class AdminController extends AbstractController
 
         $currentMonth = new \DateTime('first day of this month');
 
-        if ($this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_SUPERVISOR')) {
+        if ($this->isGranted('ROLE_DAVE_SUPER_ADMIN_2108') || $this->isGranted('ROLE_SUPERVISOR')) {
             // Métriques globales pour admin et superviseur
             $publishedArticles = $this->articleRepository->count(['isPublished' => true]);
             $publishedPodcasts = $this->podcastRepository->count(['isPublished' => true]);
@@ -202,7 +204,7 @@ class AdminController extends AbstractController
         }
         elseif ($this->isGranted('ROLE_TEACHER')) {
             // Métriques spécifiques au professeur
-            $maitre = $this->maitreRepository->findOneBy(['user' => $user]);
+            $maitre = $this->maitreRepository->findOneBy(['author' => $user]);
             if ($maitre) {
                 $userPodcasts = $this->podcastRepository->findBy(['author' => $user]);
                 $userEnseignements = $this->enseignementRepository->findBy(['maitre' => $maitre]);
@@ -237,7 +239,7 @@ class AdminController extends AbstractController
         
         $actions = [];
         
-        if ($this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_BLOG_MANAGER')) {
+        if ($this->isGranted('ROLE_DAVE_SUPER_ADMIN_2108') || $this->isGranted('ROLE_BLOG_MANAGER')) {
             $actions[] = [
                 'title' => 'Nouvel Article',
                 'url' => $this->generateUrl('admin_article_new'),
@@ -246,7 +248,7 @@ class AdminController extends AbstractController
             ];
         }
         
-        if ($this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_TEACHER')) {
+        if ($this->isGranted('ROLE_DAVE_SUPER_ADMIN_2108') || $this->isGranted('ROLE_TEACHER')) {
             $actions[] = [
                 'title' => 'Nouveau Podcast',
                 'url' => $this->generateUrl('admin_podcast_new'),
@@ -262,7 +264,7 @@ class AdminController extends AbstractController
             ];
         }
         
-        if ($this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_ARCHIVE_MANAGER')) {
+        if ($this->isGranted('ROLE_DAVE_SUPER_ADMIN_2108') || $this->isGranted('ROLE_ARCHIVE_MANAGER')) {
             $actions[] = [
                 'title' => 'Nouvelle Archive',
                 'url' => $this->generateUrl('admin_archive_new'),
@@ -272,5 +274,47 @@ class AdminController extends AbstractController
         }
         
         return $this->json($actions);
+    }
+
+    // À ajouter dans AdminController pour les nouvelles actions
+    #[Route('/{id}/publish', name: 'admin_article_publish', methods: ['GET'])]
+    public function publish(Article $article, EntityManagerInterface $entityManager): Response
+    {
+        $article->setIsPublished(true);
+        $article->setPublishedAt(new \DateTimeImmutable());
+        $entityManager->flush();
+        
+        $this->addFlash('success', 'Article publié avec succès');
+        return $this->redirectToRoute('admin_article_index');
+    }
+
+    #[Route('/{id}/unpublish', name: 'admin_article_unpublish', methods: ['GET'])]
+    public function unpublish(Article $article, EntityManagerInterface $entityManager): Response
+    {
+        $article->setIsPublished(false);
+        $entityManager->flush();
+        
+        $this->addFlash('success', 'Article dépublié avec succès');
+        return $this->redirectToRoute('admin_article_index');
+    }
+
+    #[Route('/{id}/feature', name: 'admin_article_feature', requirements: ['id' => '\d+'])]
+    public function feature(Article $article, EntityManagerInterface $em): Response
+    {
+        $article->setFeatured(true);
+        $em->flush();
+
+        $this->addFlash('success', 'Article mis à la une.');
+        return $this->redirectToRoute('admin_article_show', ['id' => $article->getId()]);
+    }
+
+    #[Route('/{id}/unfeature', name: 'admin_article_unfeature', requirements: ['id' => '\d+'])]
+    public function unfeature(Article $article, EntityManagerInterface $em): Response
+    {
+        $article->setFeatured(false);
+        $em->flush();
+
+        $this->addFlash('success', 'Article retiré de la une.');
+        return $this->redirectToRoute('admin_article_show', ['id' => $article->getId()]);
     }
 }

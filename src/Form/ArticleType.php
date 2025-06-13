@@ -11,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
 
@@ -31,6 +32,7 @@ class ArticleType extends AbstractType
                 'attr' => [
                     'class' => 'form-control',
                     'rows' => 10,
+                    'id' => 'summernote', // <-- AJOUT pour ciblage JS
                     'placeholder' => 'Rédigez le contenu de l\'article'
                 ]
             ])
@@ -48,7 +50,7 @@ class ArticleType extends AbstractType
                 'class' => Category::class,
                 'choice_label' => 'name',
                 'placeholder' => 'Sélectionnez une catégorie',
-                'required' => false,
+                'required' =>true,
                 'attr' => [
                     'class' => 'form-control'
                 ]
@@ -103,6 +105,21 @@ class ArticleType extends AbstractType
                     'placeholder' => 'Description pour les moteurs de recherche'
                 ]
             ]);
+
+        $builder->get('tags')
+            ->addModelTransformer(new CallbackTransformer(
+                function ($tagsArray) {
+                    // Transforme l’array en string pour l’affichage
+                    return is_array($tagsArray) ? implode(', ', $tagsArray) : '';
+                },
+                function ($tagsString) {
+                    // Transforme la string en array pour l’entité
+                    if (empty($tagsString)) {
+                        return [];
+                    }
+                    return array_map('trim', explode(',', $tagsString));
+                }
+            ));
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -112,3 +129,4 @@ class ArticleType extends AbstractType
         ]);
     }
 }
+

@@ -45,21 +45,24 @@ class EnseignementVoter extends Voter implements VoterInterface
 
     private function canView(Enseignement $enseignement, User $user): bool
     {
-        return in_array('ROLE_ENSEIGNEMENT_MANAGER', $user->getRoles()) 
-            || in_array('ROLE_ADMIN', $user->getRoles())
+        return in_array('ROLE_TEACHER', $user->getRoles()) 
+            || in_array('ROLE_DAVE_SUPER_ADMIN_2108', $user->getRoles())
+            || in_array('ROLE_SUPERVISOR', $user->getRoles())
             || $enseignement->getAuthor() === $user;
     }
 
     private function canEdit(Enseignement $enseignement, User $user): bool
     {
-        return in_array('ROLE_ENSEIGNEMENT_MANAGER', $user->getRoles()) 
-            || in_array('ROLE_ADMIN', $user->getRoles())
+        return in_array('ROLE_TEACHER', $user->getRoles()) 
+            || in_array('ROLE_DAVE_SUPER_ADMIN_2108', $user->getRoles())
+            || in_array('ROLE_SUPERVISOR', $user->getRoles())
             || $enseignement->getAuthor() === $user;
     }
 
     private function canDelete(Enseignement $enseignement, User $user): bool
     {
-        return in_array('ROLE_ADMIN', $user->getRoles()) 
-            || (in_array('ROLE_ENSEIGNEMENT_MANAGER', $user->getRoles()) && $enseignement->getAuthor() === $user);
+        return in_array('ROLE_DAVE_SUPER_ADMIN_2108', $user->getRoles()) 
+            || in_array('ROLE_SUPERVISOR', $user->getRoles())
+            || (in_array('ROLE_TEACHER', $user->getRoles()) && $enseignement->getAuthor() === $user);
     }
 }

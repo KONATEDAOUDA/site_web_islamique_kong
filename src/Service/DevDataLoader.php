@@ -39,7 +39,7 @@ class DevDataLoader
         $admin->setEmail('admin@islamique-kong.ci');
         $admin->setFirstName('Admin');
         $admin->setLastName('Kong');
-        $admin->setRoles(['ROLE_ADMIN']);
+        $admin->setRoles(['ROLE_DAVE_SUPER_ADMIN_2108']);
         $admin->setPassword($this->userPasswordHasher->hashPassword($admin, 'admin123'));
         $admin->setIsVerified(true);
         

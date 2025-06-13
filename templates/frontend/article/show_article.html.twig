@@ -1,0 +1,190 @@
+{% extends 'frontend/base.html.twig' %}
+
+{% block title %}{{ article.title }} - Kong{% endblock %}
+
+{% block main %}
+<div class="container my-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-white px-0">
+            <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('app_blog_index') }}">Actualités</a></li>
+            {% if article.category %}
+                <li class="breadcrumb-item">
+                    <a href="{{ path('category_show', {slug: article.category.slug}) }}">
+                        {{ article.category.name }}
+                    </a>
+                </li>
+            {% endif %}
+            <li class="breadcrumb-item active" aria-current="page">
+                {{ article.title|length > 40 ? article.title|slice(0, 40) ~ '...' : article.title }}
+            </li>
+        </ol>
+    </nav>
+
+    <article>
+        <header>
+            <h1 class="display-4">{{ article.title }}</h1>
+            <div class="mb-3 text-muted">
+                <span><i class="fas fa-calendar-alt"></i> {{ article.publishedAt ? article.publishedAt|date('d/m/Y') : article.createdAt|date('d/m/Y') }}</span>
+                {% if article.author %}
+                <span class="ml-3">
+                    <i class="fas fa-user"></i> {{ article.author.firstName ~ ' ' ~ article.author.lastName }}
+                </span>
+                {% endif %}
+                {% if article.readingTime %}
+                <span class="ml-3">
+                    <i class="fas fa-clock"></i> {{ article.readingTime }} min de lecture
+                </span>
+                {% endif %}
+            </div>
+            
+            {# Utilisation de thumbnail #}
+            {% if article.thumbnail %}
+                <img src="{{ asset('uploads/articles/' ~ article.thumbnail) }}" 
+                     alt="{{ article.title }}" 
+                     class="img-fluid rounded mb-4 w-100" 
+                     style="max-height:400px; object-fit:cover;">
+            {% endif %}
+            
+            {% if article.excerpt %}
+                <div class="alert alert-info">
+                    <strong>Résumé :</strong> {{ article.excerpt }}
+                </div>
+            {% endif %}
+        </header>
+
+        <section class="mb-5 article-content">
+            {{ article.content|raw }}
+        </section>
+
+        {# Affichage des tags #}
+        {% if article.tags|length > 0 %}
+        <section class="mb-4">
+            <i class="fas fa-tags mr-2"></i>
+            {% for tag in article.tags %}
+                <span class="badge badge-secondary mr-1">{{ tag }}</span>
+            {% endfor %}
+        </section>
+        {% endif %}
+
+        {# Statistiques de l'article #}
+        <section class="mb-4">
+            <div class="d-flex flex-wrap">
+                <span class="badge badge-light mr-2">
+                    <i class="fas fa-eye"></i> {{ article.viewCount }} vues
+                </span>
+                {% if article.favoriteCount > 0 %}
+                <span class="badge badge-light mr-2">
+                    <i class="fas fa-heart"></i> {{ article.favoriteCount }} favoris
+                </span>
+                {% endif %}
+                {% if article.isFeatured %}
+                <span class="badge badge-warning mr-2">
+                    <i class="fas fa-star"></i> Article vedette
+                </span>
+                {% endif %}
+            </div>
+        </section>
+
+        <footer class="mt-5">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <small class="text-muted">
+                        Publié le {{ article.publishedAt ? article.publishedAt|date('d/m/Y à H:i') : article.createdAt|date('d/m/Y à H:i') }}
+                        {% if article.updatedAt %}
+                            | Modifié le {{ article.updatedAt|date('d/m/Y à H:i') }}
+                        {% endif %}
+                    </small>
+                </div>
+                <div>
+                    <button class="btn btn-outline-primary" onclick="shareArticle()">
+                        <i class="fas fa-share-alt"></i> Partager
+                    </button>
+                </div>
+            </div>
+        </footer>
+    </article>
+
+    {# Commentaires - Utilise directement les commentaires de l'article avec filtrage #}
+    {% set approvedComments = article.comments|filter(c => c.isIsApproved) %}
+    {% if approvedComments|length > 0 %}
+        <section class="mt-5">
+            <h3 class="h5 mb-4"><i class="fas fa-comments"></i> Commentaires ({{ approvedComments|length }})</h3>
+            {% for comment in approvedComments %}
+            <div class="media mb-4">
+                <img class="mr-3 rounded-circle" 
+                     src="{{ comment.author.profilePicture ? asset('uploads/users/' ~ comment.author.profilePicture) : asset('images/default-avatar.png') }}" 
+                     alt="Avatar" 
+                     style="width:40px; height:40px; object-fit:cover;">
+                <div class="media-body">
+                    <h6 class="mt-0 mb-1">
+                        {{ comment.author.firstName ~ ' ' ~ comment.author.lastName }} 
+                        <small class="text-muted">{{ comment.createdAt|date('d/m/Y H:i') }}</small>
+                    </h6>
+                    <p>{{ comment.content }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </section>
+    {% endif %}
+
+    {# Articles similaires (optionnel) #}
+    {% if article.category %}
+    <section class="mt-5">
+        <h4>Articles de la même catégorie</h4>
+        <p class="text-muted">
+            <a href="{{ path('app_blog_category', {slug: article.category.slug}) }}" class="btn btn-outline-secondary">
+                Voir tous les articles de "{{ article.category.name }}"
+            </a>
+        </p>
+    </section>
+    {% endif %}
+
+    {# Formulaire de commentaire (à adapter selon votre système d'authentification) #}
+    {% if app.user %}
+        <section class="mt-5">
+            <h5>Laisser un commentaire</h5>
+            {{ form_start(form) }}
+            {{ form_widget(form) }}
+            <button class="btn btn-success mt-2" type="submit">
+                <i class="fas fa-paper-plane"></i> Envoyer
+            </button>
+            {{ form_end(form) }}
+        </section>
+    {% else %}
+        <section class="mt-5">
+            <div class="alert alert-info">
+                <a href="{{ path('app_login') }}">Connectez-vous</a> pour laisser un commentaire.
+            </div>
+        </section>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        function shareArticle() {
+            if (navigator.share) {
+                navigator.share({
+                    title: '{{ article.title|e('js') }}',
+                    text: '{{ article.excerpt|default('Article à découvrir')|e('js') }}',
+                    url: window.location.href
+                });
+            } else {
+                navigator.clipboard.writeText(window.location.href).then(function() {
+                    alert('Lien copié dans le presse-papiers !');
+                }, function() {
+                    // Fallback si clipboard API n'est pas disponible
+                    const textArea = document.createElement('textarea');
+                    textArea.value = window.location.href;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    alert('Lien copié dans le presse-papiers !');
+                });
+            }
+        }
+    </script>
+{% endblock %}

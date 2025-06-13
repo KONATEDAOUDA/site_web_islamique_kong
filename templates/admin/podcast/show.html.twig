@@ -43,14 +43,14 @@
                 {% if podcast.tags %}
                 <div class="mb-2">
                     <i class="fas fa-tags mr-1"></i>
-                    {% for tag in podcast.tags|split(',') %}
+                    {% for tag in podcast.tags %}
                         <span class="badge badge-secondary mr-1">{{ tag|trim }}</span>
                     {% endfor %}
                 </div>
                 {% endif %}
-                {% if podcast.thumbnailPath %}
+                {% if podcast.thumbnail %}
                 <div class="mb-3">
-                    <img src="{{ asset('uploads/podcasts/' ~ podcast.thumbnailPath) }}" alt="Couverture" class="img-thumbnail" style="max-width: 250px;">
+                    <img src="{{ asset('uploads/podcasts/' ~ podcast.thumbnail) }}" alt="Couverture" class="img-thumbnail" style="max-width: 250px;">
                 </div>
                 {% endif %}
                 {% if podcast.description %}
@@ -59,9 +59,9 @@
                     </div>
                 {% endif %}
                 <div class="mb-3">
-                    {% if podcast.audioFilePath %}
+                    {% if podcast.filePath %}
                         <audio controls style="width:100%;">
-                            <source src="{{ asset('uploads/podcasts/' ~ podcast.audioFilePath) }}">
+                            <source src="{{ asset('uploads/podcasts/' ~ podcast.filePath) }}">
                             Votre navigateur ne supporte pas l'audio.
                         </audio>
                     {% elseif podcast.externalUrl %}
@@ -148,7 +148,7 @@
                         <td><strong>Tags :</strong></td>
                         <td>
                             {% if podcast.tags %}
-                                {% for tag in podcast.tags|split(',') %}
+                                {% for tag in podcast.tags %}
                                     <span class="badge badge-secondary mr-1">{{ tag|trim }}</span>
                                 {% endfor %}
                             {% else %}
@@ -209,19 +209,25 @@
                             <span class="description-percentage text-info">
                                 <i class="fas fa-heart"></i>
                             </span>
-                            <h5 class="description-header">{{ podcast.favoriteCount ?? 0 }}</h5>
-                            <span class="description-text">FAVORIS</span>
+                            <h5 class="description-header">{{ podcast.downloadCount ?? 0 }}</h5>
+                            <span class="description-text">TELECHARGEMENTS</span>
                         </div>
                     </div>
                 </div>
                 <div class="progress-group mt-3">
                     <span class="progress-text">Engagement</span>
-                    <span class="float-right">
-                        <b>{{ ((podcast.favoriteCount ?? 0) / ((podcast.viewCount ?? 1) * 10) * 100)|round(1) }}%</b>
-                    </span>
+                    {# Calcul sécurisé de l'engagement #}
+                    {% set base = (podcast.viewCount is defined and podcast.viewCount > 0) ? (podcast.viewCount * 10) : 1 %}
+                    {% set engagement = (podcast.downloadCount ?? 0) / base * 100 %}
+                    <span class="float-right"><b>{{ engagement|round(1) }}%</b></span>
                     <div class="progress progress-sm">
-                        <div class="progress-bar bg-success" 
-                             style="width: {{ ((podcast.favoriteCount ?? 0) / ((podcast.viewCount ?? 1) * 10) * 100)|round(1) }}%"></div>
+                        <div class="progress-bar bg-success" style="width: {{ engagement|round(1) }}%"></div>
+                    </div>
+                    {# Sécurise la division pour éviter division par zéro #}
+                    {% set base = (podcast.viewCount is defined and podcast.viewCount > 0) ? (podcast.viewCount * 10) : 1 %}
+                    {% set safeDownloadPercent = (podcast.downloadCount ?? 0) / base * 100 %}
+                    <div class="progress progress-sm">
+                        <div class="progress-bar bg-success" style="width: {{ safeDownloadPercent|round(1) }}%"></div>
                     </div>
                 </div>
             </div>
@@ -240,8 +246,8 @@
                     <li class="list-group-item">
                         <a href="{{ path('admin_podcast_show', {id: related.id}) }}" class="text-decoration-none">
                             <div class="d-flex align-items-center">
-                                {% if related.thumbnailPath %}
-                                    <img src="{{ asset('uploads/podcasts/' ~ related.thumbnailPath) }}" 
+                                {% if related.thumbnail %}
+                                    <img src="{{ asset('uploads/podcasts/' ~ related.thumbnail) }}" 
                                          alt="Image" class="rounded mr-3" style="width: 50px; height: 50px; object-fit: cover;">
                                 {% else %}
                                     <div class="bg-secondary rounded d-flex align-items-center justify-content-center mr-3" 

@@ -1,4 +1,3 @@
-{# templates/admin/article/edit.html.twig #}
 {% extends 'admin/base.html.twig' %}
 
 {% block title %}Modifier "{{ article.title }}" - Kong Administration{% endblock %}
@@ -13,61 +12,29 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <!-- Summernote -->
-    <link rel="stylesheet" href="{{ asset('plugins/summernote/summernote-bs4.min.css') }}">
-    <!-- Select2 -->
-    <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('summernote-0.9.0-dist/summernote-bs4.min.css') }}">
 {% endblock %}
 
 {% block content %}
+    {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
     <div class="row">
         <div class="col-md-8">
-            {{ form_start(form, {'attr': {'enctype': 'multipart/form-data', 'id': 'article-edit-form'}}) }}
-            
-            <!-- Alerte si brouillon -->
-            {% if not article.isPublished %}
-            <div class="alert alert-warning">
-                <h5><i class="fas fa-exclamation-triangle mr-2"></i>Article en brouillon</h5>
-                Cet article n'est pas encore publié. N'oubliez pas de cocher "Publier l'article" pour le rendre visible sur le site.
-            </div>
-            {% endif %}
-            
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">
-                        <i class="fas fa-edit mr-2"></i>Modifier "{{ article.title }}"
-                    </h3>
-                    <div class="card-tools">
-                        <span class="badge badge-info">
-                            <i class="fas fa-clock mr-1"></i>
-                            Créé le {{ article.createdAt|date('d/m/Y') }}
-                        </span>
-                        {% if article.updatedAt %}
-                        <span class="badge badge-secondary ml-1">
-                            <i class="fas fa-edit mr-1"></i>
-                            Modifié le {{ article.updatedAt|date('d/m/Y') }}
-                        </span>
-                        {% endif %}
-                    </div>
+                    <h3 class="card-title">Informations de l'article</h3>
                 </div>
                 <div class="card-body">
                     <div class="form-group">
                         {{ form_label(form.title) }}
                         {{ form_widget(form.title) }}
                         {{ form_errors(form.title) }}
-                        <div class="character-count text-muted small" data-target="article_title">
-                            <span class="current">0</span> / 255 caractères
-                        </div>
                     </div>
                     
                     <div class="form-group">
                         {{ form_label(form.excerpt) }}
                         {{ form_widget(form.excerpt) }}
                         {{ form_errors(form.excerpt) }}
-                        <small class="form-text text-muted">Ce résumé sera affiché dans la liste des articles et sur les réseaux sociaux</small>
-                        <div class="character-count text-muted small" data-target="article_excerpt">
-                            <span class="current">0</span> / 500 caractères recommandés
-                        </div>
+                        <small class="form-text text-muted">Ce résumé sera affiché dans la liste des articles</small>
                     </div>
                     
                     <div class="form-group">
@@ -80,75 +47,17 @@
                         {{ form_label(form.metaDescription) }}
                         {{ form_widget(form.metaDescription) }}
                         {{ form_errors(form.metaDescription) }}
-                        <small class="form-text text-muted">Description pour le référencement (SEO) - 150-160 caractères recommandés</small>
-                        <div class="character-count text-muted small" data-target="article_metaDescription">
-                            <span class="current">0</span> / 160 caractères
-                        </div>
+                        <small class="form-text text-muted">Description pour le référencement (SEO)</small>
                     </div>
                 </div>
             </div>
-            
-            <!-- Historique des versions -->
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        <i class="fas fa-history mr-2"></i>Historique des modifications
-                    </h3>
-                    <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="card-body">
-                    {% if article.revisions is defined and article.revisions|length > 0 %}
-                    <div class="timeline">
-                        {% for revision in article.revisions|slice(0, 5) %}
-                        <div class="time-label">
-                            <span class="bg-info">{{ revision.createdAt|date('d/m/Y') }}</span>
-                        </div>
-                        <div>
-                            <i class="fas fa-edit bg-blue"></i>
-                            <div class="timeline-item">
-                                <span class="time">
-                                    <i class="fas fa-clock"></i> {{ revision.createdAt|date('H:i') }}
-                                </span>
-                                <h3 class="timeline-header">
-                                    Modification par {{ revision.author.fullName }}
-                                </h3>
-                                <div class="timeline-body">
-                                    {{ revision.changeDescription ?? 'Modification du contenu' }}
-                                </div>
-                                <div class="timeline-footer">
-                                    <button type="button" class="btn btn-primary btn-sm" 
-                                            onclick="compareVersion({{ revision.id }})">
-                                        Comparer
-                                    </button>
-                                    <button type="button" class="btn btn-warning btn-sm" 
-                                            onclick="restoreVersion({{ revision.id }})">
-                                        Restaurer
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    {% else %}
-                    <p class="text-muted">Aucun historique de modification disponible.</p>
-                    {% endif %}
-                </div>
-            </div>
-            
-            {{ form_end(form) }}
         </div>
         
         <div class="col-md-4">
-            <!-- Actions de publication -->
+            <!-- Options de publication -->
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">
-                        <i class="fas fa-cogs mr-2"></i>Publication
-                    </h3>
+                    <h3 class="card-title">Publication</h3>
                 </div>
                 <div class="card-body">
                     <div class="form-group">
@@ -158,42 +67,17 @@
                     
                     <div class="form-group">
                         {{ form_label(form.tags) }}
-                        {{ form_widget(form.tags, {'attr': {'id': 'tags-input'}}) }}
+                        {{ form_widget(form.tags) }}
                         {{ form_errors(form.tags) }}
-                        <small class="form-text text-muted">Utilisez des virgules pour séparer les tags</small>
+                        <small class="form-text text-muted">Séparez les tags par des virgules</small>
                     </div>
                     
                     <div class="form-group">
                         {{ form_label(form.featuredImage) }}
-                        {{ form_widget(form.featuredImage, {'attr': {'id': 'featured-image'}}) }}
+                        {{ form_widget(form.featuredImage) }}
                         {{ form_errors(form.featuredImage) }}
-                        
-                        <!-- Aperçu de l'image actuelle -->
-                        {% if article.featuredImage %}
-                        <div class="current-image mt-2">
-                            <label class="form-label">Image actuelle:</label>
-                            <div class="position-relative">
-                                <img src="{{ asset('uploads/articles/' ~ article.featuredImage) }}" 
-                                     alt="Image actuelle" 
-                                     class="img-thumbnail"
-                                     style="max-width: 200px;">
-                                <button type="button" class="btn btn-danger btn-sm position-absolute" 
-                                        style="top: 5px; right: 5px;"
-                                        onclick="removeCurrentImage()">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-                        {% endif %}
-                        
-                        <!-- Aperçu de la nouvelle image -->
-                        <div id="image-preview" class="mt-2" style="display: none;">
-                            <label class="form-label">Nouvelle image:</label>
-                            <img id="preview-img" src="" alt="Aperçu" class="img-thumbnail" style="max-width: 200px;">
-                        </div>
+                        <small class="form-text text-muted">Image principale de l'article</small>
                     </div>
-                    
-                    <hr>
                     
                     <div class="form-check mb-3">
                         {{ form_widget(form.isPublished) }}
@@ -206,146 +90,48 @@
                         {{ form_label(form.isFeatured, null, {'label_attr': {'class': 'form-check-label'}}) }}
                         {{ form_errors(form.isFeatured) }}
                     </div>
-                    
-                    <hr>
-                    
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-success btn-lg" form="article-edit-form">
-                            <i class="fas fa-save mr-2"></i>Enregistrer les modifications
-                        </button>
-                        <button type="button" class="btn btn-info" onclick="previewArticle()">
-                            <i class="fas fa-eye mr-2"></i>Aperçu
-                        </button>
-                        <a href="{{ path('admin_article_show', {id: article.id}) }}" class="btn btn-secondary">
-                            <i class="fas fa-times mr-2"></i>Annuler
-                        </a>
-                    </div>
                 </div>
-            </div>
-            
-            <!-- Statistiques SEO -->
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        <i class="fas fa-search mr-2"></i>Analyse SEO
-                    </h3>
-                </div>
-                <div class="card-body">
-                    <div class="seo-analysis">
-                        <div class="seo-item mb-2">
-                            <span class="seo-label">Titre:</span>
-                            <span id="seo-title-status" class="badge badge-secondary">En attente</span>
-                            <small class="d-block text-muted">
-                                <span id="title-length">0</span> caractères (recommandé: 50-60)
-                            </small>
-                        </div>
-                        
-                        <div class="seo-item mb-2">
-                            <span class="seo-label">Meta description:</span>
-                            <span id="seo-meta-status" class="badge badge-secondary">En attente</span>
-                            <small class="d-block text-muted">
-                                <span id="meta-length">0</span> caractères (recommandé: 150-160)
-                            </small>
-                        </div>
-                        
-                        <div class="seo-item mb-2">
-                            <span class="seo-label">Contenu:</span>
-                            <span id="seo-content-status" class="badge badge-secondary">En attente</span>
-                            <small class="d-block text-muted">
-                                <span id="word-count">0</span> mots (recommandé: 300+)
-                            </small>
-                        </div>
-                        
-                        <div class="seo-item mb-2">
-                            <span class="seo-label">Image à la une:</span>
-                            <span id="seo-image-status" class="badge badge-{{ article.featuredImage ? 'success' : 'warning' }}">
-                                {{ article.featuredImage ? 'Présente' : 'Manquante' }}
-                            </span>
-                        </div>
-                        
-                        <div class="seo-item">
-                            <span class="seo-label">Tags:</span>
-                            <span id="seo-tags-status" class="badge badge-secondary">En attente</span>
-                            <small class="d-block text-muted">
-                                <span id="tags-count">0</span> tags (recommandé: 3-5)
-                            </small>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-3">
-                        <div class="progress">
-                            <div id="seo-score-bar" class="progress-bar" role="progressbar" style="width: 0%"></div>
-                        </div>
-                        <small class="text-muted">Score SEO: <span id="seo-score">0</span>/100</small>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Actions rapides -->
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        <i class="fas fa-bolt mr-2"></i>Actions rapides
-                    </h3>
-                </div>
-                <div class="card-body">
-                    <div class="btn-group-vertical w-100">
-                        <button type="button" class="btn btn-outline-primary" onclick="saveAsDraft()">
-                            <i class="fas fa-save mr-2"></i>Enregistrer comme brouillon
-                        </button>
-                        
-                        {% if article.isPublished %}
-                        <button type="button" class="btn btn-outline-warning" onclick="unpublishArticle()">
-                            <i class="fas fa-eye-slash mr-2"></i>Dépublier
-                        </button>
-                        {% endif %}
-                        
-                        <button type="button" class="btn btn-outline-info" onclick="schedulePublication()">
-                            <i class="fas fa-calendar mr-2"></i>Programmer la publication
-                        </button>
-                        
-                        <button type="button" class="btn btn-outline-secondary" onclick="duplicateArticle()">
-                            <i class="fas fa-copy mr-2"></i>Dupliquer
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal pour l'aperçu -->
-    <div class="modal fade" id="previewModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Aperçu de l'article</h4>
-                    <button type="button" class="close" data-dismiss="modal">
-                        <span>&times;</span>
+                
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save mr-2"></i>Enregistrer
                     </button>
+                    <a href="{{ path('admin_article_show', {id: article.id}) }}" class="btn btn-secondary">
+                        <i class="fas fa-times mr-2"></i>Annuler
+                    </a>
                 </div>
-                <div class="modal-body">
-                    <div id="preview-content"></div>
+            </div>
+            
+            <!-- Aide -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Aide</h3>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-info-circle text-info mr-2"></i>Le titre doit être accrocheur</li>
+                        <li><i class="fas fa-info-circle text-info mr-2"></i>Le résumé apparaît dans les listes</li>
+                        <li><i class="fas fa-info-circle text-info mr-2"></i>Les tags améliorent la recherche</li>
+                        <li><i class="fas fa-info-circle text-info mr-2"></i>L'image doit être au format JPG, PNG ou WebP</li>
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
+    {{ form_end(form) }}
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
-    <!-- Summernote -->
-    <script src="{{ asset('plugins/summernote/summernote-bs4.min.js') }}"></script>
-    <!-- Select2 -->
-    <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
-    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
+    <script src="{{ asset('summernote-0.9.0-dist/summernote-bs4.min.js') }}"></script>
+    <script src="{{ asset('summernote-0.9.0-dist/lang/summernote-fr-FR.min.js') }}"></script>
     <script>
         $(function () {
-            // Summernote
             $('#summernote').summernote({
-                height: 400,
+                height: 300,
                 lang: 'fr-FR',
                 toolbar: [
                     ['style', ['style']],
@@ -356,176 +142,8 @@
                     ['table', ['table']],
                     ['insert', ['link', 'picture', 'video']],
                     ['view', ['fullscreen', 'codeview', 'help']]
-                ],
-                callbacks: {
-                    onChange: function() {
-                        updateSEOAnalysis();
-                    }
-                }
+                ]
             });
-            
-            // Select2 pour les tags
-            $('#tags-input').select2({
-                tags: true,
-                tokenSeparators: [',', ' '],
-                placeholder: "Ajoutez des tags...",
-                allowClear: true
-            });
-            
-            // Compteurs de caractères
-            updateCharacterCounts();
-            
-            // Listeners pour l'analyse SEO
-            $('#article_title, #article_metaDescription').on('input', function() {
-                updateCharacterCounts();
-                updateSEOAnalysis();
-            });
-            
-            $('#tags-input').on('change', function() {
-                updateSEOAnalysis();
-            });
-            
-            // Aperçu de l'image
-            $('#featured-image').on('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        $('#preview-img').attr('src', e.target.result);
-                        $('#image-preview').show();
-                        updateSEOAnalysis();
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-            
-            // Analyse SEO initiale
-            setTimeout(updateSEOAnalysis, 1000);
         });
-        
-        function updateCharacterCounts() {
-            $('.character-count').each(function() {
-                const target = $(this).data('target');
-                const input = $('#' + target);
-                const current = input.val().length;
-                $(this).find('.current').text(current);
-                
-                // Couleur selon la longueur
-                if (target === 'article_title') {
-                    $(this).removeClass('text-success text-warning text-danger');
-                    if (current >= 50 && current <= 60) $(this).addClass('text-success');
-                    else if (current > 60) $(this).addClass('text-danger');
-                    else $(this).addClass('text-warning');
-                }
-            });
-        }
-        
-        function updateSEOAnalysis() {
-            const title = $('#article_title').val();
-            const meta = $('#article_metaDescription').val();
-            const content = $('#summernote').summernote('code');
-            const tags = $('#tags-input').val();
-            const hasImage = $('#featured-image')[0].files.length > 0 || {{ article.featuredImage ? 'true' : 'false' }};
-            
-            let score = 0;
-            
-            // Analyse du titre
-            $('#title-length').text(title.length);
-            if (title.length >= 50 && title.length <= 60) {
-                $('#seo-title-status').removeClass().addClass('badge badge-success').text('Optimal');
-                score += 20;
-            } else if (title.length >= 30) {
-                $('#seo-title-status').removeClass().addClass('badge badge-warning').text('Correct');
-                score += 15;
-            } else {
-                $('#seo-title-status').removeClass().addClass('badge badge-danger').text('Trop court');
-                score += 5;
-            }
-            
-            // Analyse de la meta description
-            $('#meta-length').text(meta.length);
-            if (meta.length >= 150 && meta.length <= 160) {
-                $('#seo-meta-status').removeClass().addClass('badge badge-success').text('Optimal');
-                score += 20;
-            } else if (meta.length >= 120) {
-                $('#seo-meta-status').removeClass().addClass('badge badge-warning').text('Correct');
-                score += 15;
-            } else {
-                $('#seo-meta-status').removeClass().addClass('badge badge-danger').text('Trop court');
-                score += 5;
-            }
-            
-            // Analyse du contenu
-            const wordCount = content.replace(/<[^>]*>/g, '').split(/\s+/).length;
-            $('#word-count').text(wordCount);
-            if (wordCount >= 300) {
-                $('#seo-content-status').removeClass().addClass('badge badge-success').text('Suffisant');
-                score += 30;
-            } else if (wordCount >= 150) {
-                $('#seo-content-status').removeClass().addClass('badge badge-warning').text('Court');
-                score += 20;
-            } else {
-                $('#seo-content-status').removeClass().addClass('badge badge-danger').text('Trop court');
-                score += 10;
-            }
-            
-            // Analyse des tags
-            const tagCount = tags ? tags.split(',').length : 0;
-            $('#tags-count').text(tagCount);
-            if (tagCount >= 3 && tagCount <= 5) {
-                $('#seo-tags-status').removeClass().addClass('badge badge-success').text('Optimal');
-                score += 15;
-            } else if (tagCount > 0) {
-                $('#seo-tags-status').removeClass().addClass('badge badge-warning').text('Correct');
-                score += 10;
-            } else {
-                $('#seo-tags-status').removeClass().addClass('badge badge-danger').text('Manquant');
-                score += 0;
-            }
-            
-            // Image
-            if (hasImage) {
-                $('#seo-image-status').removeClass().addClass('badge badge-success').text('Présente');
-                score += 15;
-            } else {
-                $('#seo-image-status').removeClass().addClass('badge badge-warning').text('Manquante');
-            }
-            
-            // Mise à jour du score
-            $('#seo-score').text(score);
-            $('#seo-score-bar').css('width', score + '%').removeClass().addClass('progress-bar');
-            if (score >= 80) $('#seo-score-bar').addClass('bg-success');
-            else if (score >= 60) $('#seo-score-bar').addClass('bg-warning');
-            else $('#seo-score-bar').addClass('bg-danger');
-        }
-        
-        function previewArticle() {
-            const title = $('#article_title').val();
-            const content = $('#summernote').summernote('code');
-            const excerpt = $('#article_excerpt').val();
-            
-            const previewHtml = `
-                <article class="preview-article">
-                    <h1>${title}</h1>
-                    ${excerpt ? `<div class="lead">${excerpt}</div>` : ''}
-                    <div class="content">${content}</div>
-                </article>
-            `;
-            
-            $('#preview-content').html(previewHtml);
-            $('#previewModal').modal('show');
-        }
-        
-        function saveAsDraft() {
-            $('#article_isPublished').prop('checked', false);
-            $('#article-edit-form').submit();
-        }
-        
-        function removeCurrentImage() {
-            if (confirm('Supprimer l\'image actuelle ?')) {
-                $('.current-image').remove();
-                updateSEOAnalysis();
-            }
-        }
     </script>
 {% endblock %}

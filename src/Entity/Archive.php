@@ -48,6 +48,7 @@ class Archive
     #[ORM\Column]
     private bool $isPublished = false;
 
+    
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'favoriteArchives')]
     private Collection $favoredBy;
 

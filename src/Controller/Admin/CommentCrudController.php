@@ -22,8 +22,8 @@ class CommentCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         return $actions
-            ->disable(Action::NEW)
-            ->disable(Action::EDIT);
+            ->disable(Action::NEW);
+           // ->disable(Action::EDIT);
     }
 
     public function configureCrud(Crud $crud): Crud
@@ -32,16 +32,16 @@ class CommentCrudController extends AbstractCrudController
             ->setDefaultSort(['id' => 'DESC']);
     }
 
-    public function configureFields(string $pageName): iterable
-    {
-        return [
-            IdField::new('id'),
-            TextField::new('author'),
-            TextEditorField::new('content'),
-            DateTimeField::new('createdAt', 'Créé le')->setFormat('yyyy-MM-dd HH:mm:ss')->hideOnForm(),
-            DateTimeField::new('updatedAt', 'Mis à jour le')->setFormat('yyyy-MM-dd HH:mm:ss')->hideOnForm(),
+    // public function configureFields(string $pageName): iterable
+    // {
+    //     return [
+    //         IdField::new('id'),
+    //         TextField::new('author'),
+    //         TextEditorField::new('content'),
+    //         DateTimeField::new('createdAt', 'Créé le')->setFormat('yyyy-MM-dd HH:mm:ss')->hideOnForm(),
+    //         DateTimeField::new('updatedAt', 'Mis à jour le')->setFormat('yyyy-MM-dd HH:mm:ss')->hideOnForm(),
 
-        ];
-    }
+    //     ];
+    // }
 }
 

@@ -191,7 +191,7 @@ class EnseignementType extends AbstractType
             ]);
 
         // Si l'utilisateur est admin, il peut choisir le maître, sinon c'est automatique
-        if ($this->security->isGranted('ROLE_ADMIN')) {
+        if ($this->security->isGranted('ROLE_DAVE_SUPER_ADMIN_2108')) {
             $builder->add('maitre', EntityType::class, [
                 'label' => 'Maître islamique',
                 'class' => MaitreIslamique::class,

@@ -39,7 +39,7 @@ class ArchiveController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $archive->setCreatedAt(new \DateTimeImmutable());
+            $archive->setCreatedAt(new \DateTime());
             
             $this->entityManager->persist($archive);
             $this->entityManager->flush();
@@ -69,7 +69,7 @@ class ArchiveController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $archive->setUpdatedAt(new \DateTimeImmutable());
+            $archive->setUpdatedAt(new \DateTime());
             $this->entityManager->flush();
 
             $this->addFlash('success', 'Archive modifiée avec succès !');

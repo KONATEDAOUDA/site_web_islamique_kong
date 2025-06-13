@@ -11,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
 
@@ -77,6 +78,7 @@ class PodcastType extends AbstractType
             ->add('externalUrl', UrlType::class, [
                 'label' => 'Lien externe (YouTube, SoundCloud, etc.)',
                 'required' => false,
+                'default_protocol' => 'https',
                 'attr' => [
                     'class' => 'form-control',
                     'placeholder' => 'https://youtube.com/watch?v=...'
@@ -134,6 +136,22 @@ class PodcastType extends AbstractType
                     'class' => 'form-control'
                 ]
             ]);
+
+        // Transformer pour les tags (array <-> string)
+        $builder->get('tags')
+            ->addModelTransformer(new CallbackTransformer(
+                function ($tagsArray) {
+                    // Transforme l'array en string pour l'affichage
+                    return is_array($tagsArray) ? implode(', ', $tagsArray) : '';
+                },
+                function ($tagsString) {
+                    // Transforme la string en array pour l'entité
+                    if (empty($tagsString)) {
+                        return [];
+                    }
+                    return array_map('trim', explode(',', $tagsString));
+                }
+            ));
     }
 
     public function configureOptions(OptionsResolver $resolver): void

@@ -10,11 +10,11 @@ trait StateEntity
 {
     #[ORM\Column]
     #[Groups('minimum')]
-    private ?bool $deleted = null;
+    private ?bool $deleted = false;
 
     #[ORM\Column]
     #[Groups('minimum')]
-    private ?bool $valid = null;
+    private ?bool $valid = true;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: true)]

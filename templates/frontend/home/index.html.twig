@@ -13,7 +13,7 @@
                     <p class="lead">Un espace de préservation et de partage du patrimoine islamique de Kong</p>
                     <div class="mt-4">
                         <a href="{{ path('app_about') }}" class="btn btn-primary btn-lg me-2">En savoir plus</a>
-                        <a href="{{ path('app_blog') }}" class="btn btn-outline-light btn-lg">Explorer le blog</a>
+                        <a href="{{ path('app_blog_index') }}" class="btn btn-outline-light btn-lg">Explorer le blog</a>
                     </div>
                 </div>
             </div>
@@ -78,7 +78,7 @@
             </div>
             <div class="row">
                 <div class="col-md-12 text-center mt-4">
-                    <a href="{{ path('app_blog') }}" class="btn btn-primary">Voir tous les articles</a>
+                    <a href="{{ path('app_blog_show', {'slug': 'tous-les-articles'}) }}" class="btn btn-primary">Voir tous les articles</a>
                 </div>
             </div>
         </div>
@@ -124,7 +124,7 @@
         </div>
         <div class="row">
             <div class="col-md-12 text-center mt-4">
-                <a href="{{ path('app_podcast') }}" class="btn btn-primary">Voir tous les podcasts</a>
+                <a href="{{ path('app_podcast_index') }}" class="btn btn-primary">Voir tous les podcasts</a>
             </div>
         </div>
     </div>
@@ -157,7 +157,7 @@
                                     <p class="card-text">{{ archive.description }}</p>
                                 </div>
                                 <div class="card-footer bg-white border-0">
-                                    <a href="{{ path('app_archive_show') }}" class="btn btn-sm btn-outline-primary">Consulter</a>
+                                    <a href="{{ path('app_archive_show', {'slug': archive.slug}) }}" class="btn btn-sm btn-outline-primary">Consulter</a>
                                     <small class="text-muted float-end">{{ archive.year }}</small>
                                 </div>
                             </div>

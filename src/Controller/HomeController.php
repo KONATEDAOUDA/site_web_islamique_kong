@@ -141,30 +141,6 @@ class HomeController extends AbstractController
     }
 
     // =============================== creation  des routes de test =============================
-        
-    #[Route(path: '/blog', name: 'app_blog')]
-    public function blog()
-    {
-        // app_blog
-    }
-
-    #[Route(path: '/blog_show', name: 'app_blog_show')]
-    public function blog_show()
-    {
-        // blog_show
-    }
-
-    #[Route(path: '/podcast', name: 'app_podcast')]
-    public function podcast()
-    {
-        // app_podcast
-    }
-
-    #[Route(path: '/podcast_show', name: 'app_podcast_show')]
-    public function podcast_show()
-    {
-        // podcast_show
-    }
 
     #[Route(path: '/archive', name: 'app_archive')]
     public function archive()

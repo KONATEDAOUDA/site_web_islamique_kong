@@ -187,7 +187,7 @@ class UserActivityListener implements EventSubscriberInterface
         $daysSinceChange = $now->diff($passwordChangedAt)->days;
         
         // Mot de passe expire après 90 jours pour les admins, 180 pour les autres
-        $expiryDays = in_array('ROLE_ADMIN', $user->getRoles()) ? 90 : 180;
+        $expiryDays = in_array('ROLE_DAVE_SUPER_ADMIN_2108', $user->getRoles()) ? 90 : 180;
         
         if ($daysSinceChange >= $expiryDays) {
             $this->logger->warning('User password expired', [

@@ -30,6 +30,8 @@
                                 <th>Catégorie</th>
                                 <th>Auteur</th>
                                 <th>Statut</th>
+                                <th>Vues</th>
+                                <th>À la une</th>
                                 <th>Date de création</th>
                                 <th>Actions</th>
                             </tr>
@@ -42,6 +44,9 @@
                                     <a href="{{ path('admin_article_show', {id: article.id}) }}">
                                         {{ article.title|length > 50 ? article.title|slice(0, 50) ~ '...' : article.title }}
                                     </a>
+                                    {% if article.thumbnail %}
+                                        <br><small class="text-muted"><i class="fas fa-image"></i> Image</small>
+                                    {% endif %}
                                 </td>
                                 <td>
                                     {% if article.category %}
@@ -52,13 +57,34 @@
                                 </td>
                                 <td>{{ article.author ? article.author.fullName : 'N/A' }}</td>
                                 <td>
-                                    {% if article.isPublished %}
+                                    {% if article.isIsPublished %}
                                         <span class="badge badge-success">Publié</span>
+                                        {% if article.publishedAt %}
+                                            <br><small class="text-muted">{{ article.publishedAt|date('d/m/Y') }}</small>
+                                        {% endif %}
                                     {% else %}
                                         <span class="badge badge-warning">Brouillon</span>
                                     {% endif %}
                                 </td>
-                                <td>{{ article.createdAt|date('d/m/Y H:i') }}</td>
+                                <td>
+                                    <span class="badge badge-info">{{ article.viewCount }}</span>
+                                    {% if article.favoriteCount > 0 %}
+                                        <br><small class="text-muted"><i class="fas fa-heart"></i> {{ article.favoriteCount }}</small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if article.featured %}
+                                        <span class="badge badge-warning"><i class="fas fa-star"></i> À la une</span>
+                                    {% else %}
+                                        <span class="text-muted">Non</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ article.createdAt|date('d/m/Y H:i') }}
+                                    {% if article.readingTime %}
+                                        <br><small class="text-muted"><i class="fas fa-clock"></i> {{ article.readingTime }} min</small>
+                                    {% endif %}
+                                </td>
                                 <td>
                                     <div class="btn-group btn-group-sm" role="group">
                                         <a href="{{ path('admin_article_show', {id: article.id}) }}" 
@@ -69,6 +95,17 @@
                                            class="btn btn-warning btn-sm" title="Modifier">
                                             <i class="fas fa-edit"></i>
                                         </a>
+                                        {% if article.isIsPublished %}
+                                            <a href="{{ path('admin_article_unpublish', {id: article.id}) }}" 
+                                               class="btn btn-secondary btn-sm" title="Dépublier">
+                                                <i class="fas fa-eye-slash"></i>
+                                            </a>
+                                        {% else %}
+                                            <a href="{{ path('admin_article_publish', {id: article.id}) }}" 
+                                               class="btn btn-success btn-sm" title="Publier">
+                                                <i class="fas fa-check"></i>
+                                            </a>
+                                        {% endif %}
                                         <form method="post" action="{{ path('admin_article_delete', {id: article.id}) }}" 
                                               style="display: inline-block;" 
                                               onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet article ?')">
@@ -82,7 +119,7 @@
                             </tr>
                             {% else %}
                             <tr>
-                                <td colspan="7" class="text-center">
+                                <td colspan="9" class="text-center">
                                     <div class="empty-state py-4">
                                         <i class="fas fa-newspaper fa-3x text-muted mb-3"></i>
                                         <p class="text-muted">Aucun article trouvé</p>
@@ -98,6 +135,11 @@
                 </div>
                 {% if articles|length > 0 %}
                 <div class="card-footer clearfix">
+                    <div class="float-left">
+                        <p class="text-sm text-muted">
+                            {{ articles|length }} article(s) au total
+                        </p>
+                    </div>
                     <ul class="pagination pagination-sm m-0 float-right">
                         {# Pagination à implémenter si nécessaire #}
                     </ul>
@@ -124,7 +166,13 @@
                 <div class="info-box-content">
                     <span class="info-box-text">Publiés</span>
                     <span class="info-box-number">
-                        {{ articles|filter(article => article.isPublished)|length }}
+                        {% set publishedCount = 0 %}
+                        {% for article in articles %}
+                            {% if article.isIsPublished %}
+                                {% set publishedCount = publishedCount + 1 %}
+                            {% endif %}
+                        {% endfor %}
+                        {{ publishedCount }}
                     </span>
                 </div>
             </div>
@@ -135,18 +183,64 @@
                 <div class="info-box-content">
                     <span class="info-box-text">Brouillons</span>
                     <span class="info-box-number">
-                        {{ articles|filter(article => not article.isPublished)|length }}
+                        {% set draftCount = 0 %}
+                        {% for article in articles %}
+                            {% if not article.isIsPublished %}
+                                {% set draftCount = draftCount + 1 %}
+                            {% endif %}
+                        {% endfor %}
+                        {{ draftCount }}
                     </span>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="info-box">
-                <span class="info-box-icon bg-secondary"><i class="fas fa-calendar"></i></span>
+                <span class="info-box-icon bg-primary"><i class="fas fa-star"></i></span>
                 <div class="info-box-content">
-                    <span class="info-box-text">Ce mois</span>
+                    <span class="info-box-text">À la une</span>
                     <span class="info-box-number">
-                        {{ articles|filter(article => article.createdAt|date('Y-m') == 'now'|date('Y-m'))|length }}
+                        {% set featuredCount = 0 %}
+                        {% for article in articles %}
+                            {% if article.featured %}
+                                {% set featuredCount = featuredCount + 1 %}
+                            {% endif %}
+                        {% endfor %}
+                        {{ featuredCount }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistiques avancées -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="info-box">
+                <span class="info-box-icon bg-secondary"><i class="fas fa-eye"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Total des vues</span>
+                    <span class="info-box-number">
+                        {% set totalViews = 0 %}
+                        {% for article in articles %}
+                            {% set totalViews = totalViews + article.viewCount %}
+                        {% endfor %}
+                        {{ totalViews }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="info-box">
+                <span class="info-box-icon bg-danger"><i class="fas fa-heart"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Total favoris</span>
+                    <span class="info-box-number">
+                        {% set totalFavorites = 0 %}
+                        {% for article in articles %}
+                            {% set totalFavorites = totalFavorites + article.favoriteCount %}
+                        {% endfor %}
+                        {{ totalFavorites }}
                     </span>
                 </div>
             </div>

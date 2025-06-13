@@ -46,20 +46,23 @@ class PodcastVoter extends Voter implements VoterInterface
     private function canView(Podcast $podcast, User $user): bool
     {
         return in_array('ROLE_PODCAST_MANAGER', $user->getRoles()) 
-            || in_array('ROLE_ADMIN', $user->getRoles())
+            || in_array('ROLE_SUPERVISOR', $user->getRoles())
+            || in_array('ROLE_DAVE_SUPER_ADMIN_2108', $user->getRoles())
             || $podcast->getAuthor() === $user;
     }
 
     private function canEdit(Podcast $podcast, User $user): bool
     {
         return in_array('ROLE_PODCAST_MANAGER', $user->getRoles()) 
-            || in_array('ROLE_ADMIN', $user->getRoles())
+            || in_array('ROLE_SUPERVISOR', $user->getRoles())
+            || in_array('ROLE_DAVE_SUPER_ADMIN_2108', $user->getRoles())
             || $podcast->getAuthor() === $user;
     }
 
     private function canDelete(Podcast $podcast, User $user): bool
     {
-        return in_array('ROLE_ADMIN', $user->getRoles()) 
-            || (in_array('ROLE_PODCAST_MANAGER', $user->getRoles()) && $podcast->getAuthor() === $user);
+        return in_array('ROLE_DAVE_SUPER_ADMIN_2108', $user->getRoles())
+            || (in_array('ROLE_PODCAST_MANAGER', $user->getRoles()) && $podcast->getAuthor() === $user)
+            || (in_array('ROLE_SUPERVISOR', $user->getRoles()) && $podcast->getAuthor() === $user);
     }
 }

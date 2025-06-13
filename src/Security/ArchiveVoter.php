@@ -45,21 +45,24 @@ class ArchiveVoter extends Voter implements VoterInterface
 
     private function canView(Archive $archive, User $user): bool
     {
-        return in_array('ROLE_ARCHIVE_MANAGER', $user->getRoles()) 
-            || in_array('ROLE_ADMIN', $user->getRoles())
+        return in_array('ROLE_ARCHIVE_MANAGER', $user->getRoles())
+            || in_array('ROLE_SUPERVISOR', $user->getRoles())
+            || in_array('ROLE_DAVE_SUPER_ADMIN_2108', $user->getRoles())
             || $archive->getAuthor() === $user;
     }
 
     private function canEdit(Archive $archive, User $user): bool
     {
-        return in_array('ROLE_ARCHIVE_MANAGER', $user->getRoles()) 
-            || in_array('ROLE_ADMIN', $user->getRoles())
+        return in_array('ROLE_ARCHIVE_MANAGER', $user->getRoles())
+            || in_array('ROLE_SUPERVISOR', $user->getRoles())
+            || in_array('ROLE_DAVE_SUPER_ADMIN_2108', $user->getRoles())
             || $archive->getAuthor() === $user;
     }
 
     private function canDelete(Archive $archive, User $user): bool
     {
-        return in_array('ROLE_ADMIN', $user->getRoles()) 
-            || (in_array('ROLE_ARCHIVE_MANAGER', $user->getRoles()) && $archive->getAuthor() === $user);
+        return in_array('ROLE_DAVE_SUPER_ADMIN_2108', $user->getRoles())
+            || (in_array('ROLE_ARCHIVE_MANAGER', $user->getRoles()) && $archive->getAuthor() === $user)
+            || (in_array('ROLE_SUPERVISOR', $user->getRoles()) && $archive->getAuthor() === $user);
     }
 }

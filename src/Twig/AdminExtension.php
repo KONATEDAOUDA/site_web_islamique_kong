@@ -82,7 +82,7 @@ class AdminExtension extends AbstractExtension
     public function renderRoleLabel(array $roles): string
     {
         $roleLabels = [
-            'ROLE_ADMIN' => '<span class="badge badge-danger"><i class="fas fa-crown"></i> Administrateur</span>',
+            'ROLE_DAVE_SUPER_ADMIN_2108' => '<span class="badge badge-danger"><i class="fas fa-crown"></i> Administrateur</span>',
             'ROLE_SUPERVISOR' => '<span class="badge badge-info"><i class="fas fa-eye"></i> Superviseur</span>',
             'ROLE_BLOG_MANAGER' => '<span class="badge badge-primary"><i class="fas fa-newspaper"></i> Gestionnaire Blog</span>',
             'ROLE_TEACHER' => '<span class="badge badge-success"><i class="fas fa-chalkboard-teacher"></i> Enseignant</span>',
@@ -220,7 +220,7 @@ class AdminExtension extends AbstractExtension
         ];
 
         // Articles
-        if ($this->security->isGranted('ROLE_BLOG_MANAGER') || $this->security->isGranted('ROLE_ADMIN')) {
+        if ($this->security->isGranted('ROLE_BLOG_MANAGER') || $this->security->isGranted('ROLE_DAVE_SUPER_ADMIN_2108')) {
             $menuItems[] = [
                 'title' => 'Articles',
                 'icon' => 'fas fa-newspaper',
@@ -232,7 +232,7 @@ class AdminExtension extends AbstractExtension
         }
 
         // Podcasts
-        if ($this->security->isGranted('ROLE_TEACHER') || $this->security->isGranted('ROLE_ADMIN')) {
+        if ($this->security->isGranted('ROLE_TEACHER') || $this->security->isGranted('ROLE_DAVE_SUPER_ADMIN_2108')) {
             $menuItems[] = [
                 'title' => 'Podcasts',
                 'icon' => 'fas fa-microphone',
@@ -244,7 +244,7 @@ class AdminExtension extends AbstractExtension
         }
 
         // Archives
-        if ($this->security->isGranted('ROLE_ARCHIVE_MANAGER') || $this->security->isGranted('ROLE_ADMIN')) {
+        if ($this->security->isGranted('ROLE_ARCHIVE_MANAGER') || $this->security->isGranted('ROLE_DAVE_SUPER_ADMIN_2108')) {
             $menuItems[] = [
                 'title' => 'Archives',
                 'icon' => 'fas fa-archive',
@@ -256,7 +256,7 @@ class AdminExtension extends AbstractExtension
         }
 
         // Enseignements
-        if ($this->security->isGranted('ROLE_TEACHER') || $this->security->isGranted('ROLE_ADMIN')) {
+        if ($this->security->isGranted('ROLE_TEACHER') || $this->security->isGranted('ROLE_DAVE_SUPER_ADMIN_2108')) {
             $menuItems[] = [
                 'title' => 'Enseignements',
                 'icon' => 'fas fa-chalkboard-teacher',
@@ -268,7 +268,7 @@ class AdminExtension extends AbstractExtension
         }
 
         // Forum
-        if ($this->security->isGranted('ROLE_SUPERVISOR') || $this->security->isGranted('ROLE_ADMIN')) {
+        if ($this->security->isGranted('ROLE_SUPERVISOR') || $this->security->isGranted('ROLE_DAVE_SUPER_ADMIN_2108')) {
             $menuItems[] = [
                 'title' => 'Forum',
                 'icon' => 'fas fa-comments',
@@ -281,7 +281,7 @@ class AdminExtension extends AbstractExtension
         }
 
         // Administration
-        if ($this->security->isGranted('ROLE_ADMIN')) {
+        if ($this->security->isGranted('ROLE_DAVE_SUPER_ADMIN_2108')) {
             $menuItems[] = [
                 'title' => 'Administration',
                 'icon' => 'fas fa-cogs',
@@ -390,13 +390,13 @@ class AdminExtension extends AbstractExtension
         }
 
         return [
-            'canManageArticles' => $this->security->isGranted('ROLE_ADMIN') || $this->security->isGranted('ROLE_BLOG_MANAGER'),
-            'canManagePodcasts' => $this->security->isGranted('ROLE_ADMIN') || $this->security->isGranted('ROLE_TEACHER'),
-            'canManageArchives' => $this->security->isGranted('ROLE_ADMIN') || $this->security->isGranted('ROLE_ARCHIVE_MANAGER'),
-            'canManageEnseignements' => $this->security->isGranted('ROLE_ADMIN') || $this->security->isGranted('ROLE_TEACHER'),
-            'canManageForum' => $this->security->isGranted('ROLE_ADMIN') || $this->security->isGranted('ROLE_SUPERVISOR'),
-            'canManageUsers' => $this->security->isGranted('ROLE_ADMIN'),
-            'canAccessEasyAdmin' => $this->security->isGranted('ROLE_ADMIN'),
+            'canManageArticles' => $this->security->isGranted('ROLE_DAVE_SUPER_ADMIN_2108') || $this->security->isGranted('ROLE_BLOG_MANAGER'),
+            'canManagePodcasts' => $this->security->isGranted('ROLE_DAVE_SUPER_ADMIN_2108') || $this->security->isGranted('ROLE_TEACHER'),
+            'canManageArchives' => $this->security->isGranted('ROLE_DAVE_SUPER_ADMIN_2108') || $this->security->isGranted('ROLE_ARCHIVE_MANAGER'),
+            'canManageEnseignements' => $this->security->isGranted('ROLE_DAVE_SUPER_ADMIN_2108') || $this->security->isGranted('ROLE_TEACHER'),
+            'canManageForum' => $this->security->isGranted('ROLE_DAVE_SUPER_ADMIN_2108') || $this->security->isGranted('ROLE_SUPERVISOR'),
+            'canManageUsers' => $this->security->isGranted('ROLE_DAVE_SUPER_ADMIN_2108'),
+            'canAccessEasyAdmin' => $this->security->isGranted('ROLE_DAVE_SUPER_ADMIN_2108'),
         ];
     }
 
