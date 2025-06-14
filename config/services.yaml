@@ -12,7 +12,7 @@ parameters:
     adminlte:
         skin: 'blue'
         layout: 'fixed'
-        brand_logo: '/images/logo/logo.png'
+        brand_logo: '/assets/images/logo/logo.png'
         brand_text: 'Kong Administration'
     kong:
         site_name: 'Portail Islamique de Kong'

@@ -18,21 +18,21 @@ class HomeController extends AbstractController
             [
                 'title' => 'L\'histoire de la mosquée de Kong',
                 'excerpt' => 'Découvrez l\'histoire fascinante de la mosquée de Kong, un joyau architectural du XVIIIe siècle...',
-                'thumbnail' => 'images/grande_mosquee_kong_old.jpg',
+                'thumbnail' => 'assets/images/grande_mosquee_kong_old.jpg',
                 'slug' => 'histoire-mosquee-kong',
                 'createdAt' => new \DateTime('2023-08-15')
             ],
             [
                 'title' => 'Les manuscrits islamiques de Kong',
                 'excerpt' => 'Kong abrite une collection unique de manuscrits islamiques anciens qui témoignent de la richesse intellectuelle...',
-                'thumbnail' => 'images/manuscripts-thumbnail.jpg',
+                'thumbnail' => 'assets/images/manuscripts-thumbnail.jpg',
                 'slug' => 'manuscrits-islamiques-kong',
                 'createdAt' => new \DateTime('2023-09-01')
             ],
             [
                 'title' => 'Traditions et pratiques islamiques à Kong',
                 'excerpt' => 'Explorez les traditions et pratiques islamiques uniques qui ont façonné la culture de Kong au fil des siècles...',
-                'thumbnail' => 'images/traditions-thumbnail.jpg',
+                'thumbnail' => 'assets/images/traditions-thumbnail.jpg',
                 'slug' => 'traditions-pratiques-islamiques-kong',
                 'createdAt' => new \DateTime('2023-09-15')
             ]
@@ -42,21 +42,21 @@ class HomeController extends AbstractController
             [
                 'title' => 'Entretien avec l\'Imam de Kong',
                 'description' => 'Dans ce podcast, l\'Imam de Kong partage sa vision de l\'islam contemporain et les défis de la communauté.',
-                'audioFile' => 'podcasts/imam-interview.mp3',
+                'audioFile' => 'assets/podcasts/imam-interview.mp3',
                 'slug' => 'entretien-imam-kong',
                 'createdAt' => new \DateTime('2023-08-20')
             ],
             [
                 'title' => 'L\'héritage soufi à Kong',
                 'description' => 'Découvrez l\'influence du soufisme sur la pratique islamique à Kong et son impact sur la spiritualité locale.',
-                'audioFile' => 'podcasts/soufi-heritage.mp3',
+                'audioFile' => 'assets/podcasts/soufi-heritage.mp3',
                 'slug' => 'heritage-soufi-kong',
                 'createdAt' => new \DateTime('2023-09-05')
             ],
             [
                 'title' => 'Éducation islamique à Kong',
                 'description' => 'Comment l\'éducation islamique a évolué à Kong et son rôle dans la transmission des connaissances religieuses.',
-                'audioFile' => 'podcasts/education-islamique.mp3',
+                'audioFile' => 'assets/podcasts/education-islamique.mp3',
                 'slug' => 'education-islamique-kong',
                 'createdAt' => new \DateTime('2023-09-20')
             ]
@@ -86,7 +86,7 @@ class HomeController extends AbstractController
                 'title' => 'Documents historiques sur la fondation de Kong',
                 'description' => 'Collection de documents historiques sur la fondation de la ville de Kong et son développement comme centre islamique.',
                 'type' => 'article',
-                'thumbnail' => 'images/archives/documents-historiques.jpg',
+                'thumbnail' => 'assets/images/archives/documents-historiques.jpg',
                 'slug' => 'documents-historiques-fondation-kong',
                 'year' => '2022',
                 'createdAt' => new \DateTime('2022-10-15')
@@ -95,7 +95,7 @@ class HomeController extends AbstractController
                 'title' => 'Chants soufis traditionnels de Kong',
                 'description' => 'Enregistrements rares de chants soufis traditionnels pratiqués à Kong depuis des générations.',
                 'type' => 'audio',
-                'audioFile' => 'archives/chants-soufis.mp3',
+                'audioFile' => 'assets/archives/chants-soufis.mp3',
                 'slug' => 'chants-soufis-traditionnels-kong',
                 'year' => '2022',
                 'createdAt' => new \DateTime('2022-11-20')
@@ -104,7 +104,7 @@ class HomeController extends AbstractController
                 'title' => 'La vie quotidienne des érudits islamiques de Kong',
                 'description' => 'Documentaire sur la vie quotidienne des érudits islamiques de Kong et leur rôle dans la communauté.',
                 'type' => 'video',
-                'videoFile' => 'archives/erudits-kong.mp4',
+                'videoFile' => 'assets/archives/erudits-kong.mp4',
                 'slug' => 'vie-quotidienne-erudits-islamiques-kong',
                 'year' => '2023',
                 'createdAt' => new \DateTime('2023-01-10')

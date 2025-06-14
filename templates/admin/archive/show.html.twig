@@ -31,7 +31,7 @@
                 
                 {% if archive.featuredImage %}
                 <div class="card-img-top">
-                    <img src="{{ asset('uploads/archives/' ~ archive.featuredImage) }}" 
+                    <img src="{{ asset('assets/archives/' ~ archive.featuredImage) }}" 
                          alt="{{ archive.title }}" 
                          class="img-fluid"
                          style="width: 100%; max-height: 400px; object-fit: cover;">
@@ -97,7 +97,7 @@
                     <div class="media mb-3">
                         <div class="media-object mr-3">
                             {% if comment.author.profilePicture %}
-                                <img src="{{ asset('uploads/users/' ~ comment.author.profilePicture) }}" 
+                                <img src="{{ asset('assets/uploads/users/' ~ comment.author.profilePicture) }}" 
                                      alt="Avatar" class="img-circle" style="width: 50px; height: 50px;">
                             {% else %}
                                 <div class="bg-info rounded-circle d-flex align-items-center justify-content-center" 
@@ -148,7 +148,7 @@
                             <td>
                                 <div class="d-flex align-items-center">
                                     {% if archive.author.profilePicture %}
-                                        <img src="{{ asset('uploads/users/' ~ archive.author.profilePicture) }}" 
+                                        <img src="{{ asset('assets/uploads/users/' ~ archive.author.profilePicture) }}" 
                                              alt="Avatar" class="img-circle img-size-32 mr-2">
                                     {% else %}
                                         <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center mr-2" 
@@ -313,7 +313,7 @@
                             <a href="{{ path('admin_archive_show', {id: related.id}) }}" class="text-decoration-none">
                                 <div class="d-flex align-items-center">
                                     {% if related.featuredImage %}
-                                        <img src="{{ asset('uploads/archives/' ~ related.featuredImage) }}" 
+                                        <img src="{{ asset('assets/uploads/archives/' ~ related.featuredImage) }}" 
                                              alt="Image" class="rounded mr-3" style="width: 50px; height: 50px; object-fit: cover;">
                                     {% else %}
                                         <div class="bg-secondary rounded d-flex align-items-center justify-content-center mr-3" 

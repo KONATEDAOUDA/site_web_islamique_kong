@@ -154,7 +154,7 @@ class ArticleController extends AbstractController
         $fileName = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
 
         try {
-            $uploadsDirectory = $this->getParameter('kernel.project_dir').'/public/uploads/articles';
+            $uploadsDirectory = $this->getParameter('kernel.project_dir').'/public/assets/uploads/articles';
             
             // Créer le dossier s'il n'existe pas
             if (!is_dir($uploadsDirectory)) {

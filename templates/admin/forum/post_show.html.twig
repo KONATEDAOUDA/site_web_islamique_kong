@@ -35,7 +35,7 @@
                 <div class="media mb-3">
                     <div class="media-object mr-3">
                         {% if post.author.profilePicture %}
-                            <img src="{{ asset('uploads/users/' ~ post.author.profilePicture) }}" 
+                            <img src="{{ asset('assets/uploads/users/' ~ post.author.profilePicture) }}" 
                                  alt="Avatar" class="img-circle" style="width:50px; height:50px;">
                         {% else %}
                             <div class="bg-info rounded-circle d-flex align-items-center justify-content-center"
@@ -159,7 +159,7 @@
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     {% if post.author.profilePicture %}
-                        <img src="{{ asset('uploads/users/' ~ post.author.profilePicture) }}" 
+                        <img src="{{ asset('assets/uploads/users/' ~ post.author.profilePicture) }}" 
                              alt="Avatar" class="img-circle img-size-32 mr-2">
                     {% else %}
                         <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center mr-2" 

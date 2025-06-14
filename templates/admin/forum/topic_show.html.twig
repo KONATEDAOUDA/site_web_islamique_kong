@@ -33,7 +33,7 @@
                 <div class="media mb-3">
                     <div class="media-object mr-3">
                         {% if topic.author.profilePicture %}
-                            <img src="{{ asset('uploads/users/' ~ topic.author.profilePicture) }}" 
+                            <img src="{{ asset('assets/uploads/users/' ~ topic.author.profilePicture) }}" 
                                  alt="Avatar" class="img-circle" style="width:50px; height:50px;">
                         {% else %}
                             <div class="bg-info rounded-circle d-flex align-items-center justify-content-center"
@@ -94,7 +94,7 @@
                         <div class="d-flex align-items-start">
                             <div class="mr-3">
                                 {% if post.author.profilePicture %}
-                                    <img src="{{ asset('uploads/users/' ~ post.author.profilePicture) }}" 
+                                    <img src="{{ asset('assets/uploads/users/' ~ post.author.profilePicture) }}" 
                                          alt="Avatar" class="img-circle" style="width:40px; height:40px;">
                                 {% else %}
                                     <div class="bg-info rounded-circle d-flex align-items-center justify-content-center"

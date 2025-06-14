@@ -12,8 +12,6 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <!-- Summernote -->
-    <link rel="stylesheet" href="{{ asset('plugins/summernote/summernote-bs4.min.css') }}">
     <!-- Select2 -->
     <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
 {% endblock %}
@@ -139,7 +137,7 @@
                                 {# Affichage du fichier existant #}
                                 {% if enseignement.supportFilePath is defined and enseignement.supportFilePath %}
                                     <div class="mt-2">
-                                        <a href="{{ asset('uploads/enseignements/' ~ enseignement.supportFilePath) }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                        <a href="{{ asset('assets/uploads/enseignements/' ~ enseignement.supportFilePath) }}" target="_blank" class="btn btn-outline-primary btn-sm">
                                             <i class="fas fa-file-download mr-1"></i>Fichier actuel
                                         </a>
                                     </div>
@@ -159,7 +157,7 @@
                                 {% if enseignement.audioFilePath is defined and enseignement.audioFilePath %}
                                     <div class="mt-2">
                                         <audio controls style="width:100%;">
-                                            <source src="{{ asset('uploads/enseignements/' ~ enseignement.audioFilePath) }}">
+                                            <source src="{{ asset('assets/enseignements/' ~ enseignement.audioFilePath) }}">
                                             Votre navigateur ne supporte pas l'audio.
                                         </audio>
                                     </div>

@@ -12,8 +12,6 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <!-- Summernote -->
-    <link rel="stylesheet" href="{{ asset('plugins/summernote/summernote-bs4.min.css') }}">
     <!-- Select2 -->
     <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
 {% endblock %}
@@ -99,7 +97,7 @@
                                 </small>
                                 {% if podcast.filePath is defined and podcast.filePath %}
                                     <div class="mt-2">
-                                        <a href="{{ asset('uploads/podcasts/' ~ podcast.filePath) }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                        <a href="{{ asset('assets/uploads/podcasts/' ~ podcast.filePath) }}" target="_blank" class="btn btn-outline-primary btn-sm">
                                             <i class="fas fa-file-audio mr-1"></i>Fichier actuel
                                         </a>
                                     </div>
@@ -123,7 +121,7 @@
                                 <small class="form-text text-muted">Image de couverture (optionnelle)</small>
                                 {% if podcast.thumbnail is defined and podcast.thumbnail %}
                                     <div class="mt-2">
-                                        <img src="{{ asset('uploads/podcasts/' ~ podcast.thumbnail) }}" alt="Aperçu" class="img-thumbnail" style="max-width: 150px;">
+                                        <img src="{{ asset('assets/uploads/podcasts/' ~ podcast.thumbnail) }}" alt="Aperçu" class="img-thumbnail" style="max-width: 150px;">
                                     </div>
                                 {% endif %}
                                 <div id="thumbnail-preview" class="mt-2" style="display: none;">

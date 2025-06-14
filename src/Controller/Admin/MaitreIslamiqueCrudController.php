@@ -39,8 +39,8 @@ class MaitreIslamiqueCrudController extends AbstractCrudController
             TextField::new('nom'),
             TextField::new('prenom'),
             ImageField::new('photo')
-                ->setUploadDir('public/uploads/maitres')
-                ->setBasePath('uploads/maitres'),
+                ->setUploadDir('public/assets/uploads/maitres')
+                ->setBasePath('assets/uploads/maitres'),
             TextEditorField::new('biographie'),
             TextEditorField::new('enseignements')->onlyOnForms(),
             TextField::new('specialite'),

@@ -54,8 +54,8 @@ class UserCrudController extends AbstractCrudController
                 ])
                 ->onlyWhenCreating(),
             ImageField::new('profilePicture', 'Photo de profil')
-                ->setBasePath('uploads/users')
-                ->setUploadDir('public/uploads/users')
+                ->setBasePath('assets/uploads/users')
+                ->setUploadDir('public/assets/uploads/users')
                 ->setUploadedFileNamePattern('[randomhash].[extension]')
                 ->setRequired(false),
             ChoiceField::new('roles', 'Rôles')

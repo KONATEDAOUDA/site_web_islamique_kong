@@ -13,7 +13,7 @@
                 <div class="col-md-4 mb-4">
                     <div class="card h-100">
                         {% if article.featuredImage %}
-                            <img src="{{ asset('uploads/articles/' ~ article.featuredImage) }}" class="card-img-top" alt="{{ article.title }}">
+                            <img src="{{ asset('assets/uploads/articles/' ~ article.featuredImage) }}" class="card-img-top" alt="{{ article.title }}">
                         {% endif %}
                         <div class="card-body">
                             <h5 class="card-title">{{ article.title }}</h5>

@@ -40,7 +40,7 @@
             
             {# Utilisation de thumbnail #}
             {% if article.thumbnail %}
-                <img src="{{ asset('uploads/articles/' ~ article.thumbnail) }}" 
+                <img src="{{ asset('assets/uploads/articles/' ~ article.thumbnail) }}" 
                      alt="{{ article.title }}" 
                      class="img-fluid rounded mb-4 w-100" 
                      style="max-height:400px; object-fit:cover;">
@@ -112,8 +112,8 @@
             <h3 class="h5 mb-4"><i class="fas fa-comments"></i> Commentaires ({{ approvedComments|length }})</h3>
             {% for comment in approvedComments %}
             <div class="media mb-4">
-                <img class="mr-3 rounded-circle" 
-                     src="{{ comment.author.profilePicture ? asset('uploads/users/' ~ comment.author.profilePicture) : asset('images/default-avatar.png') }}" 
+                <img class="mr-3 rounded-circle" images/
+                     src="{{ comment.author.profilePicture ? asset('assets/uploads/users/' ~ comment.author.profilePicture) : asset('default-avatar.png') }}" 
                      alt="Avatar" 
                      style="width:40px; height:40px; object-fit:cover;">
                 <div class="media-body">

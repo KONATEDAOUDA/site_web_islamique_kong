@@ -40,7 +40,7 @@ node_modules/
 
 # Assets and user uploads
 /web/bundles/
-/web/uploads/
+/web/assets/uploads/
 
 # PHPUnit
 /app/phpunit.xml

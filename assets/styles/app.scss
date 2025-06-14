@@ -47,7 +47,7 @@ body {
 
 // Hero section with background image 
 .hero-section { 
-  background-image: url('../images/kong-mosque.jpg'); // Corrected path
+  background-image: url('../assets/images/kong-mosque.jpg'); // Corrected path
   background-size: cover; 
   background-position: center; 
   background-repeat: no-repeat;
@@ -166,7 +166,7 @@ footer {
 // Islamic decoration elements 
 .islamic-pattern { 
   background-color: $light; 
-  background-image: url('../images/islamic-pattern.jpg'); // Corrected path
+  background-image: url('../assets/images/islamic-pattern.jpg'); // Corrected path
   background-size: 200px; 
   background-repeat: repeat; 
   padding: 40px 0; 

@@ -54,7 +54,7 @@ class ContentManager
             'filename' => $filename,
             'type' => $isImage ? 'image' : 'file',
             'directory' => $directory,
-            'path' => '/uploads/' . $directory . '/' . $filename
+            'path' => '/assets/uploads/' . $directory . '/' . $filename
         ];
     }
 

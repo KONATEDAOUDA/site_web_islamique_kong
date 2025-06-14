@@ -19,7 +19,7 @@
             <div class="row">
                 <div class="col-md-4">
                     {% if podcast.thumbnail %}
-                        <img src="{{ asset('uploads/podcasts/thumbnails/' ~ podcast.thumbnail) }}" 
+                        <img src="{{ asset('assets/uploads/podcasts/thumbnails/' ~ podcast.thumbnail) }}" 
                              alt="{{ podcast.title }}" 
                              class="img-fluid rounded shadow-sm podcast-cover">
                     {% else %}
@@ -102,19 +102,19 @@
                         <div class="local-player">
                             {% if podcast.type == 'audio' %}
                                 <audio controls class="w-100">
-                                    <source src="{{ asset('uploads/podcasts/' ~ podcast.filePath) }}" type="audio/mpeg">
+                                    <source src="{{ asset('assets/uploads/podcasts/' ~ podcast.filePath) }}" type="audio/mpeg">
                                     Votre navigateur ne supporte pas l'élément audio.
                                 </audio>
                             {% else %}
                                 <video controls class="w-100" style="max-height: 400px;">
-                                    <source src="{{ asset('uploads/podcasts/' ~ podcast.filePath) }}" type="video/mp4">
+                                    <source src="{{ asset('assets/uploads/podcasts/' ~ podcast.filePath) }}" type="video/mp4">
                                     Votre navigateur ne supporte pas l'élément vidéo.
                                 </video>
                             {% endif %}
                             
                             {% if podcast.type == 'audio' %}
                             <div class="text-center mt-3">
-                                <a href="{{ asset('uploads/podcasts/' ~ podcast.filePath) }}" 
+                                <a href="{{ asset('assets/uploads/podcasts/' ~ podcast.filePath) }}" 
                                    download="{{ podcast.title }}" 
                                    class="btn btn-outline-primary"
                                    onclick="incrementDownload({{ podcast.id }})">

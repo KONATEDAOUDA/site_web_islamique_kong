@@ -30,7 +30,7 @@
         </div>
         <div class="row">
             <div class="col-md-6">
-                <img src="{{ asset('images/archive/kong-mosque.jpg') }}" alt="Historique de Kong" class="img-fluid rounded">
+                <img src="{{ asset('assets/images/archive/kong-mosque.jpg') }}" alt="Historique de Kong" class="img-fluid rounded">
             </div>
             <div class="col-md-6">
                 <h3 class="mb-3">Un centre islamique historique</h3>
@@ -56,7 +56,7 @@
                     {% for article in latestArticles %}
                         <div class="col-md-4 mb-4">
                             <div class="card h-100">
-                                <img src="{{ asset('images/archive/grande_mosquee_kong_old.jpg')}}" class="card-img-top" alt="{{ article.title }}">
+                                <img src="{{ asset('assets/images/archive/grande_mosquee_kong_old.jpg')}}" class="card-img-top" alt="{{ article.title }}">
                                 <div class="card-body">
                                     <h5 class="card-title">{{ article.title }}</h5>
                                     <p class="card-text">{{ article.excerpt }}</p>
@@ -193,7 +193,7 @@
                 {% for teacher in teachers %}
                     <div class="col-md-3 mb-4">
                         <div class="card teacher-card text-center h-100">
-                            <img src="{{ asset('images/teacher/icon_user.jpeg') }}" class="card-img-top rounded-circle mx-auto mt-3" alt="{{ teacher.name }}" style="width: 150px; height: 150px; object-fit: cover;">
+                            <img src="{{ asset('assets/images/teacher/icon_user.jpeg') }}" class="card-img-top rounded-circle mx-auto mt-3" alt="{{ teacher.name }}" style="width: 150px; height: 150px; object-fit: cover;">
                             <div class="card-body">
                                 <h5 class="card-title">{{ teacher.name }}</h5>
                                 <p class="card-text text-muted">

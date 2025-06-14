@@ -214,7 +214,7 @@ class PodcastController extends AbstractController
         $fileName = $safeFilename.'-'.uniqid().'.'.$audioFile->guessExtension();
 
         try {
-            $uploadsDirectory = $this->getParameter('kernel.project_dir').'/public/uploads/podcasts';
+            $uploadsDirectory = $this->getParameter('kernel.project_dir').'/public/assets/uploads/podcasts';
             
             // Créer le dossier s'il n'existe pas
             if (!is_dir($uploadsDirectory)) {
@@ -250,7 +250,7 @@ class PodcastController extends AbstractController
         $fileName = $safeFilename.'-'.uniqid().'.'.$thumbnailFile->guessExtension();
 
         try {
-            $uploadsDirectory = $this->getParameter('kernel.project_dir').'/public/uploads/podcasts/thumbnails';
+            $uploadsDirectory = $this->getParameter('kernel.project_dir').'/public/assets/uploads/podcasts/thumbnails';
             
             // Créer le dossier s'il n'existe pas
             if (!is_dir($uploadsDirectory)) {
@@ -292,7 +292,7 @@ class PodcastController extends AbstractController
         
         // Supprimer le fichier audio/vidéo
         if ($podcast->getFilePath()) {
-            $audioPath = $projectDir . '/public/uploads/podcasts/' . $podcast->getFilePath();
+            $audioPath = $projectDir . '/public/assets/uploads/podcasts/' . $podcast->getFilePath();
             if (file_exists($audioPath)) {
                 unlink($audioPath);
             }
@@ -300,7 +300,7 @@ class PodcastController extends AbstractController
         
         // Supprimer l'image de couverture
         if ($podcast->getThumbnail()) {
-            $thumbnailPath = $projectDir . '/public/uploads/podcasts/thumbnails/' . $podcast->getThumbnail();
+            $thumbnailPath = $projectDir . '/public/assets/uploads/podcasts/thumbnails/' . $podcast->getThumbnail();
             if (file_exists($thumbnailPath)) {
                 unlink($thumbnailPath);
             }

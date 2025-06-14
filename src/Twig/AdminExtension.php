@@ -176,7 +176,7 @@ class AdminExtension extends AbstractExtension
 
         if ($user->getProfilePicture()) {
             return sprintf(
-                '<img src="/uploads/users/%s" alt="%s" class="img-circle" style="width: %dpx; height: %dpx;">',
+                '<img src="/assets/uploads/users/%s" alt="%s" class="img-circle" style="width: %dpx; height: %dpx;">',
                 $user->getProfilePicture(),
                 htmlspecialchars($user->getFullName()),
                 $size, $size
