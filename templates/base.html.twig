@@ -1,29 +1,182 @@
-<!DOCTYPE html>
-<html lang="{{ app.request.locale|default('fr') }}">
+<!doctype html>
+<html class="no-js" lang="{{ app.request.locale }}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>{% block title %}Portail Islamique de Kong{% endblock %}</title>
-    <link rel="icon" href="{{ asset('assets/images/logo/logo.png') }}">
+    <meta name="author" content="Kong Islamic Portal">
+    <meta name="description" content="{% block meta_description %}Portail Islamique de Kong - Préservation et partage du patrimoine islamique{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}Islam, Kong, Côte d'Ivoire, Patrimoine, Islamic, Heritage{% endblock %}">
+    <meta name="robots" content="INDEX,FOLLOW">
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
     
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="57x57" href="{{ asset('assets/img/favicons/apple-icon-57x57.png') }}">
+    <link rel="apple-touch-icon" sizes="60x60" href="{{ asset('assets/img/favicons/apple-icon-60x60.png') }}">
+    <link rel="apple-touch-icon" sizes="72x72" href="{{ asset('assets/img/favicons/apple-icon-72x72.png') }}">
+    <link rel="apple-touch-icon" sizes="76x76" href="{{ asset('assets/img/favicons/apple-icon-76x76.png') }}">
+    <link rel="apple-touch-icon" sizes="114x114" href="{{ asset('assets/img/favicons/apple-icon-114x114.png') }}">
+    <link rel="apple-touch-icon" sizes="120x120" href="{{ asset('assets/img/favicons/apple-icon-120x120.png') }}">
+    <link rel="apple-touch-icon" sizes="144x144" href="{{ asset('assets/img/favicons/apple-icon-144x144.png') }}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ asset('assets/img/favicons/apple-icon-152x152.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('assets/img/favicons/apple-icon-180x180.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('assets/img/favicons/android-icon-192x192.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/img/favicons/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{{ asset('assets/img/favicons/favicon-96x96.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('assets/img/favicons/favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ asset('assets/img/favicons/manifest.json') }}">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="{{ asset('assets/img/favicons/ms-icon-144x144.png') }}">
+    <meta name="theme-color" content="#ffffff">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    
+    <!-- CSS Files -->
     {% block stylesheets %}
-        {{ encore_entry_link_tags('app') }}
+        <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/css/fontawesome.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/css/magnific-popup.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/css/swiper-bundle.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+        
+        <!-- Custom styles for Kong -->
+        <style>
+            :root {
+                --th-primary-color: #3E66F3;
+                --th-secondary-color: #684DF4;
+                --th-body-color: #6B7280;
+                --th-heading-color: #1F2937;
+                --th-white-color: #ffffff;
+            }
+            
+            .kong-brand {
+                color: var(--th-primary-color);
+            }
+            
+            .section-divider {
+                width: 60px;
+                height: 4px;
+                background: linear-gradient(45deg, var(--th-primary-color), var(--th-secondary-color));
+                margin: 0 auto 20px;
+            }
+        </style>
     {% endblock %}
 </head>
-<body class="hold-transition sidebar-mini">
+
+<body>
+    <!-- Preloader -->
+    <div class="preloader">
+        <button class="th-btn style1 preloaderCls">Annuler Preloader</button>
+        <div class="preloader-inner">
+            <img src="{{ asset('assets/img/shape/shape.svg') }}" alt="Loading">
+            <div class="loading-text">
+                <span class="letter">C</span>
+                <span class="letter">h</span>
+                <span class="letter">a</span>
+                <span class="letter">r</span>
+                <span class="letter">g</span>
+                <span class="letter">e</span>
+                <span class="letter">m</span>
+                <span class="letter">e</span>
+                <span class="letter">n</span>
+                <span class="letter">t</span>
+                <span class="letter">.</span>
+                <span class="letter">.</span>
+                <span class="letter">.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Side Menu -->
+    <div class="sidemenu-wrapper d-none d-lg-block">
+        <div class="sidemenu-content">
+            <button class="closeButton sideMenuCls"><i class="far fa-times"></i></button>
+            <div class="widget footer-widget">
+                <h3 class="widget_title">Informations</h3>
+                <div class="th-widget-about">
+                    <p class="about-text">Le portail islamique de Kong préserve et partage le riche patrimoine islamique de cette ville historique de Côte d'Ivoire.</p>
+                    <div class="th-widget-about">
+                        <p class="footer-info">
+                            <i class="fa-sharp fa-solid fa-phone"></i> 
+                            <span><a class="text-inherit" href="tel:+22500000000">+225 00 00 00 00</a></span>
+                        </p>
+                        <p class="footer-info">
+                            <i class="fa-sharp fa-solid fa-envelope"></i>
+                            <span><a class="text-inherit" href="mailto:contact@kong-islamique.org">contact@kong-islamique.org</a></span>
+                        </p>
+                        <p class="footer-info">
+                            <i class="fas fa-map-marker-alt"></i>Kong, Région du Tchologo, Côte d'Ivoire
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Box -->
+    <div class="popup-search-box d-none d-lg-block">
+        <button class="searchClose"><i class="fal fa-times"></i></button>
+        <form action="{{ path('app_search') }}" method="get">
+            <input type="text" name="q" placeholder="Que recherchez-vous ?">
+            <button type="submit"><i class="fal fa-search"></i></button>
+        </form>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div class="th-menu-wrapper">
+        <div class="th-menu-area text-center">
+            <button class="th-menu-toggle"><i class="fal fa-times"></i></button>
+            <div class="mobile-logo">
+                <a href="{{ path('app_home') }}">
+                    <img src="{{ asset('assets/img/logo.svg') }}" alt="Kong Islamique">
+                </a>
+            </div>
+            <div class="th-mobile-menu">
+                <ul>
+                    <li><a href="{{ path('app_home') }}">Accueil</a></li>
+                    <li><a href="{{ path('app_about') }}">À propos</a></li>
+                    <li class="menu-item-has-children">
+                        <a href="#">Contenu</a>
+                        <ul class="sub-menu">
+                            <li><a href="{{ path('app_blog_index') }}">Articles</a></li>
+                            <li><a href="{{ path('app_podcast_index') }}">Podcasts</a></li>
+                            <li><a href="{{ path('app_archive') }}">Archives</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="{{ path('app_teacher') }}">Maîtres</a></li>
+                    <li><a href="{{ path('app_forum') }}">Forum</a></li>
+                    <li><a href="{{ path('app_contact') }}">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
     {% block body %}{% endblock %}
 
+    <!-- Scroll To Top -->
+    <div class="scroll-top">
+        <svg class="progress-circle svg-content" width="100%" height="100%" viewBox="-1 -1 102 102">
+            <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98" style="transition: stroke-dashoffset 10ms linear 0s; stroke-dasharray: 307.919, 307.919; stroke-dashoffset: 307.919;"></path>
+        </svg>
+    </div>
+
+    <!-- JavaScript Files -->
     {% block javascripts %}
-        {{ encore_entry_script_tags('app') }}
-        
-        {# Initialisation AdminLTE #}
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                if (typeof $ !== 'undefined' && $.fn.AdminLTE) {
-                    $.AdminLTE.init();
-                }
-            });
-        </script>
+        <script src="{{ asset('assets/js/vendor/jquery-3.7.1.min.js') }}"></script>
+        <script src="{{ asset('assets/js/swiper-bundle.min.js') }}"></script>
+        <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
+        <script src="{{ asset('assets/js/jquery.magnific-popup.min.js') }}"></script>
+        <script src="{{ asset('assets/js/circle-progress.js') }}"></script>
+        <script src="{{ asset('assets/js/jquery.counterup.min.js') }}"></script>
+        <script src="{{ asset('assets/js/jquery-ui.min.js') }}"></script>
+        <script src="{{ asset('assets/js/imagesloaded.pkgd.min.js') }}"></script>
+        <script src="{{ asset('assets/js/isotope.pkgd.min.js') }}"></script>
+        <script src="{{ asset('assets/js/nice-select.min.js') }}"></script>
+        <script src="{{ asset('assets/js/wow.min.js') }}"></script>
+        <script src="{{ asset('assets/js/main.js') }}"></script>
     {% endblock %}
 </body>
 </html>

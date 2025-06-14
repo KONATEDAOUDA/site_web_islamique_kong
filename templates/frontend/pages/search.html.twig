@@ -1,0 +1,471 @@
+{% extends 'frontend/base.html.twig' %}
+
+{% block title %}
+    {% if query %}
+        Résultats pour "{{ query }}" - Kong Islamique
+    {% else %}
+        Recherche - Kong Islamique
+    {% endif %}
+{% endblock %}
+
+{% block main %}
+<!-- Breadcrumb -->
+<div class="breadcumb-wrapper" data-bg-src="{{ asset('assets/images/kong/search-hero.jpg') }}">
+    <div class="container">
+        <div class="breadcumb-content">
+            <h1 class="breadcumb-title">
+                {% if query %}
+                    Résultats de recherche
+                {% else %}
+                    Recherche
+                {% endif %}
+            </h1>
+            <ul class="breadcumb-menu">
+                <li><a href="{{ path('app_home') }}">Accueil</a></li>
+                <li>Recherche</li>
+                {% if query %}
+                    <li>"{{ query }}"</li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Search Form -->
+<section class="search-form-area space-top">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-8">
+                <div class="search-form-wrapper">
+                    <form action="{{ path('app_search') }}" method="get" class="advanced-search-form">
+                        <div class="search-input-wrapper">
+                            <div class="search-input-group">
+                                <input type="text" 
+                                       name="q" 
+                                       class="form-control search-input" 
+                                       placeholder="Rechercher dans tout le site..." 
+                                       value="{{ query|default('') }}"
+                                       autocomplete="off">
+                                <button type="submit" class="search-btn">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="search-filters mt-3">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <select name="type" class="form-select">
+                                        <option value="all" {% if type == 'all' %}selected{% endif %}>Tout</option>
+                                        <option value="articles" {% if type == 'articles' %}selected{% endif %}>Articles</option>
+                                        <option value="podcasts" {% if type == 'podcasts' %}selected{% endif %}>Podcasts</option>
+                                        <option value="archives" {% if type == 'archives' %}selected{% endif %}>Archives</option>
+                                        <option value="teachers" {% if type == 'teachers' %}selected{% endif %}>Maîtres</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <select name="language" class="form-select">
+                                        <option value="">Toutes langues</option>
+                                        <option value="fr" {% if app.request.query.get('language') == 'fr' %}selected{% endif %}>Français</option>
+                                        <option value="ar" {% if app.request.query.get('language') == 'ar' %}selected{% endif %}>العربية</option>
+                                        <option value="en" {% if app.request.query.get('language') == 'en' %}selected{% endif %}>English</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <select name="date" class="form-select">
+                                        <option value="">Toutes dates</option>
+                                        <option value="week" {% if app.request.query.get('date') == 'week' %}selected{% endif %}>Cette semaine</option>
+                                        <option value="month" {% if app.request.query.get('date') == 'month' %}selected{% endif %}>Ce mois</option>
+                                        <option value="year" {% if app.request.query.get('date') == 'year' %}selected{% endif %}>Cette année</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <select name="sort" class="form-select">
+                                        <option value="relevance" {% if app.request.query.get('sort') == 'relevance' %}selected{% endif %}>Pertinence</option>
+                                        <option value="date" {% if app.request.query.get('sort') == 'date' %}selected{% endif %}>Date</option>
+                                        <option value="title" {% if app.request.query.get('sort') == 'title' %}selected{% endif %}>Titre</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Search Results -->
+{% if query %}
+<section class="search-results-area space">
+    <div class="container">
+        <!-- Results Summary -->
+        <div class="search-summary mb-4">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h3 class="results-title">
+                        {% set totalResults = (results.articles|length) + (results.podcasts|length) + (results.archives|length) + (results.teachers|length) %}
+                        {% if totalResults > 0 %}
+                            {{ totalResults }} résultat(s) trouvé(s) pour "{{ query }}"
+                        {% else %}
+                            Aucun résultat pour "{{ query }}"
+                        {% endif %}
+                    </h3>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div class="results-actions">
+                        <button class="view-toggle-btn active" data-view="list">
+                            <i class="fas fa-list"></i>
+                        </button>
+                        <button class="view-toggle-btn" data-view="grid">
+                            <i class="fas fa-th-large"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if hasResults %}
+            <!-- Search Results Tabs -->
+            <div class="search-tabs-wrapper">
+                <ul class="nav nav-tabs search-tabs" id="searchTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all-results" type="button">
+                            Tous ({{ totalResults }})
+                        </button>
+                    </li>
+                    {% if results.articles|length > 0 %}
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="articles-tab" data-bs-toggle="tab" data-bs-target="#articles-results" type="button">
+                            Articles ({{ results.articles|length }})
+                        </button>
+                    </li>
+                    {% endif %}
+                    {% if results.podcasts|length > 0 %}
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="podcasts-tab" data-bs-toggle="tab" data-bs-target="#podcasts-results" type="button">
+                            Podcasts ({{ results.podcasts|length }})
+                        </button>
+                    </li>
+                    {% endif %}
+                    {% if results.archives|length > 0 %}
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="archives-tab" data-bs-toggle="tab" data-bs-target="#archives-results" type="button">
+                            Archives ({{ results.archives|length }})
+                        </button>
+                    </li>
+                    {% endif %}
+                    {% if results.teachers|length > 0 %}
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="teachers-tab" data-bs-toggle="tab" data-bs-target="#teachers-results" type="button">
+                            Maîtres ({{ results.teachers|length }})
+                        </button>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content search-tab-content" id="searchTabContent">
+                <!-- All Results -->
+                <div class="tab-pane fade show active" id="all-results" role="tabpanel">
+                    <div class="search-results-wrapper">
+                        <!-- Articles Results -->
+                        {% if results.articles|length > 0 %}
+                        <div class="result-section">
+                            <h4 class="section-title">
+                                <i class="fas fa-newspaper"></i> Articles
+                            </h4>
+                            <div class="results-grid">
+                                {% for article in results.articles|slice(0, 3) %}
+                                <div class="result-item article-result">
+                                    <div class="result-thumbnail">
+                                        {% if article.featuredImage %}
+                                            <img src="{{ asset('assets/uploads/articles/' ~ article.featuredImage) }}" alt="{{ article.title }}">
+                                        {% else %}
+                                            <img src="{{ asset('assets/images/default/article-default.jpg') }}" alt="{{ article.title }}">
+                                        {% endif %}
+                                        <div class="result-type">
+                                            <span class="type-badge article">Article</span>
+                                        </div>
+                                    </div>
+                                    <div class="result-content">
+                                        <h5 class="result-title">
+                                            <a href="{{ path('app_blog_show', {'slug': article.slug}) }}">{{ article.title }}</a>
+                                        </h5>
+                                        <p class="result-excerpt">{{ article.excerpt|striptags|length > 150 ? article.excerpt|striptags|slice(0, 150) ~ '...' : article.excerpt|striptags }}</p>
+                                        <div class="result-meta">
+                                            <span class="meta-date">{{ article.publishedAt ? article.publishedAt|date('d M Y') : article.createdAt|date('d M Y') }}</span>
+                                            {% if article.author %}
+                                                <span class="meta-author">{{ article.author.firstName ~ ' ' ~ article.author.lastName }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% if results.articles|length > 3 %}
+                            <div class="see-more-link">
+                                <a href="#articles-results" data-bs-toggle="tab">Voir tous les articles ({{ results.articles|length }})</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+
+                        <!-- Podcasts Results -->
+                        {% if results.podcasts|length > 0 %}
+                        <div class="result-section">
+                            <h4 class="section-title">
+                                <i class="fas fa-podcast"></i> Podcasts
+                            </h4>
+                            <div class="results-grid">
+                                {% for podcast in results.podcasts|slice(0, 3) %}
+                                <div class="result-item podcast-result">
+                                    <div class="result-thumbnail">
+                                        {% if podcast.thumbnail %}
+                                            <img src="{{ asset('assets/uploads/podcasts/thumbnails/' ~ podcast.thumbnail) }}" alt="{{ podcast.title }}">
+                                        {% else %}
+                                            <img src="{{ asset('assets/images/default/podcast-default.jpg') }}" alt="{{ podcast.title }}">
+                                        {% endif %}
+                                        <div class="result-type">
+                                            <span class="type-badge podcast">{{ podcast.type|title }}</span>
+                                        </div>
+                                        <div class="play-overlay">
+                                            <a href="{{ path('app_podcast_show', {'slug': podcast.slug}) }}" class="play-btn">
+                                                <i class="fas fa-play"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="result-content">
+                                        <h5 class="result-title">
+                                            <a href="{{ path('app_podcast_show', {'slug': podcast.slug}) }}">{{ podcast.title }}</a>
+                                        </h5>
+                                        <p class="result-excerpt">{{ podcast.description|striptags|length > 120 ? podcast.description|striptags|slice(0, 120) ~ '...' : podcast.description|striptags }}</p>
+                                        <div class="result-meta">
+                                            {% if podcast.duration %}
+                                                <span class="meta-duration">{{ podcast.duration }}</span>
+                                            {% endif %}
+                                            {% if podcast.author %}
+                                                <span class="meta-author">{{ podcast.author.name }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% if results.podcasts|length > 3 %}
+                            <div class="see-more-link">
+                                <a href="#podcasts-results" data-bs-toggle="tab">Voir tous les podcasts ({{ results.podcasts|length }})</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+
+                        <!-- Archives Results -->
+                        {% if results.archives|length > 0 %}
+                        <div class="result-section">
+                            <h4 class="section-title">
+                                <i class="fas fa-archive"></i> Archives
+                            </h4>
+                            <div class="results-grid">
+                                {% for archive in results.archives|slice(0, 3) %}
+                                <div class="result-item archive-result">
+                                    <div class="result-thumbnail">
+                                        {% if archive.thumbnail %}
+                                            <img src="{{ asset('assets/uploads/archives/' ~ archive.thumbnail) }}" alt="{{ archive.title }}">
+                                        {% else %}
+                                            <img src="{{ asset('assets/images/default/archive-' ~ archive.type ~ '.jpg') }}" alt="{{ archive.title }}">
+                                        {% endif %}
+                                        <div class="result-type">
+                                            <span class="type-badge archive">{{ archive.type|title }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="result-content">
+                                        <h5 class="result-title">
+                                            <a href="{{ path('app_archive_show', {'slug': archive.slug}) }}">{{ archive.title }}</a>
+                                        </h5>
+                                        <p class="result-excerpt">{{ archive.description|striptags|length > 120 ? archive.description|striptags|slice(0, 120) ~ '...' : archive.description|striptags }}</p>
+                                        <div class="result-meta">
+                                            {% if archive.year %}
+                                                <span class="meta-year">{{ archive.year }}</span>
+                                            {% endif %}
+                                            {% if archive.language %}
+                                                <span class="meta-language">
+                                                    {% if archive.language == 'ar' %}العربية{% elseif archive.language == 'fr' %}Français{% else %}{{ archive.language }}{% endif %}
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% if results.archives|length > 3 %}
+                            <div class="see-more-link">
+                                <a href="#archives-results" data-bs-toggle="tab">Voir toutes les archives ({{ results.archives|length }})</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+
+                        <!-- Teachers Results -->
+                        {% if results.teachers|length > 0 %}
+                        <div class="result-section">
+                            <h4 class="section-title">
+                                <i class="fas fa-user-graduate"></i> Maîtres
+                            </h4>
+                            <div class="results-grid">
+                                {% for teacher in results.teachers %}
+                                <div class="result-item teacher-result">
+                                    <div class="result-thumbnail">
+                                        {% if teacher.profilePicture %}
+                                            <img src="{{ asset('assets/uploads/teachers/' ~ teacher.profilePicture) }}" alt="{{ teacher.name }}">
+                                        {% else %}
+                                            <img src="{{ asset('assets/images/default/teacher-default.jpg') }}" alt="{{ teacher.name }}">
+                                        {% endif %}
+                                        <div class="result-type">
+                                            <span class="type-badge teacher">Maître</span>
+                                        </div>
+                                    </div>
+                                    <div class="result-content">
+                                        <h5 class="result-title">
+                                            <a href="{{ path('app_teacher_show', {'slug': teacher.slug}) }}">{{ teacher.name }}</a>
+                                        </h5>
+                                        <p class="result-specialty">{{ teacher.specialty }}</p>
+                                        {% if teacher.biography %}
+                                            <p class="result-excerpt">{{ teacher.biography|striptags|length > 120 ? teacher.biography|striptags|slice(0, 120) ~ '...' : teacher.biography|striptags }}</p>
+                                        {% endif %}
+                                        <div class="result-meta">
+                                            {% if teacher.era %}
+                                                <span class="meta-era">{{ teacher.era == 'historical' ? 'Historique' : 'Contemporain' }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Individual result tabs would go here with full lists -->
+                <!-- Articles Tab -->
+                {% if results.articles|length > 0 %}
+                <div class="tab-pane fade" id="articles-results" role="tabpanel">
+                    <div class="results-grid full-results">
+                        {% for article in results.articles %}
+                        <!-- Full article result item -->
+                        <div class="result-item article-result">
+                            <!-- Same structure as above but for all articles -->
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Similar for other content types... -->
+            </div>
+        {% else %}
+            <!-- No Results -->
+            <div class="no-results">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6 text-center">
+                        <div class="no-results-content">
+                            <img src="{{ asset('assets/img/icon/no-results.svg') }}" alt="Aucun résultat" class="mb-4">
+                            <h3>Aucun résultat trouvé</h3>
+                            <p>Nous n'avons trouvé aucun contenu correspondant à votre recherche "<strong>{{ query }}</strong>".</p>
+                            
+                            <div class="search-suggestions">
+                                <h5>Suggestions :</h5>
+                                <ul class="suggestions-list">
+                                    <li>Vérifiez l'orthographe de vos mots-clés</li>
+                                    <li>Essayez des termes plus généraux</li>
+                                    <li>Utilisez des synonymes</li>
+                                    <li>Réduisez le nombre de mots-clés</li>
+                                </ul>
+                            </div>
+
+                            <div class="alternative-actions mt-4">
+                                <a href="{{ path('app_blog_index') }}" class="th-btn me-2">
+                                    <span class="btn-text" data-back="Parcourir les articles" data-front="Parcourir les articles"></span>
+                                </a>
+                                <a href="{{ path('app_contact') }}" class="th-btn style2">
+                                    <span class="btn-text" data-back="Demander de l'aide" data-front="Demander de l'aide"></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endif %}
+
+<!-- Popular Searches -->
+{% if not query or not hasResults %}
+<section class="popular-searches space" data-bg-src="{{ asset('assets/img/bg/popular_searches_bg.jpg') }}">
+    <div class="container">
+        <div class="title-area text-center text-white">
+            <span class="sub-title">Recherches Populaires</span>
+            <h2 class="sec-title text-white">Sujets Populaires</h2>
+        </div>
+        <div class="popular-terms">
+            <a href="{{ path('app_search', {q: 'mosquée kong'}) }}" class="popular-term">Mosquée de Kong</a>
+            <a href="{{ path('app_search', {q: 'histoire islam'}) }}" class="popular-term">Histoire de l'Islam</a>
+            <a href="{{ path('app_search', {q: 'coran'}) }}" class="popular-term">Coran</a>
+            <a href="{{ path('app_search', {q: 'maître islamique'}) }}" class="popular-term">Maîtres Islamiques</a>
+            <a href="{{ path('app_search', {q: 'prière'}) }}" class="popular-term">Prière</a>
+            <a href="{{ path('app_search', {q: 'ramadan'}) }}" class="popular-term">Ramadan</a>
+            <a href="{{ path('app_search', {q: 'manuscrit'}) }}" class="popular-term">Manuscrits</a>
+            <a href="{{ path('app_search', {q: 'architecture'}) }}" class="popular-term">Architecture</a>
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // Auto-focus search input
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.querySelector('.search-input');
+            if (searchInput && !searchInput.value) {
+                searchInput.focus();
+            }
+        });
+
+        // View toggle functionality
+        document.querySelectorAll('.view-toggle-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.view-toggle-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const view = this.getAttribute('data-view');
+                const resultsWrapper = document.querySelector('.search-results-wrapper');
+                
+                if (view === 'grid') {
+                    resultsWrapper.classList.add('grid-view');
+                } else {
+                    resultsWrapper.classList.remove('grid-view');
+                }
+            });
+        });
+
+        // Search analytics
+        if (typeof gtag !== 'undefined' && '{{ query }}') {
+            gtag('event', 'search', {
+                'search_term': '{{ query|e('js') }}',
+                'results_count': {{ totalResults ?? 0 }}
+            });
+        }
+
+        // Auto-submit on filter change
+        document.querySelectorAll('.search-filters select').forEach(select => {
+            select.addEventListener('change', function() {
+                this.closest('form').submit();
+            });
+        });
+    </script>
+{% endblock %}

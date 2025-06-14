@@ -1,224 +1,364 @@
 {% extends 'frontend/base.html.twig' %}
 
-{% block title %}Portail Islamique de Kong{% endblock %}
+{% block title %}Portail Islamique de Kong - Patrimoine et Culture Islamique{% endblock %}
 
 {% block main %}
-    <!-- Bannière principale avec image de mosquée traditionnelle de Kong -->
-    <div class="hero-section position-relative">
-        <div class="overlay bg-dark position-absolute w-100 h-100" style="opacity: 0.6;"></div>
-        <div class="container">
-            <div class="row align-items-center" style="min-height: 500px;">
-                <div class="col-md-8 text-white position-relative">
-                    <h1 class="display-4 fw-bold">Bienvenue sur le Site Islamique de Kong</h1>
-                    <p class="lead">Un espace de préservation et de partage du patrimoine islamique de Kong</p>
-                    <div class="mt-4">
-                        <a href="{{ path('app_about') }}" class="btn btn-primary btn-lg me-2">En savoir plus</a>
-                        <a href="{{ path('app_blog_index') }}" class="btn btn-outline-light btn-lg">Explorer le blog</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Section historique de Kong -->
-    <div class="container my-5">
-        <div class="row">
-            <div class="col-md-12 text-center mb-4">
-                <h2 class="section-title">Histoire Islamique de Kong</h2>
-                <div class="divider mx-auto"></div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <img src="{{ asset('assets/images/archive/kong-mosque.jpg') }}" alt="Historique de Kong" class="img-fluid rounded">
-            </div>
-            <div class="col-md-6">
-                <h3 class="mb-3">Un centre islamique historique</h3>
-                <p>Fondée au XVIIIe siècle, Kong est devenue un important centre commercial et islamique en Afrique de l'Ouest. Les érudits, les commerçants et les fidèles y ont créé une riche tradition d'enseignement et de pratique de l'Islam.</p>
-                <p>La ville est connue pour ses mosquées en terre, ses écoles coraniques et sa contribution à la diffusion de la culture islamique dans toute la région.</p>
-                <p>Ce site vise à préserver et à partager ce riche patrimoine islamique à travers des articles, des podcasts, des archives historiques et des enseignements des maîtres contemporains.</p>
-                <a href="{{ path('app_archive') }}" class="btn btn-primary mt-3">Découvrir les archives</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Derniers articles -->
-    <div class="bg-light py-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12 text-center mb-4">
-                    <h2 class="section-title">Derniers Articles</h2>
-                    <div class="divider mx-auto"></div>
-                </div>
-            </div>
-            <div class="row">
-                {% if latestArticles is defined and latestArticles|length > 0 %}
-                    {% for article in latestArticles %}
-                        <div class="col-md-4 mb-4">
-                            <div class="card h-100">
-                                <img src="{{ asset('assets/images/archive/grande_mosquee_kong_old.jpg')}}" class="card-img-top" alt="{{ article.title }}">
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ article.title }}</h5>
-                                    <p class="card-text">{{ article.excerpt }}</p>
-                                </div>
-                                <div class="card-footer bg-white border-0">
-                                    <a href="{{ path('app_blog_show', {'slug': article.slug}) }}" class="btn btn-sm btn-outline-primary">Lire plus</a>
-                                    <small class="text-muted float-end">{{ article.createdAt|date('d/m/Y') }}</small>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="col-md-12">
-                        <div class="alert alert-info">
-                            <p class="mb-0">Aucun article n'a été publié pour le moment.</p>
-                        </div>
-                    </div>
-                {% endif %}
-            </div>
-            <div class="row">
-                <div class="col-md-12 text-center mt-4">
-                    <a href="{{ path('app_blog_show', {'slug': 'tous-les-articles'}) }}" class="btn btn-primary">Voir tous les articles</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Derniers podcasts -->
-    <div class="container my-5">
-        <div class="row">
-            <div class="col-md-12 text-center mb-4">
-                <h2 class="section-title">Derniers Podcasts</h2>
-                <div class="divider mx-auto"></div>
-            </div>
-        </div>
-        <div class="row">
-            {% if latestPodcasts is defined and latestPodcasts|length > 0 %}
-                {% for podcast in latestPodcasts %}
-                    <div class="col-md-4 mb-4">
-                        <div class="card h-100">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ podcast.title }}</h5>
-                                <p class="card-text">{{ podcast.description }}</p>
-                                <div class="podcast-player mb-3">
-                                    <audio controls class="w-100">
-                                        <source src="{{ asset(podcast.audioFile) }}" type="audio/mpeg">
-                                        Votre navigateur ne supporte pas la lecture audio.
-                                    </audio>
-                                </div>
-                            </div>
-                            <div class="card-footer bg-white border-0">
-                                <a href="{{ path('app_podcast_show', {'slug': podcast.slug}) }}" class="btn btn-sm btn-outline-primary">Plus de détails</a>
-                                <small class="text-muted float-end">{{ podcast.createdAt|date('d/m/Y') }}</small>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            {% else %}
-                <div class="col-md-12">
-                    <div class="alert alert-info">
-                        <p class="mb-0">Aucun podcast n'a été publié pour le moment.</p>
-                    </div>
-                </div>
-            {% endif %}
-        </div>
-        <div class="row">
-            <div class="col-md-12 text-center mt-4">
-                <a href="{{ path('app_podcast_index') }}" class="btn btn-primary">Voir tous les podcasts</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Archives pertinentes -->
-    <div class="bg-light py-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12 text-center mb-4">
-                    <h2 class="section-title">Archives Pertinentes</h2>
-                    <div class="divider mx-auto"></div>
-                </div>
-            </div>
-            <div class="row">
-                {% if relevantArchives is defined and relevantArchives|length > 0 %}
-                    {% for archive in relevantArchives %}
-                        <div class="col-md-4 mb-4">
-                            <div class="card h-100">
-                                <div class="card-body">
-                                    <div class="archive-type mb-2">
-                                        {% if archive.type == 'article' %}
-                                            <span class="badge bg-primary">Article</span>
-                                        {% elseif archive.type == 'audio' %}
-                                            <span class="badge bg-success">Audio</span>
-                                        {% elseif archive.type == 'video' %}
-                                            <span class="badge bg-danger">Vidéo</span>
-                                        {% endif %}
+    <!-- Hero Section -->
+    <div class="th-hero-wrapper hero-5" id="hero">
+        <div class="swiper th-slider hero-slider-5" id="heroSlide1" data-slider-options='{"effect":"fade"}'>
+            <div class="swiper-wrapper">
+                <!-- Slide 1 -->
+                <div class="swiper-slide">
+                    <div class="th-hero-bg" data-bg-src="{{ asset('assets/images/kong/grande-mosquee-kong.jpg') }}"></div>
+                    <div class="container">
+                        <div class="row align-items-end">
+                            <div class="col-lg-7">
+                                <div class="hero-style5">
+                                    <span class="sub-title" data-ani="slideinleft" data-ani-delay="0.2s">
+                                        <img src="{{ asset('assets/img/theme-img/sub-title.svg') }}" alt="">
+                                    </span>
+                                    <h1 class="hero-title" data-ani="slideinleft" data-ani-delay="0.3s">
+                                        Patrimoine Islamique de Kong
+                                    </h1>
+                                    <p class="hero-text" data-ani="slideinleft" data-ani-delay="0.4s">
+                                        Découvrez la riche histoire islamique de Kong, centre intellectuel et commercial majeur de l'Afrique de l'Ouest depuis le XVIIIe siècle.
+                                    </p>
+                                    <div class="btn-group justify-content-lg-start justify-content-center" data-ani="slideinleft" data-ani-delay="0.8s">
+                                        <a href="{{ path('app_archive') }}" class="th-btn style1">
+                                            <i class="fas fa-archive"></i>
+                                            <span class="btn-text" data-back="Explorer Archives" data-front="Explorer Archives"></span>
+                                        </a>
+                                        <a href="{{ path('app_about') }}" class="th-btn border-btn">
+                                            En savoir plus <i class="fa-light fa-arrow-right-long ms-2"></i>
+                                        </a>
                                     </div>
-                                    <h5 class="card-title">{{ archive.title }}</h5>
-                                    <p class="card-text">{{ archive.description }}</p>
                                 </div>
-                                <div class="card-footer bg-white border-0">
-                                    <a href="{{ path('app_archive_show', {'slug': archive.slug}) }}" class="btn btn-sm btn-outline-primary">Consulter</a>
-                                    <small class="text-muted float-end">{{ archive.year }}</small>
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="hero-image" data-ani="slideinup" data-ani-delay="0.4s">
+                                    <img src="{{ asset('assets/images/kong/mosque-interior.jpg') }}" alt="Mosquée de Kong">
                                 </div>
                             </div>
                         </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="col-md-12">
-                        <div class="alert alert-info">
-                            <p class="mb-0">Aucune archive n'a été publiée pour le moment.</p>
+                    </div>
+                </div>
+                
+                <!-- Slide 2 -->
+                <div class="swiper-slide">
+                    <div class="th-hero-bg" data-bg-src="{{ asset('assets/images/kong/kong-scholars.jpg') }}"></div>
+                    <div class="container">
+                        <div class="row align-items-end">
+                            <div class="col-lg-7">
+                                <div class="hero-style5">
+                                    <span class="sub-title" data-ani="slideinleft" data-ani-delay="0.2s">
+                                        <img src="{{ asset('assets/img/theme-img/sub-title.svg') }}" alt="">
+                                    </span>
+                                    <h1 class="hero-title" data-ani="slideinleft" data-ani-delay="0.3s">
+                                        Enseignements des Maîtres
+                                    </h1>
+                                    <p class="hero-text" data-ani="slideinleft" data-ani-delay="0.4s">
+                                        Accédez aux enseignements authentiques des grands maîtres islamiques de Kong et approfondissez votre connaissance de l'Islam.
+                                    </p>
+                                    <div class="btn-group justify-content-lg-start justify-content-center" data-ani="slideinleft" data-ani-delay="0.8s">
+                                        <a href="{{ path('app_teacher') }}" class="th-btn style1">
+                                            <i class="fas fa-graduation-cap"></i>
+                                            <span class="btn-text" data-back="Découvrir Maîtres" data-front="Découvrir Maîtres"></span>
+                                        </a>
+                                        <a href="{{ path('app_podcast_index') }}" class="th-btn border-btn">
+                                            Écouter Podcasts <i class="fa-light fa-arrow-right-long ms-2"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="hero-image" data-ani="slideinup" data-ani-delay="0.4s">
+                                    <img src="{{ asset('assets/images/kong/scholar-teaching.jpg') }}" alt="Enseignement">
+                                </div>
+                            </div>
                         </div>
                     </div>
-                {% endif %}
+                </div>
             </div>
-            <div class="row">
-                <div class="col-md-12 text-center mt-4">
-                    <a href="{{ path('app_archive') }}" class="btn btn-primary">Explorer toutes les archives</a>
+            <div class="slider-controller">
+                <div class="slider-pagination"></div>
+            </div>
+        </div>
+        <div class="scroll-down">
+            <a href="#about-sec" class="scroll-bottom"><i class="far fa-chevron-down"></i></a>
+        </div>
+        <div class="hero-shape"></div>
+    </div>
+
+    <!-- About Section -->
+    <div class="about-area overflow-hidden space-top" id="about-sec">
+        <div class="container">
+            <div class="row gy-5">
+                <div class="col-xxl-6">
+                    <div class="img-box4">
+                        <div class="img-box4-area">
+                            <div class="img-wrapp">
+                                <div class="img1 global-img">
+                                    <img src="{{ asset('assets/images/kong/kong-historical-1.jpg') }}" alt="Histoire Kong">
+                                </div>
+                                <div class="img2 global-img">
+                                    <img src="{{ asset('assets/images/kong/kong-historical-2.jpg') }}" alt="Histoire Kong">
+                                </div>
+                            </div>
+                            <div class="img-wrapp">
+                                <div class="img3 global-img">
+                                    <img src="{{ asset('assets/images/kong/kong-historical-3.jpg') }}" alt="Histoire Kong">
+                                </div>
+                                <div class="img4 global-img">
+                                    <img src="{{ asset('assets/images/kong/kong-historical-4.jpg') }}" alt="Histoire Kong">
+                                </div>
+                            </div>
+                            <div class="discount-wrapp">
+                                <div class="logo">
+                                    <img src="{{ asset('assets/img/small-logo2.svg') }}" alt="Kong">
+                                </div>
+                                <div class="discount-tag">
+                                    <span class="discount-anime">Heritage Kong * Culture Islamique</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xxl-6 mb-30 mb-xl-0">
+                    <div class="ps-xl-5">
+                        <div class="title-area mb-40">
+                            <span class="sub-title">À propos de Kong</span>
+                            <h2 class="sec-title">Bienvenue au <span>Centre Islamique Historique de Kong</span></h2>
+                        </div>
+                        <p class="mt-n2 mb-35 fs-18 pe-xl-5">
+                            Kong, fondée au XVIIIe siècle, est devenue un centre commercial et islamique majeur en Afrique de l'Ouest. 
+                            Cette ville historique a été le berceau d'une tradition intellectuelle islamique riche et influente.
+                        </p>
+                        <div class="about-wrapper2 mt-50">
+                            <div class="about-content">
+                                <div class="about-feature style3">
+                                    <div class="box-icon">
+                                        <img src="{{ asset('assets/img/icon/about_2_1.svg') }}" alt="Patrimoine">
+                                    </div>
+                                    <div class="media-body">
+                                        <h3 class="box-title">Préservation du Patrimoine Islamique</h3>
+                                        <p class="box-text">Conservation et transmission du riche héritage culturel et religieux de Kong.</p>
+                                    </div>
+                                </div>
+                                <div class="about-feature style3">
+                                    <div class="box-icon">
+                                        <img src="{{ asset('assets/img/icon/about_2_2.svg') }}" alt="Éducation">
+                                    </div>
+                                    <div class="media-body">
+                                        <h3 class="box-title">Éducation et Enseignement</h3>
+                                        <p class="box-text">Partage des enseignements des maîtres et de la sagesse islamique ancestrale.</p>
+                                    </div>
+                                </div>
+                                <div class="about-feature style3">
+                                    <div class="box-icon">
+                                        <img src="{{ asset('assets/img/icon/about_2_3.svg') }}" alt="Communauté">
+                                    </div>
+                                    <div class="media-body">
+                                        <h3 class="box-title">Renforcement de la Communauté</h3>
+                                        <p class="box-text">Création de liens et d'échanges entre les membres de la communauté islamique.</p>
+                                    </div>
+                                </div>
+                                <div class="btn-group mt-50">
+                                    <a href="{{ path('app_about') }}" class="th-btn">
+                                        <span class="btn-text" data-back="En savoir plus" data-front="En savoir plus"></span>
+                                    </a>
+                                    <a href="{{ path('app_contact') }}" class="th-btn style2">
+                                        <span class="btn-text" data-back="Nous contacter" data-front="Nous contacter"></span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Section des maîtres islamiques -->
-    <div class="container my-5">
-        <div class="row">
-            <div class="col-md-12 text-center mb-4">
-                <h2 class="section-title">Maîtres Islamiques</h2>
-                <div class="divider mx-auto"></div>
-                <p class="lead">Découvrez les enseignements et le savoir-faire des maîtres islamiques de Kong</p>
-            </div>
-        </div>
-        <div class="row">
-            {# {% if teachers is defined and teachers|length > 0 %} #}
-                {% for teacher in teachers %}
-                    <div class="col-md-3 mb-4">
-                        <div class="card teacher-card text-center h-100">
-                            <img src="{{ asset('assets/images/teacher/icon_user.jpeg') }}" class="card-img-top rounded-circle mx-auto mt-3" alt="{{ teacher.name }}" style="width: 150px; height: 150px; object-fit: cover;">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ teacher.name }}</h5>
-                                <p class="card-text text-muted">
-                                    <strong class="text-primary">Spécialité :</strong>
-                                    {{ teacher.specialty }}
+    <!-- Services Section -->
+    <section class="overflow-hidden space" data-bg-src="{{ asset('assets/img/bg/service_bg_2.jpg') }}">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-xl-5">
+                    <div class="service-image">
+                        <img src="{{ asset('assets/images/kong/kong-services.png') }}" alt="Services Kong">
+                    </div>
+                </div>
+                <div class="col-xl-7">
+                    <div class="title-area text-center text-md-start">
+                        <span class="sub-title">NOS SERVICES</span>
+                        <h2 class="sec-title">Services que nous offrons</h2>
+                    </div>
+                    <div class="service-grid-wrapper">
+                        <div class="service-grid">
+                            <div class="box-content">
+                                <div class="box-icon">
+                                    <img src="{{ asset('assets/img/icon/service_3_1.svg') }}" alt="Archives">
+                                </div>
+                                <h3 class="box-title">
+                                    <a href="{{ path('app_archive') }}">Archives Historiques</a>
+                                </h3>
+                                <p class="box-text">
+                                    Accès à une collection unique d'archives historiques sur l'Islam à Kong, incluant manuscrits et documents anciens.
                                 </p>
                             </div>
-                            <div class="card-footer bg-white border-0">
-                                <a href="{{ path('app_teacher_show', {'slug': teacher.slug}) }}" class="btn btn-sm btn-outline-primary">Voir le profil</a>
+                        </div>
+                        <div class="service-grid">
+                            <div class="box-content">
+                                <div class="box-icon">
+                                    <img src="{{ asset('assets/img/icon/service_3_2.svg') }}" alt="Podcasts">
+                                </div>
+                                <h3 class="box-title">
+                                    <a href="{{ path('app_podcast_index') }}">Podcasts Éducatifs</a>
+                                </h3>
+                                <p class="box-text">
+                                    Écoutez les enseignements des maîtres contemporains et les récits historiques de Kong.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="service-grid">
+                            <div class="box-content">
+                                <div class="box-icon">
+                                    <img src="{{ asset('assets/img/icon/service_3_3.svg') }}" alt="Forum">
+                                </div>
+                                <h3 class="box-title">
+                                    <a href="{{ path('app_forum') }}">Forum Communautaire</a>
+                                </h3>
+                                <p class="box-text">
+                                    Participez aux discussions et échanges avec la communauté islamique de Kong et d'ailleurs.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="service-grid">
+                            <div class="box-content">
+                                <div class="box-icon">
+                                    <img src="{{ asset('assets/img/icon/service_3_4.svg') }}" alt="Enseignement">
+                                </div>
+                                <h3 class="box-title">
+                                    <a href="{{ path('app_teacher') }}">Enseignements des Maîtres</a>
+                                </h3>
+                                <p class="box-text">
+                                    Découvrez les profils et enseignements des grands maîtres islamiques de Kong.
+                                </p>
                             </div>
                         </div>
                     </div>
-                {% endfor %}
-            {# {% else %}
-                <div class="col-md-12">
-                    <div class="alert alert-info">
-                        <p class="mb-0">Aucun maître islamique n'a été ajouté pour le moment.</p>
+                    <div class="btn-group justify-content-center justify-content-md-start mt-50">
+                        <a href="{{ path('app_about') }}" class="th-btn style2 th-icon">
+                            <span class="btn-text" data-back="En savoir plus" data-front="En savoir plus"></span>
+                        </a>
                     </div>
-                </div> #}
-            {# {% endif %} #}
-        </div>
-        <div class="row">
-            <div class="col-md-12 text-center mt-4">
-                <a href="{{ path('app_teacher') }}" class="btn btn-primary">Tous les maîtres</a>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
+
+    <!-- Latest Articles -->
+    <section class="overflow-hidden space" id="blog-sec">
+        <div class="container">
+            <div class="title-area text-center">
+                <span class="sub-title">Actualités & Blog</span>
+                <h2 class="sec-title">Articles Récents</h2>
+            </div>
+            <div class="slider-area">
+                <div class="swiper th-slider has-shadow" id="blogSlider" data-slider-options='{"loop":true,"breakpoints":{"0":{"slidesPerView":1},"576":{"slidesPerView":"1"},"768":{"slidesPerView":"2"},"992":{"slidesPerView":"2"},"1200":{"slidesPerView":"3"}}}'>
+                    <div class="swiper-wrapper">
+                        {% if latestArticles is defined and latestArticles|length > 0 %}
+                            {% for article in latestArticles %}
+                                <div class="swiper-slide">
+                                    <div class="blog-card">
+                                        <div class="box-img global-img">
+                                            <img src="{{ article.featuredImage ? asset('assets/uploads/articles/' ~ article.featuredImage) : asset('assets/images/default/article-default.jpg') }}" alt="{{ article.title }}">
+                                        </div>
+                                        <div class="box-content">
+                                            <h3 class="box-title">
+                                                <a href="{{ path('app_blog_show', {'slug': article.slug}) }}">{{ article.title }}</a>
+                                            </h3>
+                                            <div class="blog-meta">
+                                                <a href="{{ path('app_blog_index') }}">
+                                                    <i class="fa-solid fa-calendar-days"></i>{{ article.publishedAt ? article.publishedAt|date('d M Y') : article.createdAt|date('d M Y') }}
+                                                </a>
+                                                {% if article.author %}
+                                                <a class="author" href="{{ path('app_blog_index') }}">
+                                                    <i class="fa-solid fa-user"></i>{{ article.author.firstName ~ ' ' ~ article.author.lastName }}
+                                                </a>
+                                                {% endif %}
+                                            </div>
+                                            <p class="box-text">{{ article.excerpt|striptags|length > 100 ? article.excerpt|striptags|slice(0, 100) ~ '...' : article.excerpt|striptags }}</p>
+                                            <a href="{{ path('app_blog_show', {'slug': article.slug}) }}" class="th-btn">
+                                                <span class="btn-text" data-back="Lire plus" data-front="Lire plus"></span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="swiper-slide">
+                                <div class="blog-card">
+                                    <div class="box-content text-center">
+                                        <h3 class="box-title">Bientôt disponible</h3>
+                                        <p class="box-text">Les premiers articles seront publiés prochainement.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <button data-slider-prev="#blogSlider" class="slider-arrow slider-prev">
+                    <i class="far fa-arrow-left"></i>
+                </button>
+                <button data-slider-next="#blogSlider" class="slider-arrow slider-next">
+                    <i class="far fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Teachers Section -->
+    <section class="team-sec space-top overflow-hidden">
+        <div class="container z-index-common">
+            <div class="title-area text-center">
+                <span class="sub-title">Nos Maîtres</span>
+                <h2 class="sec-title">Maîtres Islamiques</h2>
+            </div>
+            <div class="slider-area">
+                <div class="swiper th-slider has-shadow" id="teamSlider1" data-slider-options='{"loop":true,"breakpoints":{"0":{"slidesPerView":1},"576":{"slidesPerView":"1"},"768":{"slidesPerView":"2"},"992":{"slidesPerView":"3"},"1300":{"slidesPerView":"4"}}}'>
+                    <div class="swiper-wrapper">
+                        {% if teachers is defined and teachers|length > 0 %}
+                            {% for teacher in teachers %}
+                                <div class="swiper-slide">
+                                    <div class="th-team team-box">
+                                        <div class="box-img">
+                                            <img src="{{ teacher.photo ? asset('assets/uploads/teachers/' ~ teacher.photo) : asset('assets/images/default/teacher-default.jpg') }}" alt="{{ teacher.nom }}">
+                                        </div>
+                                        <div class="box-content">
+                                            <h3 class="box-title">
+                                                <a href="{{ path('app_teacher_show', {'slug': teacher.slug}) }}">{{ teacher.nom }}</a>
+                                            </h3>
+                                            <span class="team-desig">{{ teacher.specialite }}</span>
+                                            <div class="th-social">
+                                                <a href="">teacher.socialLinks</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="swiper-slide">
+                                <div class="th-team team-box">
+                                    <div class="box-content text-center">
+                                        <h3 class="box-title">Prochainement</h3>
+                                        <span class="team-desig">Les profils des maîtres seront ajoutés bientôt</span>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 {% endblock %}

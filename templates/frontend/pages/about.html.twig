@@ -1,0 +1,295 @@
+{% extends 'frontend/base.html.twig' %}
+
+{% block title %}À propos de Kong - Portail Islamique{% endblock %}
+
+{% block main %}
+<!-- Breadcrumb -->
+<div class="breadcumb-wrapper" data-bg-src="{{ asset('assets/images/kong/about-hero.jpg') }}">
+    <div class="container">
+        <div class="breadcumb-content">
+            <h1 class="breadcumb-title">À propos de Kong</h1>
+            <ul class="breadcumb-menu">
+                <li><a href="{{ path('app_home') }}">Accueil</a></li>
+                <li>À propos</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- About Section -->
+<div class="about-area overflow-hidden space">
+    <div class="container">
+        <div class="row gy-5 align-items-center">
+            <div class="col-xl-6">
+                <div class="img-box3">
+                    <div class="img1">
+                        <img src="{{ asset('assets/images/kong/kong-mosque-main.jpg') }}" alt="Grande Mosquée de Kong">
+                    </div>
+                    <div class="img2">
+                        <img src="{{ asset('assets/images/kong/kong-scholars-old.jpg') }}" alt="Érudits de Kong">
+                    </div>
+                    <div class="shape-mockup jump" data-top="0" data-right="0">
+                        <img src="{{ asset('assets/img/shape/about_shape_1.png') }}" alt="shape">
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6">
+                <div class="ps-xl-4">
+                    <div class="title-area mb-35">
+                        <span class="sub-title">Histoire de Kong</span>
+                        <h2 class="sec-title">Un Centre Islamique <span>Historique en Afrique de l'Ouest</span></h2>
+                    </div>
+                    <p class="mt-n2 mb-35">
+                        Kong, fondée au XVIIIe siècle dans l'actuelle Côte d'Ivoire, est devenue l'un des centres islamiques 
+                        les plus importants d'Afrique de l'Ouest. Cette ville historique a joué un rôle crucial dans la 
+                        diffusion de l'Islam et de la culture arabo-islamique dans la région.
+                    </p>
+                    <p class="mb-35">
+                        Située sur les routes commerciales transsahariennes, Kong était un carrefour où se rencontraient 
+                        marchands, érudits et voyageurs venus de tout l'Empire du Mali et au-delà. La ville était réputée 
+                        pour ses mosquées, ses écoles coraniques et ses bibliothèques.
+                    </p>
+                    <div class="checklist list-two-column">
+                        <ul>
+                            <li><i class="fas fa-check-circle"></i> Centre commercial majeur</li>
+                            <li><i class="fas fa-check-circle"></i> Tradition d'enseignement islamique</li>
+                            <li><i class="fas fa-check-circle"></i> Architecture islamique unique</li>
+                            <li><i class="fas fa-check-circle"></i> Manuscrits arabes précieux</li>
+                            <li><i class="fas fa-check-circle"></i> Influence culturelle régionale</li>
+                            <li><i class="fas fa-check-circle"></i> Patrimoine UNESCO</li>
+                        </ul>
+                    </div>
+                    <div class="btn-group mt-40">
+                        <a href="{{ path('app_archive') }}" class="th-btn">
+                            <span class="btn-text" data-back="Explorer Archives" data-front="Explorer Archives"></span>
+                        </a>
+                        <a href="{{ path('app_contact') }}" class="th-btn border-btn">
+                            Nous contacter <i class="fa-light fa-arrow-right-long ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Mission & Vision -->
+<section class="overflow-hidden space" data-bg-src="{{ asset('assets/img/bg/about_bg_1.jpg') }}">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-6 mb-30 mb-xl-0">
+                <div class="about-content-wrap">
+                    <div class="title-area mb-25">
+                        <span class="sub-title text-white">Notre Mission</span>
+                        <h2 class="sec-title text-white">Préserver et Transmettre</h2>
+                    </div>
+                    <p class="about-text text-white">
+                        Notre mission est de préserver le riche patrimoine islamique de Kong et de le rendre accessible 
+                        aux générations actuelles et futures. Nous nous efforçons de documenter, archiver et partager 
+                        l'histoire, la culture et les enseignements islamiques de cette ville historique.
+                    </p>
+                    <div class="about-tab">
+                        <ul class="nav nav-tabs" id="aboutTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="mission-tab" data-bs-toggle="tab" data-bs-target="#mission" type="button" role="tab">
+                                    Mission
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="vision-tab" data-bs-toggle="tab" data-bs-target="#vision" type="button" role="tab">
+                                    Vision
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="values-tab" data-bs-toggle="tab" data-bs-target="#values" type="button" role="tab">
+                                    Valeurs
+                                </button>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="aboutTabContent">
+                            <div class="tab-pane fade show active" id="mission" role="tabpanel">
+                                <p class="about-text text-white">
+                                    Préserver et transmettre le patrimoine islamique de Kong à travers la documentation, 
+                                    l'archivage numérique et la création d'une plateforme accessible pour l'éducation et la recherche.
+                                </p>
+                            </div>
+                            <div class="tab-pane fade" id="vision" role="tabpanel">
+                                <p class="about-text text-white">
+                                    Devenir la référence mondiale pour l'étude et la compréhension de l'Islam en Afrique de l'Ouest, 
+                                    en particulier l'héritage unique de Kong.
+                                </p>
+                            </div>
+                            <div class="tab-pane fade" id="values" role="tabpanel">
+                                <p class="about-text text-white">
+                                    Authenticité, respect du patrimoine, excellence académique, accessibilité et engagement 
+                                    communautaire sont les valeurs qui guident notre travail.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6">
+                <div class="about-thumb3">
+                    <img src="{{ asset('assets/images/kong/kong-manuscript.jpg') }}" alt="Manuscrits de Kong">
+                    <div class="about-grid">
+                        <h3 class="about-grid_year"><span class="counter-number">300</span>+</h3>
+                        <p class="about-grid_text">Années d'Histoire</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features -->
+<section class="feature-area space">
+    <div class="container">
+        <div class="title-area text-center">
+            <span class="sub-title">Nos Objectifs</span>
+            <h2 class="sec-title">Ce que nous offrons</h2>
+        </div>
+        <div class="row gy-4 justify-content-center">
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-card-icon">
+                        <img src="{{ asset('assets/img/icon/feature_1_1.svg') }}" alt="Archives">
+                    </div>
+                    <h3 class="feature-card_title">Archives Numériques</h3>
+                    <p class="feature-card_text">
+                        Conservation numérique de manuscrits, documents historiques et témoignages oraux de Kong.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-card-icon">
+                        <img src="{{ asset('assets/img/icon/feature_1_2.svg') }}" alt="Éducation">
+                    </div>
+                    <h3 class="feature-card_title">Ressources Éducatives</h3>
+                    <p class="feature-card_text">
+                        Création de contenus pédagogiques pour faire découvrir l'histoire islamique de Kong.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-card-icon">
+                        <img src="{{ asset('assets/img/icon/feature_1_3.svg') }}" alt="Recherche">
+                    </div>
+                    <h3 class="feature-card_title">Plateforme de Recherche</h3>
+                    <p class="feature-card_text">
+                        Faciliter la recherche académique sur l'Islam ouest-africain et l'héritage de Kong.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-card-icon">
+                        <img src="{{ asset('assets/img/icon/feature_1_4.svg') }}" alt="Communauté">
+                    </div>
+                    <h3 class="feature-card_title">Réseau Communautaire</h3>
+                    <p class="feature-card_text">
+                        Connecter les descendants, chercheurs et passionnés de l'histoire de Kong.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-card-icon">
+                        <img src="{{ asset('assets/img/icon/feature_1_5.svg') }}" alt="Patrimoine">
+                    </div>
+                    <h3 class="feature-card_title">Conservation du Patrimoine</h3>
+                    <p class="feature-card_text">
+                        Protection et promotion du patrimoine architectural et culturel islamique.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-card-icon">
+                        <img src="{{ asset('assets/img/icon/feature_1_6.svg') }}" alt="Innovation">
+                    </div>
+                    <h3 class="feature-card_title">Innovation Numérique</h3>
+                    <p class="feature-card_text">
+                        Utilisation des technologies modernes pour préserver et diffuser le patrimoine.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Statistics -->
+<div class="counter-area" data-bg-src="{{ asset('assets/img/bg/counter_bg_1.jpg') }}">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6 col-xl-3">
+                <div class="counter-card">
+                    <div class="counter-card_icon">
+                        <img src="{{ asset('assets/img/icon/counter_1_1.svg') }}" alt="Archives">
+                    </div>
+                    <div class="media-body">
+                        <h2 class="counter-card_number"><span class="counter-number">500</span>+</h2>
+                        <p class="counter-card_text">Documents archivés</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="counter-card">
+                    <div class="counter-card_icon">
+                        <img src="{{ asset('assets/img/icon/counter_1_2.svg') }}" alt="Manuscrits">
+                    </div>
+                    <div class="media-body">
+                        <h2 class="counter-card_number"><span class="counter-number">150</span>+</h2>
+                        <p class="counter-card_text">Manuscrits numérisés</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="counter-card">
+                    <div class="counter-card_icon">
+                        <img src="{{ asset('assets/img/icon/counter_1_3.svg') }}" alt="Chercheurs">
+                    </div>
+                    <div class="media-body">
+                        <h2 class="counter-card_number"><span class="counter-number">50</span>+</h2>
+                        <p class="counter-card_text">Chercheurs contributeurs</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="counter-card">
+                    <div class="counter-card_icon">
+                        <img src="{{ asset('assets/img/icon/counter_1_4.svg') }}" alt="Communauté">
+                    </div>
+                    <div class="media-body">
+                        <h2 class="counter-card_number"><span class="counter-number">1000</span>+</h2>
+                        <p class="counter-card_text">Membres de la communauté</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Call to Action -->
+<section class="cta-area" data-bg-src="{{ asset('assets/img/bg/cta_bg_1.jpg') }}">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <div class="cta-content">
+                    <h2 class="cta-title">Rejoignez notre mission de préservation</h2>
+                    <p class="cta-text">
+                        Aidez-nous à préserver et partager le patrimoine islamique de Kong pour les générations futures.
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <a href="{{ path('app_contact') }}" class="th-btn">
+                    <span class="btn-text" data-back="Nous rejoindre" data-front="Nous rejoindre"></span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

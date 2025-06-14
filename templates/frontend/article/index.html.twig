@@ -1,32 +1,239 @@
 {% extends 'frontend/base.html.twig' %}
 
-{% block title %}Blog - Articles{% endblock %}
+{% block title %}Actualités et Articles - Kong Islamique{% endblock %}
 
 {% block main %}
+<!-- Breadcrumb -->
+<div class="breadcumb-wrapper" data-bg-src="{{ asset('assets/images/kong/blog-hero.jpg') }}">
     <div class="container">
-        <h1>TOUTES LES ACTUALITÉS</h1>
+        <div class="breadcumb-content">
+            <h1 class="breadcumb-title">Actualités & Articles</h1>
+            <ul class="breadcumb-menu">
+                <li><a href="{{ path('app_home') }}">Accueil</a></li>
+                <li>Actualités</li>
+            </ul>
+        </div>
+    </div>
+</div>
 
-        {% include 'frontend/article/_search-filtre.html.twig' %}
-        
-        <div class="row">
-            {% for article in articles %}
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        {% if article.featuredImage %}
-                            <img src="{{ asset('assets/uploads/articles/' ~ article.featuredImage) }}" class="card-img-top" alt="{{ article.title }}">
-                        {% endif %}
-                        <div class="card-body">
-                            <h5 class="card-title">{{ article.title }}</h5>
-                            <p class="card-text">{{ article.excerpt|striptags|length > 150 ? article.excerpt[:150] ~ '...' : article.excerpt }}</p>
-                            <a href="{{ path('app_blog_show', {'slug': article.slug}) }}" class="btn btn-primary">Lire l'article</a>
+<section class="th-blog-wrapper space-top space-extra-bottom">
+    <div class="container">
+        <div class="row gx-30">
+            <div class="col-xxl-8 col-lg-7">
+                <!-- Search and Filter Section -->
+                <div class="blog-filter-wrapper mb-50">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <form class="search-form" action="{{ path('app_blog_index') }}" method="get">
+                                <input type="text" name="q" placeholder="Rechercher un article..." 
+                                       value="{{ app.request.query.get('q')|default('') }}">
+                                <button type="submit"><i class="far fa-search"></i></button>
+                            </form>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="filter-dropdown">
+                                <select class="form-select" onchange="location.href=this.value">
+                                    <option value="{{ path('app_blog_index') }}">Toutes les catégories</option>
+                                    {% for category in categories %}
+                                        <option value="{{ path('app_blog_category', {slug: category.slug}) }}" 
+                                                {% if app.request.get('_route_params').slug|default('') == category.slug %}selected{% endif %}>
+                                            {{ category.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
-            {% else %}
-                <div class="col-12">
-                    <p>Aucun article disponible pour le moment.</p>
+
+                <!-- Articles Grid -->
+                <div class="row gy-4">
+                    {% for article in articles %}
+                    <div class="col-sm-6 col-xl-4">
+                        <div class="blog-card">
+                            <div class="box-img">
+                                {% if article.featuredImage %}
+                                    <img src="{{ asset('assets/uploads/articles/' ~ article.featuredImage) }}" alt="{{ article.title }}">
+                                {% else %}
+                                    <img src="{{ asset('assets/images/default/article-default.jpg') }}" alt="{{ article.title }}">
+                                {% endif %}
+                                {% if article.category %}
+                                <div class="blog-category">
+                                    <a href="{{ path('app_blog_category', {slug: article.category.slug}) }}">
+                                        {{ article.category.name }}
+                                    </a>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="box-content">
+                                <div class="blog-meta">
+                                    <a href="{{ path('app_blog_index') }}">
+                                        <i class="fa-light fa-calendar-days"></i>
+                                        {{ article.publishedAt ? article.publishedAt|date('d M Y') : article.createdAt|date('d M Y') }}
+                                    </a>
+                                    {% if article.author %}
+                                    <a class="author" href="{{ path('app_blog_index') }}">
+                                        <i class="fa-light fa-user"></i>{{ article.author.firstName ~ ' ' ~ article.author.lastName }}
+                                    </a>
+                                    {% endif %}
+                                    <a href="{{ path('app_blog_show', {'slug': article.slug}) }}#comments">
+                                        <i class="fa-light fa-comments"></i>{{ article.comments|filter(c => c.isIsApproved)|length }}
+                                    </a>
+                                </div>
+                                <h3 class="box-title">
+                                    <a href="{{ path('app_blog_show', {'slug': article.slug}) }}">
+                                        {{ article.title|length > 50 ? article.title|slice(0, 50) ~ '...' : article.title }}
+                                    </a>
+                                </h3>
+                                <p class="box-text">
+                                    {{ article.excerpt|striptags|length > 120 ? article.excerpt|striptags|slice(0, 120) ~ '...' : article.excerpt|striptags }}
+                                </p>
+                                <a href="{{ path('app_blog_show', {'slug': article.slug}) }}" class="link-btn">
+                                    Lire plus <i class="fas fa-arrow-right ms-2"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="col-12">
+                        <div class="empty-state text-center">
+                            <img src="{{ asset('assets/img/icon/empty-articles.svg') }}" alt="Aucun article" class="mb-3">
+                            <h3>Aucun article trouvé</h3>
+                            <p>Aucun article ne correspond à vos critères de recherche.</p>
+                            <a href="{{ path('app_blog_index') }}" class="th-btn">
+                                <span class="btn-text" data-back="Voir tous les articles" data-front="Voir tous les articles"></span>
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
-            {% endfor %}
+
+                <!-- Pagination -->
+                {% if articles.haveToPaginate %}
+                <div class="th-pagination text-center pt-50">
+                    <ul>
+                        {% if articles.hasPreviousPage %}
+                            <li><a href="{{ path('app_blog_index', {'page': articles.previousPage}) }}"><i class="far fa-arrow-left"></i></a></li>
+                        {% endif %}
+
+                        {% for page in articles.pagesInRange %}
+                            {% if page != articles.currentPage %}
+                                <li><a href="{{ path('app_blog_index', {'page': page}) }}">{{ page }}</a></li>
+                            {% else %}
+                                <li><a class="current">{{ page }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if articles.hasNextPage %}
+                            <li><a href="{{ path('app_blog_index', {'page': articles.nextPage}) }}"><i class="far fa-arrow-right"></i></a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-xxl-4 col-lg-5">
+                <aside class="sidebar-area">
+                    <!-- Categories Widget -->
+                    <div class="widget widget_categories">
+                        <h3 class="widget_title">Catégories</h3>
+                        <ul>
+                            {% for category in categories %}
+                            <li>
+                                <a href="{{ path('app_blog_category', {slug: category.slug}) }}">
+                                    {{ category.name }} 
+                                    <span>({{ category.articles|filter(a => a.isPublished)|length }})</span>
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <!-- Recent Posts Widget -->
+                    {% if recentArticles is defined and recentArticles|length > 0 %}
+                    <div class="widget">
+                        <h3 class="widget_title">Articles récents</h3>
+                        <div class="recent-post-wrap">
+                            {% for recentArticle in recentArticles %}
+                            <div class="recent-post">
+                                <div class="media-img">
+                                    <a href="{{ path('app_blog_show', {'slug': recentArticle.slug}) }}">
+                                        <img src="{{ recentArticle.featuredImage ? asset('assets/uploads/articles/' ~ recentArticle.featuredImage) : asset('assets/images/default/article-thumb.jpg') }}" alt="{{ recentArticle.title }}">
+                                    </a>
+                                </div>
+                                <div class="media-body">
+                                    <div class="recent-post-meta">
+                                        <a href="{{ path('app_blog_index') }}">{{ recentArticle.publishedAt ? recentArticle.publishedAt|date('d M Y') : recentArticle.createdAt|date('d M Y') }}</a>
+                                    </div>
+                                    <h4 class="post-title">
+                                        <a class="text-inherit" href="{{ path('app_blog_show', {'slug': recentArticle.slug}) }}">
+                                            {{ recentArticle.title|length > 40 ? recentArticle.title|slice(0, 40) ~ '...' : recentArticle.title }}
+                                        </a>
+                                    </h4>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Popular Tags Widget -->
+                    {% if popularTags is defined and popularTags|length > 0 %}
+                    <div class="widget widget_tag_cloud">
+                        <h3 class="widget_title">Tags populaires</h3>
+                        <div class="tagcloud">
+                            {% for tag in popularTags %}
+                                <a href="{{ path('app_blog_index', {tag: tag}) }}">{{ tag }}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Newsletter Widget -->
+                    <div class="widget newsletter-widget">
+                        <h4 class="widget_title">Newsletter</h4>
+                        <p class="newsletter-text">Recevez les dernières actualités islamiques de Kong.</p>
+                        <form class="newsletter-form">
+                            <div class="form-group">
+                                <input class="form-control" type="email" placeholder="Votre email" required>
+                            </div>
+                            <button type="submit" class="th-btn style2">S'abonner</button>
+                        </form>
+                    </div>
+
+                    <!-- Prayer Times Widget -->
+                    <div class="widget prayer-times-widget">
+                        <h4 class="widget_title">Horaires de Prière</h4>
+                        <div class="prayer-times-list">
+                            <div class="prayer-time-item">
+                                <span class="prayer-name">Fajr</span>
+                                <span class="prayer-time">05:30</span>
+                            </div>
+                            <div class="prayer-time-item">
+                                <span class="prayer-name">Dhuhr</span>
+                                <span class="prayer-time">13:30</span>
+                            </div>
+                            <div class="prayer-time-item">
+                                <span class="prayer-name">Asr</span>
+                                <span class="prayer-time">16:00</span>
+                            </div>
+                            <div class="prayer-time-item">
+                                <span class="prayer-name">Maghrib</span>
+                                <span class="prayer-time">18:30</span>
+                            </div>
+                            <div class="prayer-time-item">
+                                <span class="prayer-name">Isha</span>
+                                <span class="prayer-time">19:45</span>
+                            </div>
+                        </div>
+                        <div class="prayer-location">
+                            <i class="fas fa-map-marker-alt"></i> Kong, Côte d'Ivoire
+                        </div>
+                    </div>
+                </aside>
+            </div>
         </div>
     </div>
+</section>
 {% endblock %}

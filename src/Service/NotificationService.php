@@ -10,11 +10,13 @@ class NotificationService
 {
     private MailerInterface $mailer;
     private Environment $twig;
+    private string $contactEmail;
 
-    public function __construct(MailerInterface $mailer, Environment $twig)
+    public function __construct(MailerInterface $mailer, Environment $twig, string $contactEmail)
     {
         $this->mailer = $mailer;
         $this->twig = $twig;
+        $this->contactEmail = $contactEmail;
     }
 
     public function sendEmail(string $to, string $subject, string $template, array $context = []): void
@@ -77,10 +79,8 @@ class NotificationService
 
     public function sendAdminAlert(string $message, string $level = 'info'): void
     {
-        $adminEmail = 'admin@islamique-kong.ci'; // Vous pouvez mettre ça en paramètre
-        
         $this->sendEmail(
-            $adminEmail,
+            $this->contactEmail, // Utilise l'email configuré
             'Alerte Système - Portail Islamique Kong',
             'emails/admin_alert.html.twig',
             [
@@ -103,10 +103,8 @@ class NotificationService
 
     public function sendContactFormNotification(string $senderName, string $senderEmail, string $message): void
     {
-        $adminEmail = 'contact@islamique-kong.ci';
-        
         $this->sendEmail(
-            $adminEmail,
+            $this->contactEmail, // Utilise l'email configuré
             'Nouveau message de contact',
             'emails/contact_form.html.twig',
             [

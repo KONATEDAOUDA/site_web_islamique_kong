@@ -1,0 +1,297 @@
+{% extends 'frontend/base.html.twig' %}
+
+{% block title %}Maîtres Islamiques - Kong{% endblock %}
+
+{% block main %}
+<!-- Breadcrumb -->
+<div class="breadcumb-wrapper" data-bg-src="{{ asset('assets/images/kong/teachers-hero.jpg') }}">
+    <div class="container">
+        <div class="breadcumb-content">
+            <h1 class="breadcumb-title">Maîtres Islamiques</h1>
+            <ul class="breadcumb-menu">
+                <li><a href="{{ path('app_home') }}">Accueil</a></li>
+                <li>Maîtres</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Intro Section -->
+<section class="space-top">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-8">
+                <div class="title-area text-center">
+                    <span class="sub-title">Nos Érudits</span>
+                    <h2 class="sec-title">Les Maîtres Islamiques de Kong</h2>
+                    <p class="sec-text">
+                        Découvrez les profils des grands maîtres islamiques qui ont façonné et continuent d'influencer 
+                        la tradition intellectuelle et spirituelle de Kong. Leurs enseignements et leur sagesse sont 
+                        une source d'inspiration pour les générations actuelles et futures.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Teachers Grid -->
+<section class="team-area space-bottom">
+    <div class="container">
+        <!-- Filter Tabs -->
+        <div class="filter-menu-wrapper">
+            <div class="filter-menu-area">
+                <div class="filter-menu filter-menu-active">
+                    <button data-filter="*" class="active" type="button">Tous</button>
+                    <button data-filter=".historical" type="button">Historiques</button>
+                    <button data-filter=".contemporary" type="button">Contemporains</button>
+                    <button data-filter=".quran" type="button">Spécialistes Coran</button>
+                    <button data-filter=".hadith" type="button">Spécialistes Hadith</button>
+                    <button data-filter=".fiqh" type="button">Spécialistes Fiqh</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row gy-4 filter-active">
+            {% for teacher in teachers %}
+            <div class="col-md-6 col-lg-4 col-xl-3 filter-item {{ teacher.era == 'historical' ? 'historical' : 'contemporary' }} {{ teacher.specialty|lower|replace({' ': '', 'é': 'e'}) }}">
+                <div class="th-team team-card">
+                    <div class="team-img">
+                        {% if teacher.profilePicture %}
+                            <img src="{{ asset('assets/uploads/teachers/' ~ teacher.profilePicture) }}" alt="{{ teacher.name }}">
+                        {% else %}
+                            <img src="{{ asset('assets/images/default/teacher-default.jpg') }}" alt="{{ teacher.name }}">
+                        {% endif %}
+                        <div class="team-social">
+                            <a href="{{ path('app_teacher_show', {'slug': teacher.slug}) }}" class="icon-btn">
+                                <i class="far fa-eye"></i>
+                            </a>
+                            {% if teacher.socialLinks %}
+                                {% for social in teacher.socialLinks %}
+                                    <a href="{{ social.url }}" target="_blank" class="icon-btn">
+                                        <i class="fab fa-{{ social.platform }}"></i>
+                                    </a>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="team-content">
+                        <h3 class="team-title">
+                            <a href="{{ path('app_teacher_show', {'slug': teacher.slug}) }}">{{ teacher.name }}</a>
+                        </h3>
+                        <span class="team-desig">{{ teacher.specialty }}</span>
+                        {% if teacher.era %}
+                        <div class="team-era">
+                            <span class="badge {{ teacher.era == 'historical' ? 'badge-warning' : 'badge-success' }}">
+                                {% if teacher.era == 'historical' %}
+                                    Historique
+                                {% else %}
+                                    Contemporain
+                                {% endif %}
+                            </span>
+                        </div>
+                        {% endif %}
+                        {% if teacher.yearsActive %}
+                        <div class="team-years">
+                            <small class="text-muted">
+                                <i class="fas fa-calendar-alt"></i> {{ teacher.yearsActive }}
+                            </small>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-12">
+                <div class="empty-state text-center">
+                    <img src="{{ asset('assets/img/icon/empty-teachers.svg') }}" alt="Aucun maître" class="mb-3">
+                    <h3>Aucun maître trouvé</h3>
+                    <p>Les profils des maîtres seront ajoutés prochainement.</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if teachers.haveToPaginate %}
+        <div class="th-pagination text-center pt-50">
+            <ul>
+                {% if teachers.hasPreviousPage %}
+                    <li><a href="{{ path('app_teacher', {'page': teachers.previousPage}) }}"><i class="far fa-arrow-left"></i></a></li>
+                {% endif %}
+
+                {% for page in teachers.pagesInRange %}
+                    {% if page != teachers.currentPage %}
+                        <li><a href="{{ path('app_teacher', {'page': page}) }}">{{ page }}</a></li>
+                    {% else %}
+                        <li><a class="current">{{ page }}</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if teachers.hasNextPage %}
+                    <li><a href="{{ path('app_teacher', {'page': teachers.nextPage}) }}"><i class="far fa-arrow-right"></i></a></li>
+                {% endif %}
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- About Kong Masters Section -->
+<section class="about-area space" data-bg-src="{{ asset('assets/img/bg/about_bg_2.jpg') }}">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-xl-6">
+                <div class="about-thumb2">
+                    <img src="{{ asset('assets/images/kong/kong-teaching.jpg') }}" alt="Enseignement à Kong">
+                    <div class="about-counter">
+                        <h3 class="about-counter_number"><span class="counter-number">300</span>+</h3>
+                        <p class="about-counter_text">Années de<br>Tradition</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6">
+                <div class="ps-xl-5">
+                    <div class="title-area mb-35">
+                        <span class="sub-title text-white">Tradition d'Excellence</span>
+                        <h2 class="sec-title text-white">L'Héritage Intellectuel de Kong</h2>
+                    </div>
+                    <p class="about-text text-white mb-30">
+                        Depuis sa fondation, Kong a été un centre d'excellence dans l'enseignement islamique. 
+                        Les maîtres de Kong ont formé des générations d'érudits et ont contribué à la diffusion 
+                        de la connaissance islamique à travers l'Afrique de l'Ouest.
+                    </p>
+                    <div class="about-feature-list">
+                        <div class="about-feature">
+                            <div class="about-feature_icon">
+                                <img src="{{ asset('assets/img/icon/about_feature_1.svg') }}" alt="Coran">
+                            </div>
+                            <div class="about-feature_content">
+                                <h4 class="about-feature_title text-white">Enseignement du Coran</h4>
+                                <p class="about-feature_text text-white">Mémorisation et interprétation du Livre Saint</p>
+                            </div>
+                        </div>
+                        <div class="about-feature">
+                            <div class="about-feature_icon">
+                                <img src="{{ asset('assets/img/icon/about_feature_2.svg') }}" alt="Hadith">
+                            </div>
+                            <div class="about-feature_content">
+                                <h4 class="about-feature_title text-white">Science du Hadith</h4>
+                                <p class="about-feature_text text-white">Étude et transmission des traditions prophétiques</p>
+                            </div>
+                        </div>
+                        <div class="about-feature">
+                            <div class="about-feature_icon">
+                                <img src="{{ asset('assets/img/icon/about_feature_3.svg') }}" alt="Fiqh">
+                            </div>
+                            <div class="about-feature_content">
+                                <h4 class="about-feature_title text-white">Jurisprudence Islamique</h4>
+                                <p class="about-feature_text text-white">Enseignement du droit et de la jurisprudence</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="btn-group mt-40">
+                        <a href="{{ path('app_about') }}" class="th-btn style2">
+                            <span class="btn-text" data-back="En savoir plus" data-front="En savoir plus"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Notable Quotes Section -->
+<section class="testimonial-area space">
+    <div class="container">
+        <div class="title-area text-center">
+            <span class="sub-title">Sagesse</span>
+            <h2 class="sec-title">Paroles de Nos Maîtres</h2>
+        </div>
+        <div class="slider-area">
+            <div class="swiper th-slider testimonial-slider" data-slider-options='{"loop":true,"autoplay":{"delay":5000},"breakpoints":{"0":{"slidesPerView":1},"768":{"slidesPerView":2},"992":{"slidesPerView":3}}}'>
+                <div class="swiper-wrapper">
+                    {% for teacher in teachers|slice(0, 6) %}
+                        {% if teacher.quote %}
+                        <div class="swiper-slide">
+                            <div class="testimonial-card">
+                                <div class="testimonial-quote">
+                                    <img src="{{ asset('assets/img/icon/quote.svg') }}" alt="Quote">
+                                </div>
+                                <p class="testimonial-text">"{{ teacher.quote }}"</p>
+                                <div class="testimonial-author">
+                                    <div class="author-img">
+                                        <img src="{{ teacher.profilePicture ? asset('assets/uploads/teachers/' ~ teacher.profilePicture) : asset('assets/images/default/teacher-default.jpg') }}" alt="{{ teacher.name }}">
+                                    </div>
+                                    <div class="author-info">
+                                        <h4 class="author-name">{{ teacher.name }}</h4>
+                                        <span class="author-desig">{{ teacher.specialty }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="slider-pagination"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="cta-area" data-bg-src="{{ asset('assets/img/bg/cta_bg_2.jpg') }}">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <div class="cta-content">
+                    <h2 class="cta-title">Vous connaissez un maître de Kong ?</h2>
+                    <p class="cta-text">
+                        Aidez-nous à enrichir notre base de données en nous signalant des maîtres islamiques 
+                        de Kong dont les profils mériteraient d'être préservés.
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <a href="{{ path('app_contact') }}" class="th-btn">
+                    <span class="btn-text" data-back="Suggérer un profil" data-front="Suggérer un profil"></span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // Filter functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterButtons = document.querySelectorAll('.filter-menu button');
+            const filterItems = document.querySelectorAll('.filter-item');
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    const filterValue = this.getAttribute('data-filter');
+                    
+                    filterItems.forEach(item => {
+                        if (filterValue === '*' || item.classList.contains(filterValue.substring(1))) {
+                            item.style.display = 'block';
+                            item.style.opacity = '1';
+                        } else {
+                            item.style.opacity = '0';
+                            setTimeout(() => {
+                                item.style.display = 'none';
+                            }, 300);
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+{% endblock %}

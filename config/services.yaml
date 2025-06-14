@@ -1,5 +1,5 @@
 parameters:
-    upload_directory: '%kernel.project_dir%/public/uploads'
+    upload_directory: '%kernel.project_dir%/public/assets/uploads'
     articles_directory: '%upload_directory%/articles'
     podcasts_directory: '%upload_directory%/podcasts'
     archives_directory: '%upload_directory%/archives'

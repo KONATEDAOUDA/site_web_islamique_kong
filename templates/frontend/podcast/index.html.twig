@@ -1,89 +1,384 @@
 {% extends 'frontend/base.html.twig' %}
 
-{% block title %}Podcasts{% endblock %}
+{% block title %}Podcasts - Kong Islamique{% endblock %}
 
 {% block main %}
-<div class="container py-5">
-    <h1 class="mb-4 text-center">Tous les Podcasts</h1>
-    
-    <div class="mb-5">
-        <h2><i class="fas fa-volume-up text-info mr-2"></i> Podcasts Audio</h2>
-        {% if audioPodcasts is not empty %}
-            <div class="row">
-                {% for podcast in audioPodcasts %}
-                    <div class="col-md-4 mb-4">
-                        <div class="card h-100">
-                            {% if podcast.thumbnail %}
-                                <img src="{{ asset('assets/uploads/podcasts/' ~ podcast.thumbnail) }}" class="card-img-top" alt="{{ podcast.title }}">
-                            {% endif %}
-                            <div class="card-body">
-                                <h5 class="card-title">
-                                    <a href="{{ path('app_podcast_show', {slug: podcast.slug}) }}">
-                                        {{ podcast.title|length > 60 ? podcast.title|slice(0,60) ~ '…' : podcast.title }}
-                                    </a>
-                                </h5>
-                                <p class="card-text text-muted small">
-                                    {{ podcast.createdAt|date('d/m/Y') }}
-                                </p>
-                                {% if podcast.description %}
-                                    <p class="card-text">
-                                        {{ podcast.description|striptags|u.truncate(100, '…') }}
-                                    </p>
-                                {% endif %}
-                            </div>
-                            <div class="card-footer d-flex justify-content-between align-items-center">
-                                <span class="badge badge-info">Audio</span>
-                                {% if podcast.duration %}
-                                    <span class="text-muted"><i class="fas fa-clock mr-1"></i> {{ podcast.duration }}</span>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <p class="text-muted">Aucun podcast audio disponible.</p>
-        {% endif %}
-    </div>
-
-    <div>
-        <h2><i class="fas fa-video text-success mr-2"></i> Podcasts Vidéo</h2>
-        {% if videoPodcasts is not empty %}
-            <div class="row">
-                {% for podcast in videoPodcasts %}
-                    <div class="col-md-4 mb-4">
-                        <div class="card h-100">
-                            {% if podcast.thumbnail %}
-                                <img src="{{ asset('assets/uploads/podcasts/' ~ podcast.thumbnail) }}" class="card-img-top" alt="{{ podcast.title }}">
-                            {% endif %}
-                            <div class="card-body">
-                                <h5 class="card-title">
-                                    <a href="{{ path('app_podcast_show', {slug: podcast.slug}) }}">
-                                        {{ podcast.title|length > 60 ? podcast.title|slice(0,60) ~ '…' : podcast.title }}
-                                    </a>
-                                </h5>
-                                <p class="card-text text-muted small">
-                                    {{ podcast.createdAt|date('d/m/Y') }}
-                                </p>
-                                {% if podcast.description %}
-                                    <p class="card-text">
-                                        {{ podcast.description|striptags|u.truncate(100, '…') }}
-                                    </p>
-                                {% endif %}
-                            </div>
-                            <div class="card-footer d-flex justify-content-between align-items-center">
-                                <span class="badge badge-success">Vidéo</span>
-                                {% if podcast.duration %}
-                                    <span class="text-muted"><i class="fas fa-clock mr-1"></i> {{ podcast.duration }}</span>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <p class="text-muted">Aucun podcast vidéo disponible.</p>
-        {% endif %}
+<!-- Breadcrumb -->
+<div class="breadcumb-wrapper" data-bg-src="{{ asset('assets/images/kong/podcasts-hero.jpg') }}">
+    <div class="container">
+        <div class="breadcumb-content">
+            <h1 class="breadcumb-title">Podcasts & Enseignements</h1>
+            <ul class="breadcumb-menu">
+                <li><a href="{{ path('app_home') }}">Accueil</a></li>
+                <li>Podcasts</li>
+            </ul>
+        </div>
     </div>
 </div>
+
+<!-- Intro Section -->
+<section class="space-top">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-8">
+                <div class="title-area text-center">
+                    <span class="sub-title">Enseignements Numériques</span>
+                    <h2 class="sec-title">Podcasts et Enseignements Islamiques</h2>
+                    <p class="sec-text">
+                        Découvrez une collection unique d'enseignements audio et vidéo des maîtres islamiques de Kong. 
+                        Ces enregistrements précieux transmettent la sagesse et les connaissances traditionnelles 
+                        aux générations actuelles.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Podcast Filter and Search -->
+<section class="podcast-filter-area space-bottom">
+    <div class="container">
+        <div class="podcast-filter-wrapper">
+            <div class="row align-items-center">
+                <div class="col-md-3">
+                    <form class="search-form" action="{{ path('app_podcast_index') }}" method="get">
+                        <input type="text" name="q" placeholder="Rechercher un podcast..." 
+                               value="{{ currentSearch|default('') }}">
+                        <button type="submit"><i class="far fa-search"></i></button>
+                    </form>
+                </div>
+                <div class="col-md-2">
+                    <select class="form-select" onchange="updateFilter('type', this.value)">
+                        <option value="">Tous les types</option>
+                        <option value="audio" {% if currentType == 'audio' %}selected{% endif %}>Audio</option>
+                        <option value="video" {% if currentType == 'video' %}selected{% endif %}>Vidéo</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" onchange="updateFilter('teacher', this.value)">
+                        <option value="">Tous les maîtres</option>
+                        {% for teacher in teachers %}
+                            <option value="{{ teacher.slug }}" {% if currentTeacher == teacher.slug %}selected{% endif %}>
+                                {{ teacher.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select class="form-select" onchange="updateFilter('language', this.value)">
+                        <option value="">Toutes langues</option>
+                        <option value="fr" {% if currentLanguage == 'fr' %}selected{% endif %}>Français</option>
+                        <option value="ar" {% if currentLanguage == 'ar' %}selected{% endif %}>العربية</option>
+                        <option value="en" {% if currentLanguage == 'en' %}selected{% endif %}>English</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <div class="view-toggle">
+                        <button class="view-btn active" data-view="grid"><i class="fas fa-th-large"></i></button>
+                        <button class="view-btn" data-view="list"><i class="fas fa-list"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Audio Podcasts Section -->
+{% if audioPodcasts|length > 0 %}
+<section class="audio-podcasts-section space-bottom">
+    <div class="container">
+        <div class="title-area text-center mb-50">
+            <span class="sub-title"><i class="fas fa-volume-up"></i> Enseignements Audio</span>
+            <h2 class="sec-title">Podcasts Audio</h2>
+        </div>
+        <div class="row gy-4">
+            {% for podcast in audioPodcasts %}
+            <div class="col-lg-4 col-md-6">
+                <div class="podcast-card audio-podcast">
+                    <div class="podcast-thumb">
+                        {% if podcast.thumbnail %}
+                            <img src="{{ asset('assets/uploads/podcasts/thumbnails/' ~ podcast.thumbnail) }}" alt="{{ podcast.title }}">
+                        {% else %}
+                            <img src="{{ asset('assets/images/default/audio-podcast.jpg') }}" alt="{{ podcast.title }}">
+                        {% endif %}
+                        <div class="podcast-overlay">
+                            <div class="podcast-type">
+                                <span class="type-badge audio">
+                                    <i class="fas fa-volume-up"></i> Audio
+                                </span>
+                            </div>
+                            <div class="play-btn">
+                                <a href="{{ path('app_podcast_show', {'slug': podcast.slug}) }}">
+                                    <i class="fas fa-play"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="podcast-content">
+                        <h3 class="podcast-title">
+                            <a href="{{ path('app_podcast_show', {'slug': podcast.slug}) }}">
+                                {{ podcast.title|length > 50 ? podcast.title|slice(0, 50) ~ '...' : podcast.title }}
+                            </a>
+                        </h3>
+                        {% if podcast.author %}
+                        <div class="podcast-author">
+                            <i class="fas fa-user"></i>
+                            <a href="{{ path('app_podcast_by_teacher', {'teacherSlug': podcast.author.slug}) }}">
+                                {{ podcast.author.name }}
+                            </a>
+                        </div>
+                        {% endif %}
+                        {% if podcast.description %}
+                        <p class="podcast-description">
+                            {{ podcast.description|striptags|length > 100 ? podcast.description|striptags|slice(0, 100) ~ '...' : podcast.description|striptags }}
+                        </p>
+                        {% endif %}
+                        <div class="podcast-meta">
+                            {% if podcast.duration %}
+                            <span class="meta-item">
+                                <i class="fas fa-clock"></i> {{ podcast.duration }}
+                            </span>
+                            {% endif %}
+                            {% if podcast.language %}
+                            <span class="meta-item">
+                                <i class="fas fa-language"></i> 
+                                {% if podcast.language == 'ar' %}العربية{% elseif podcast.language == 'fr' %}Français{% else %}English{% endif %}
+                            </span>
+                            {% endif %}
+                            <span class="meta-item">
+                                <i class="fas fa-calendar-alt"></i> {{ podcast.publishedAt ? podcast.publishedAt|date('d M Y') : podcast.createdAt|date('d M Y') }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Video Podcasts Section -->
+{% if videoPodcasts|length > 0 %}
+<section class="video-podcasts-section space-bottom">
+    <div class="container">
+        <div class="title-area text-center mb-50">
+            <span class="sub-title"><i class="fas fa-video"></i> Enseignements Vidéo</span>
+            <h2 class="sec-title">Podcasts Vidéo</h2>
+        </div>
+        <div class="row gy-4">
+            {% for podcast in videoPodcasts %}
+            <div class="col-lg-4 col-md-6">
+                <div class="podcast-card video-podcast">
+                    <div class="podcast-thumb">
+                        {% if podcast.thumbnail %}
+                            <img src="{{ asset('assets/uploads/podcasts/thumbnails/' ~ podcast.thumbnail) }}" alt="{{ podcast.title }}">
+                        {% else %}
+                            <img src="{{ asset('assets/images/default/video-podcast.jpg') }}" alt="{{ podcast.title }}">
+                        {% endif %}
+                        <div class="podcast-overlay">
+                            <div class="podcast-type">
+                                <span class="type-badge video">
+                                    <i class="fas fa-video"></i> Vidéo
+                                </span>
+                            </div>
+                            <div class="play-btn">
+                                <a href="{{ path('app_podcast_show', {'slug': podcast.slug}) }}">
+                                    <i class="fas fa-play"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="podcast-content">
+                        <h3 class="podcast-title">
+                            <a href="{{ path('app_podcast_show', {'slug': podcast.slug}) }}">
+                                {{ podcast.title|length > 50 ? podcast.title|slice(0, 50) ~ '...' : podcast.title }}
+                            </a>
+                        </h3>
+                        {% if podcast.author %}
+                        <div class="podcast-author">
+                            <i class="fas fa-user"></i>
+                            <a href="{{ path('app_podcast_by_teacher', {'teacherSlug': podcast.author.slug}) }}">
+                                {{ podcast.author.name }}
+                            </a>
+                        </div>
+                        {% endif %}
+                        {% if podcast.description %}
+                        <p class="podcast-description">
+                            {{ podcast.description|striptags|length > 100 ? podcast.description|striptags|slice(0, 100) ~ '...' : podcast.description|striptags }}
+                        </p>
+                        {% endif %}
+                        <div class="podcast-meta">
+                            {% if podcast.duration %}
+                            <span class="meta-item">
+                                <i class="fas fa-clock"></i> {{ podcast.duration }}
+                            </span>
+                            {% endif %}
+                            {% if podcast.language %}
+                            <span class="meta-item">
+                                <i class="fas fa-language"></i> 
+                                {% if podcast.language == 'ar' %}العربية{% elseif podcast.language == 'fr' %}Français{% else %}English{% endif %}
+                            </span>
+                            {% endif %}
+                            <span class="meta-item">
+                                <i class="fas fa-calendar-alt"></i> {{ podcast.publishedAt ? podcast.publishedAt|date('d M Y') : podcast.createdAt|date('d M Y') }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Empty State -->
+{% if audioPodcasts|length == 0 and videoPodcasts|length == 0 %}
+<section class="empty-podcasts space">
+    <div class="container">
+        <div class="text-center">
+            <img src="{{ asset('assets/img/icon/empty-podcasts.svg') }}" alt="Aucun podcast" class="mb-4">
+            <h3>Aucun podcast trouvé</h3>
+            <p>Aucun podcast ne correspond à vos critères de recherche.</p>
+            <a href="{{ path('app_podcast_index') }}" class="th-btn">
+                <span class="btn-text" data-back="Voir tous les podcasts" data-front="Voir tous les podcasts"></span>
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Pagination -->
+{% if podcasts.haveToPaginate %}
+<div class="th-pagination text-center pt-50">
+    <div class="container">
+        <ul>
+            {% if podcasts.hasPreviousPage %}
+                <li><a href="{{ path('app_podcast_index', {'page': podcasts.previousPage}) }}"><i class="far fa-arrow-left"></i></a></li>
+            {% endif %}
+
+            {% for page in podcasts.pagesInRange %}
+                {% if page != podcasts.currentPage %}
+                    <li><a href="{{ path('app_podcast_index', {'page': page}) }}">{{ page }}</a></li>
+                {% else %}
+                    <li><a class="current">{{ page }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if podcasts.hasNextPage %}
+                <li><a href="{{ path('app_podcast_index', {'page': podcasts.nextPage}) }}"><i class="far fa-arrow-right"></i></a></li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+{% endif %}
+
+<!-- Featured Teachers Section -->
+{% if teachers|length > 0 %}
+<section class="featured-teachers space" data-bg-src="{{ asset('assets/img/bg/teachers_bg.jpg') }}">
+    <div class="container">
+        <div class="title-area text-center text-white">
+            <span class="sub-title">Nos Intervenants</span>
+            <h2 class="sec-title text-white">Maîtres et Enseignants</h2>
+        </div>
+        <div class="row gy-4">
+            {% for teacher in teachers|slice(0, 4) %}
+            <div class="col-md-6 col-lg-3">
+                <div class="teacher-card-mini">
+                    <div class="teacher-thumb">
+                        <img src="{{ teacher.profilePicture ? asset('assets/uploads/teachers/' ~ teacher.profilePicture) : asset('assets/images/default/teacher-default.jpg') }}" alt="{{ teacher.name }}">
+                    </div>
+                    <div class="teacher-info">
+                        <h4 class="teacher-name">
+                            <a href="{{ path('app_teacher_show', {'slug': teacher.slug}) }}">{{ teacher.name }}</a>
+                        </h4>
+                        <span class="teacher-specialty">{{ teacher.specialty }}</span>
+                        <a href="{{ path('app_podcast_by_teacher', {'teacherSlug': teacher.slug}) }}" class="teacher-podcasts-btn">
+                            <i class="fas fa-headphones"></i> Ses podcasts
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Call to Action -->
+<section class="cta-area" data-bg-src="{{ asset('assets/img/bg/cta_bg_3.jpg') }}">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <div class="cta-content">
+                    <h2 class="cta-title">Abonnez-vous à nos podcasts</h2>
+                    <p class="cta-text">
+                        Recevez les derniers enseignements et ne manquez aucun nouvel épisode de nos maîtres.
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <a href="{{ path('app_contact') }}?subject=Abonnement podcasts" class="th-btn">
+                    <span class="btn-text" data-back="S'abonner" data-front="S'abonner"></span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // Filter functionality
+        function updateFilter(filterType, value) {
+            const url = new URL(window.location);
+            if (value) {
+                url.searchParams.set(filterType, value);
+            } else {
+                url.searchParams.delete(filterType);
+            }
+            window.location.href = url.toString();
+        }
+
+        // View toggle functionality
+        document.querySelectorAll('.view-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const view = this.getAttribute('data-view');
+                const sections = document.querySelectorAll('.audio-podcasts-section, .video-podcasts-section');
+                
+                sections.forEach(section => {
+                    if (view === 'list') {
+                        section.classList.add('list-view');
+                    } else {
+                        section.classList.remove('list-view');
+                    }
+                });
+            });
+        });
+
+        // AJAX search functionality
+        const searchInput = document.querySelector('input[name="q"]');
+        let searchTimeout;
+
+        searchInput?.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            const query = this.value;
+            
+            if (query.length >= 3) {
+                searchTimeout = setTimeout(() => {
+                    fetch(`{{ path('app_podcast_search_ajax') }}?q=${encodeURIComponent(query)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            // Handle search results display
+                            console.log(data.results);
+                        });
+                }, 300);
+            }
+        });
+    </script>
 {% endblock %}

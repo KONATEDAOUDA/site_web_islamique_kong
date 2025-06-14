@@ -1,83 +1,138 @@
-<header>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand" href="{{ path('app_home') }}">
-                <img src="{{ asset('assets/images/logo/logo.png') }}" alt="Logo" width="50" height="30" class="d-inline-block align-top">
-                Kong Islamique
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link {% if app.request.get('_route') == 'app_home' %}active{% endif %}" aria-current="page" href="{{ path('app_home') }}">Accueil</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if app.request.get('_route') starts with 'app_blog_index' %}active{% endif %}" href="{{ path('app_blog_index') }}">Actualités</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if app.request.get('_route') starts with 'app_podcast' %}active{% endif %}" href="{{ path('app_podcast_index') }}">Podcasts</a>                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if app.request.get('_route') starts with 'app_archive' %}active{% endif %}" href="{{ path('app_archive') }}">Archives</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if app.request.get('_route') starts with 'app_teacher' %}active{% endif %}" href="{{ path('app_teacher') }}">Prêches</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if app.request.get('_route') starts with 'app_forum' %}active{% endif %}" href="{{ path('app_forum') }}">Forum</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if app.request.get('_route') == 'app_about' %}active{% endif %}" href="{{ path('app_about') }}">À propos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if app.request.get('_route') == 'app_contact' %}active{% endif %}" href="{{ path('app_contact') }}">Contact</a>
-                    </li>
-                </ul>
-                <div class="d-flex">
-                    {% if app.user %}
-                        <div class="dropdown">
-                            <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                {{ app.user.firstName|default(app.user.email) }}
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <li><a class="dropdown-item" href="{{ path('app_profile') }}">Mon profil</a></li>
-                                <li><a class="dropdown-item" href="{{ path('app_favorites') }}">Mes favoris</a></li>
-                                {% if is_granted('ROLE_DAVE_SUPER_ADMIN_2108') %}
-                                    <li><a class="dropdown-item" href="{{ path('admin') }}">SuperAdmin</a></li>
-                                {% endif %}
-                                {% if is_granted('ROLE_DAVE_SUPER_ADMIN_2108') or is_granted('ROLE_SUPERVISOR') or is_granted('ROLE_BLOG_MANAGER') or is_granted('ROLE_TEACHER') or is_granted('ROLE_ARCHIVE_MANAGER') %}
-                                    <li><a class="dropdown-item" href="{{ path('admin_dashboard') }}">Administration</a></li>
-                                {% endif %}
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{{ path('app_logout') }}">Déconnexion</a></li>
-                            </ul>
+<header class="th-header header-layout4">
+    <!-- Top Area -->
+    <div class="top-area">
+        <div class="menu-top">
+            <div class="container">
+                <div class="row align-items-center justify-content-center justify-content-sm-between">
+                    <div class="col-auto d-none d-sm-block">
+                        <a class="header-link" href="tel:+22500000000">
+                            <i class="icon-btn fas fa-phone"></i>+225 00 00 00 00
+                        </a>
+                        <a class="header-link d-none d-lg-inline-block" href="mailto:contact@kong-islamique.org">
+                            <i class="icon-btn fas fa-envelope"></i>contact@kong-islamique.org
+                        </a>
+                        <a class="header-link d-none d-xl-inline-block" href="https://www.google.com/maps/search/Kong+Côte+d'Ivoire">
+                            <i class="icon-btn fas fa-location-dot"></i>Kong, Côte d'Ivoire
+                        </a>
+                    </div>
+                    <div class="col-auto">
+                        <div class="th-social">
+                            <a target="_blank" href="https://facebook.com/kong.islamique">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a target="_blank" href="https://twitter.com/kong_islamique">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a target="_blank" href="https://instagram.com/kong.islamique">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a target="_blank" href="https://youtube.com/@kong.islamique">
+                                <i class="fab fa-youtube"></i>
+                            </a>
                         </div>
-                    {% else %}
-                        <div class="dropdown me-3">
-                            <button class="btn btn-light dropdown-toggle" type="button" id="dropdownAccountButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                Compte
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownAccountButton">
-                                <li><a class="dropdown-item" href="{{ path('app_login') }}">Connexion</a></li>
-                                <li><a class="dropdown-item" href="{{ path('app_register') }}">Inscription</a></li>
-                            </ul>
-                        </div>
-                    {% endif %}
-                </div>
-                <div class="ms-3 ml-auto">
-                    <div class="dropdown">
-                        <button class="btn btn-light dropdown-toggle" type="button" id="dropdownLanguageButton" data-bs-toggle="dropdown" aria-expanded="false">
-                            {{ app.request.locale|upper }}
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownLanguageButton">
-                            <li><a class="dropdown-item" href="{{ path(app.request.get('_route', 'app_home'), app.request.get('_route_params', [])|merge({_locale: 'fr'})) }}">Français</a></li>
-                            <li><a class="dropdown-item" href="{{ path(app.request.get('_route', 'app_home'), app.request.get('_route_params', [])|merge({_locale: 'ar'})) }}">العربية</a></li>
-                            <li><a class="dropdown-item" href="{{ path(app.request.get('_route', 'app_home'), app.request.get('_route_params', [])|merge({_locale: 'en'})) }}">English</a></li>
-                        </ul>
                     </div>
                 </div>
             </div>
         </div>
-    </nav>
+    </div>
+
+    <!-- Main Navigation -->
+    <div class="sticky-wrapper">
+        <div class="menu-area">
+            <div class="container">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-auto">
+                        <div class="header-logo">
+                            <a href="{{ path('app_home') }}">
+                                <img src="{{ asset('assets/img/logo.svg') }}" alt="Kong Islamique">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="row align-items-center justify-content-between">
+                            <div class="col-auto">
+                                <nav class="main-menu d-none d-lg-inline-block">
+                                    <ul>
+                                        <li>
+                                            <a href="{{ path('app_home') }}" class="{% if app.request.get('_route') == 'app_home' %}active{% endif %}">
+                                                Accueil
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ path('app_about') }}" class="{% if app.request.get('_route') == 'app_about' %}active{% endif %}">
+                                                À propos
+                                            </a>
+                                        </li>
+                                        <li class="menu-item-has-children">
+                                            <a href="#">Contenu</a>
+                                            <ul class="sub-menu">
+                                                <li><a href="{{ path('app_blog_index') }}">Articles</a></li>
+                                                <li><a href="{{ path('app_podcast_index') }}">Podcasts</a></li>
+                                                <li><a href="{{ path('app_archive') }}">Archives</a></li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <a href="{{ path('app_teacher') }}" class="{% if app.request.get('_route') starts with 'app_teacher' %}active{% endif %}">
+                                                Maîtres
+                                            </a>
+                                        </li>
+                                        <li class="menu-item-has-children">
+                                            <a href="#">Communauté</a>
+                                            <ul class="sub-menu">
+                                                <li><a href="{{ path('app_forum') }}">Forum</a></li>
+                                                <li><a href="{{ path('app_blog_index') }}">FAQ</a></li>
+                                                <li><a href="{{ path('app_gallery') }}">Galerie</a></li>
+                                                <li><a href="{{ path('app_prayer_times') }}">Horaires de prière</a></li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <a href="{{ path('app_contact') }}" class="{% if app.request.get('_route') == 'app_contact' %}active{% endif %}">
+                                                Contact
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                                <button type="button" class="th-menu-toggle d-inline-block d-lg-none">
+                                    <i class="far fa-bars"></i>
+                                </button>
+                            </div>
+                            <div class="col-auto d-none d-xxl-block">
+                                <div class="header-button">
+                                    <button type="button" class="icon-style2 searchBoxToggler">
+                                        <i class="far fa-search"></i>
+                                    </button>
+                                    
+                                    {% if app.user %}
+                                        <div class="dropdown d-inline-block">
+                                            <button class="th-btn black-btn2 dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                <span class="btn-text">{{ app.user.firstName|default('Mon Compte') }}</span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="{{ path('app_profile') }}">Mon profil</a></li>
+                                                <li><a class="dropdown-item" href="{{ path('app_favorites') }}">Mes favoris</a></li>
+                                                {% if is_granted('ROLE_DAVE_SUPER_ADMIN_2108') or is_granted('ROLE_SUPERVISOR') or is_granted('ROLE_BLOG_MANAGER') or is_granted('ROLE_TEACHER') or is_granted('ROLE_ARCHIVE_MANAGER') %}
+                                                    <li><a class="dropdown-item" href="{{ path('admin_dashboard') }}">Administration</a></li>
+                                                {% endif %}
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li><a class="dropdown-item" href="{{ path('app_logout') }}">Déconnexion</a></li>
+                                            </ul>
+                                        </div>
+                                    {% else %}
+                                        <a href="{{ path('app_login') }}" class="th-btn black-btn2 th-icon">
+                                            <span class="btn-text" data-back="Se connecter" data-front="Se connecter"></span>
+                                        </a>
+                                    {% endif %}
+                                    
+                                    <a href="#" class="icon-btn sideMenuToggler d-none d-lg-block">
+                                        <img src="{{ asset('assets/img/icon/grid.svg') }}" alt="Menu">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="logo-shape"></div>
+        </div>
+    </div>
 </header>

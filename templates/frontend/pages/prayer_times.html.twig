@@ -1,0 +1,429 @@
+{% extends 'frontend/base.html.twig' %}
+
+{% block title %}Horaires de Prière - Kong{% endblock %}
+
+{% block main %}
+<!-- Breadcrumb -->
+<div class="breadcumb-wrapper" data-bg-src="{{ asset('assets/images/kong/prayer-hero.jpg') }}">
+    <div class="container">
+        <div class="breadcumb-content">
+            <h1 class="breadcumb-title">Horaires de Prière</h1>
+            <ul class="breadcumb-menu">
+                <li><a href="{{ path('app_home') }}">Accueil</a></li>
+                <li>Horaires de Prière</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Current Prayer Times -->
+<section class="prayer-times-area space">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-8">
+                <div class="title-area text-center">
+                    <span class="sub-title">{{ location }}</span>
+                    <h2 class="sec-title">Horaires de Prière d'Aujourd'hui</h2>
+                    <p class="sec-text">{{ 'now'|date('l d F Y') }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="prayer-times-wrapper">
+            <div class="row gy-4">
+                <div class="col-md-6 col-lg-4">
+                    <div class="prayer-card fajr">
+                        <div class="prayer-icon">
+                            <img src="{{ asset('assets/img/icon/fajr.svg') }}" alt="Fajr">
+                        </div>
+                        <div class="prayer-info">
+                            <h3 class="prayer-name">Fajr</h3>
+                            <p class="prayer-name-arabic">الفجر</p>
+                            <div class="prayer-time">{{ prayerTimes.fajr }}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-4">
+                    <div class="prayer-card sunrise">
+                        <div class="prayer-icon">
+                            <img src="{{ asset('assets/img/icon/sunrise.svg') }}" alt="Lever du soleil">
+                        </div>
+                        <div class="prayer-info">
+                            <h3 class="prayer-name">Lever du soleil</h3>
+                            <p class="prayer-name-arabic">الشروق</p>
+                            <div class="prayer-time">{{ prayerTimes.sunrise }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="prayer-card dhuhr active">
+                        <div class="prayer-icon">
+                            <img src="{{ asset('assets/img/icon/dhuhr.svg') }}" alt="Dhuhr">
+                        </div>
+                        <div class="prayer-info">
+                            <h3 class="prayer-name">Dhuhr</h3>
+                            <p class="prayer-name-arabic">الظهر</p>
+                            <div class="prayer-time">{{ prayerTimes.dhuhr }}</div>
+                        </div>
+                        <div class="current-badge">Prochaine prière</div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="prayer-card asr">
+                        <div class="prayer-icon">
+                            <img src="{{ asset('assets/img/icon/asr.svg') }}" alt="Asr">
+                        </div>
+                        <div class="prayer-info">
+                            <h3 class="prayer-name">Asr</h3>
+                            <p class="prayer-name-arabic">العصر</p>
+                            <div class="prayer-time">{{ prayerTimes.asr }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="prayer-card maghrib">
+                        <div class="prayer-icon">
+                            <img src="{{ asset('assets/img/icon/maghrib.svg') }}" alt="Maghrib">
+                        </div>
+                        <div class="prayer-info">
+                            <h3 class="prayer-name">Maghrib</h3>
+                            <p class="prayer-name-arabic">المغرب</p>
+                            <div class="prayer-time">{{ prayerTimes.maghrib }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="prayer-card isha">
+                        <div class="prayer-icon">
+                            <img src="{{ asset('assets/img/icon/isha.svg') }}" alt="Isha">
+                        </div>
+                        <div class="prayer-info">
+                            <h3 class="prayer-name">Isha</h3>
+                            <p class="prayer-name-arabic">العشاء</p>
+                            <div class="prayer-time">{{ prayerTimes.isha }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Next Prayer Countdown -->
+        <div class="next-prayer-countdown text-center mt-5">
+            <div class="countdown-wrapper">
+                <h4 class="countdown-title">Temps restant avant Dhuhr</h4>
+                <div class="countdown-timer" id="prayerCountdown">
+                    <div class="countdown-item">
+                        <span class="countdown-number" id="hours">02</span>
+                        <span class="countdown-label">Heures</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-number" id="minutes">15</span>
+                        <span class="countdown-label">Minutes</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-number" id="seconds">30</span>
+                        <span class="countdown-label">Secondes</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mosque Information -->
+<section class="mosque-info space" data-bg-src="{{ asset('assets/img/bg/mosque_bg.jpg') }}">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="mosque-content">
+                    <h2 class="mosque-title text-white">Grande Mosquée de Kong</h2>
+                    <p class="mosque-text text-white">
+                        La Grande Mosquée de Kong, construite dans le style architectural soudano-sahélien, 
+                        est le cœur spirituel de la communauté islamique locale. Elle accueille les fidèles 
+                        pour les cinq prières quotidiennes et les grandes célébrations religieuses.
+                    </p>
+                    <div class="mosque-features">
+                        <div class="feature-item">
+                            <i class="fas fa-mosque text-white"></i>
+                            <span class="text-white">Prières quotidiennes</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-book-open text-white"></i>
+                            <span class="text-white">Cours de Coran</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-users text-white"></i>
+                            <span class="text-white">Événements communautaires</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="mosque-image">
+                    <img src="{{ asset('assets/images/kong/grande-mosquee-night.jpg') }}" alt="Grande Mosquée de Kong" class="img-fluid rounded">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Islamic Calendar -->
+<section class="islamic-calendar space">
+    <div class="container">
+        <div class="title-area text-center">
+            <span class="sub-title">Calendrier Islamique</span>
+            <h2 class="sec-title">Dates Importantes</h2>
+        </div>
+        
+        <div class="calendar-wrapper">
+            <div class="row gy-4">
+                {% for event in islamicDates %}
+                <div class="col-md-6 col-lg-3">
+                    <div class="calendar-card {{ event.type }}">
+                        <div class="calendar-icon">
+                            {% if event.type == 'ramadan' %}
+                                <i class="fas fa-moon"></i>
+                            {% elseif event.type == 'eid' %}
+                                <i class="fas fa-star-and-crescent"></i>
+                            {% else %}
+                                <i class="fas fa-calendar-alt"></i>
+                            {% endif %}
+                        </div>
+                        <div class="calendar-content">
+                            <h3 class="event-name">{{ event.name }}</h3>
+                            {% if event.start is defined %}
+                                <p class="event-date">
+                                    Du {{ event.start|date('d M') }} au {{ event.end|date('d M Y') }}
+                                </p>
+                            {% else %}
+                                <p class="event-date">{{ event.date|date('d M Y') }}</p>
+                            {% endif %}
+                            {% if event.type == 'ramadan' %}
+                                <div class="ramadan-info">
+                                    <span class="ramadan-days">30 jours</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Prayer Guide -->
+<section class="prayer-guide space" data-bg-src="{{ asset('assets/img/bg/guide_bg.jpg') }}">
+    <div class="container">
+        <div class="title-area text-center text-white">
+            <span class="sub-title">Guide Spirituel</span>
+            <h2 class="sec-title text-white">Importance de la Prière en Islam</h2>
+        </div>
+        
+        <div class="row gy-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="guide-card">
+                    <div class="guide-icon">
+                        <i class="fas fa-hands-praying"></i>
+                    </div>
+                    <h3 class="guide-title">Pilier de l'Islam</h3>
+                    <p class="guide-text">
+                        La prière (Salah) est le deuxième pilier de l'Islam et constitue le lien direct 
+                        entre le croyant et Allah.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="guide-card">
+                    <div class="guide-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3 class="guide-title">Cinq Prières</h3>
+                    <p class="guide-text">
+                        Les musulmans accomplissent cinq prières quotidiennes à des moments précis, 
+                        structurant ainsi leur journée autour de la spiritualité.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="guide-card">
+                    <div class="guide-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3 class="guide-title">Purification de l'Âme</h3>
+                    <p class="guide-text">
+                        La prière purifie l'âme, rappelle constamment Allah et renforce 
+                        la foi du croyant.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="guide-card">
+                    <div class="guide-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="guide-title">Unité Communautaire</h3>
+                    <p class="guide-text">
+                        Les prières en congregation renforcent les liens communautaires 
+                        et l'unité entre les croyants.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="guide-card">
+                    <div class="guide-icon">
+                        <i class="fas fa-compass"></i>
+                    </div>
+                    <h3 class="guide-title">Direction de la Qibla</h3>
+                    <p class="guide-text">
+                        À Kong, la direction de la Mecque (Qibla) est vers le nord-est 
+                        (environ 57° depuis le nord).
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="guide-card">
+                    <div class="guide-icon">
+                        <i class="fas fa-moon"></i>
+                    </div>
+                    <h3 class="guide-title">Calcul des Horaires</h3>
+                    <p class="guide-text">
+                        Les horaires de prière sont calculés selon la position du soleil 
+                        et peuvent varier légèrement selon les méthodes de calcul.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Download App -->
+<section class="app-download space-bottom">
+    <div class="container">
+        <div class="app-download-wrapper" data-bg-src="{{ asset('assets/img/bg/app_bg.jpg') }}">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="app-content">
+                        <h2 class="app-title">Application Mobile des Horaires</h2>
+                        <p class="app-text">
+                            Téléchargez notre application mobile pour recevoir les horaires de prière 
+                            directement sur votre téléphone avec des notifications personnalisées.
+                        </p>
+                        <div class="app-features">
+                            <div class="feature-item">
+                                <i class="fas fa-bell"></i>
+                                <span>Notifications Adhan</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Localisation GPS</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>Calendrier Islamique</span>
+                            </div>
+                        </div>
+                        <div class="app-buttons">
+                            <a href="#" class="app-btn">
+                                <img src="{{ asset('assets/img/icon/google-play.png') }}" alt="Google Play">
+                            </a>
+                            <a href="#" class="app-btn">
+                                <img src="{{ asset('assets/img/icon/app-store.png') }}" alt="App Store">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="app-preview">
+                        <img src="{{ asset('assets/images/kong/prayer-app-preview.png') }}" alt="App Preview" class="img-fluid">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // Prayer countdown timer
+        function updateCountdown() {
+            const now = new Date();
+            const nextPrayer = new Date();
+            nextPrayer.setHours(12, 15, 0, 0); // Dhuhr time (example)
+            
+            // If it's past Dhuhr today, set for tomorrow
+            if (now > nextPrayer) {
+                nextPrayer.setDate(nextPrayer.getDate() + 1);
+            }
+            
+            const timeDiff = nextPrayer - now;
+            
+            if (timeDiff > 0) {
+                const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+                const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+                
+                document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+                document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+                document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+            }
+        }
+        
+        // Update countdown every second
+        setInterval(updateCountdown, 1000);
+        updateCountdown(); // Initial call
+        
+        // Determine current/next prayer
+        function updateCurrentPrayer() {
+            const now = new Date();
+            const currentTime = now.getHours() * 60 + now.getMinutes();
+            
+            const prayerTimes = {
+                fajr: 5 * 60 + 30,    // 05:30
+                dhuhr: 13 * 60 + 30,  // 13:30
+                asr: 16 * 60 + 00,    // 16:00
+                maghrib: 18 * 60 + 30, // 18:30
+                isha: 19 * 60 + 45     // 19:45
+            };
+            
+            // Remove active class from all cards
+            document.querySelectorAll('.prayer-card').forEach(card => {
+                card.classList.remove('active');
+                card.querySelector('.current-badge')?.remove();
+            });
+            
+            // Find next prayer
+            let nextPrayer = 'fajr'; // default to fajr
+            for (const [prayer, time] of Object.entries(prayerTimes)) {
+                if (currentTime < time) {
+                    nextPrayer = prayer;
+                    break;
+                }
+            }
+            
+            // Mark next prayer as active
+            const nextPrayerCard = document.querySelector(`.prayer-card.${nextPrayer}`);
+            if (nextPrayerCard) {
+                nextPrayerCard.classList.add('active');
+                const badge = document.createElement('div');
+                badge.className = 'current-badge';
+                badge.textContent = 'Prochaine prière';
+                nextPrayerCard.appendChild(badge);
+            }
+        }
+        
+        updateCurrentPrayer();
+    </script>
+{% endblock %}

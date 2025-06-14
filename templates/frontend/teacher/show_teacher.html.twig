@@ -1,0 +1,375 @@
+{% extends 'frontend/base.html.twig' %}
+
+{% block title %}{{ teacher.name }} - Maître Islamique de Kong{% endblock %}
+
+{% block main %}
+<!-- Breadcrumb -->
+<div class="breadcumb-wrapper" data-bg-src="{{ teacher.profilePicture ? asset('assets/uploads/teachers/' ~ teacher.profilePicture) : asset('assets/images/kong/teacher-detail-hero.jpg') }}">
+    <div class="container">
+        <div class="breadcumb-content">
+            <h1 class="breadcumb-title">{{ teacher.name }}</h1>
+            <ul class="breadcumb-menu">
+                <li><a href="{{ path('app_home') }}">Accueil</a></li>
+                <li><a href="{{ path('app_teacher') }}">Maîtres</a></li>
+                <li>{{ teacher.name }}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Teacher Details -->
+<section class="teacher-details-area space">
+    <div class="container">
+        <div class="row">
+            <div class="col-xxl-8 col-lg-7">
+                <div class="teacher-details-wrap">
+                    <!-- Teacher Profile Header -->
+                    <div class="teacher-profile-header">
+                        <div class="row align-items-center">
+                            <div class="col-md-4">
+                                <div class="teacher-thumb">
+                                    {% if teacher.profilePicture %}
+                                        <img src="{{ asset('assets/uploads/teachers/' ~ teacher.profilePicture) }}" alt="{{ teacher.name }}">
+                                    {% else %}
+                                        <img src="{{ asset('assets/images/default/teacher-large.jpg') }}" alt="{{ teacher.name }}">
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="teacher-profile-content">
+                                    <h2 class="teacher-name">{{ teacher.name }}</h2>
+                                    <p class="teacher-designation">{{ teacher.specialty }}</p>
+                                    {% if teacher.era %}
+                                    <div class="teacher-era mb-3">
+                                        <span class="badge {{ teacher.era == 'historical' ? 'badge-warning' : 'badge-success' }} badge-lg">
+                                            {% if teacher.era == 'historical' %}
+                                                Maître Historique
+                                            {% else %}
+                                                Maître Contemporain
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    <div class="teacher-meta">
+                                        {% if teacher.birthDate %}
+                                        <div class="meta-item">
+                                            <i class="fas fa-birthday-cake"></i>
+                                            <span>Né le {{ teacher.birthDate|date('d F Y') }}</span>
+                                        </div>
+                                        {% endif %}
+                                        {% if teacher.birthPlace %}
+                                        <div class="meta-item">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            <span>{{ teacher.birthPlace }}</span>
+                                        </div>
+                                        {% endif %}
+                                        {% if teacher.yearsActive %}
+                                        <div class="meta-item">
+                                            <i class="fas fa-calendar-alt"></i>
+                                            <span>Actif : {{ teacher.yearsActive }}</span>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+
+                                    {% if teacher.socialLinks %}
+                                    <div class="teacher-social mt-4">
+                                        <span class="social-title">Suivez-nous :</span>
+                                        <div class="th-social">
+                                            {% for social in teacher.socialLinks %}
+                                                <a href="{{ social.url }}" target="_blank">
+                                                    <i class="fab fa-{{ social.platform }}"></i>
+                                                </a>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Teacher Biography -->
+                    {% if teacher.biography %}
+                    <div class="teacher-biography mb-40">
+                        <h3 class="teacher-details-title">Biographie</h3>
+                        <div class="teacher-bio-content">
+                            {{ teacher.biography|raw }}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Teacher Education -->
+                    {% if teacher.education %}
+                    <div class="teacher-education mb-40">
+                        <h3 class="teacher-details-title">Formation et Éducation</h3>
+                        <div class="education-content">
+                            {{ teacher.education|raw }}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Teacher Works -->
+                    {% if teacher.majorWorks %}
+                    <div class="teacher-works mb-40">
+                        <h3 class="teacher-details-title">Œuvres Principales</h3>
+                        <div class="works-list">
+                            {% for work in teacher.majorWorks %}
+                            <div class="work-item">
+                                <h4 class="work-title">{{ work.title }}</h4>
+                                {% if work.description %}
+                                    <p class="work-description">{{ work.description }}</p>
+                                {% endif %}
+                                {% if work.year %}
+                                    <span class="work-year">{{ work.year }}</span>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Teacher Teachings/Podcasts -->
+                    {% if teacher.podcasts|length > 0 %}
+                    <div class="teacher-teachings mb-40">
+                        <h3 class="teacher-details-title">Enseignements Audio/Vidéo</h3>
+                        <div class="teachings-list">
+                            {% for podcast in teacher.podcasts|slice(0, 3) %}
+                            <div class="teaching-item">
+                                <div class="teaching-thumb">
+                                    {% if podcast.thumbnail %}
+                                        <img src="{{ asset('assets/uploads/podcasts/thumbnails/' ~ podcast.thumbnail) }}" alt="{{ podcast.title }}">
+                                    {% else %}
+                                        <img src="{{ asset('assets/images/default/podcast-thumb.jpg') }}" alt="{{ podcast.title }}">
+                                    {% endif %}
+                                    <div class="play-btn">
+                                        <a href="{{ path('app_podcast_show', {'slug': podcast.slug}) }}">
+                                            <i class="fas fa-play"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="teaching-content">
+                                    <h4 class="teaching-title">
+                                        <a href="{{ path('app_podcast_show', {'slug': podcast.slug}) }}">{{ podcast.title }}</a>
+                                    </h4>
+                                    {% if podcast.duration %}
+                                        <span class="teaching-duration">
+                                            <i class="fas fa-clock"></i> {{ podcast.duration }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% if teacher.podcasts|length > 3 %}
+                        <div class="text-center mt-4">
+                            <a href="{{ path('app_podcast_index', {'teacher': teacher.slug}) }}" class="th-btn">
+                                <span class="btn-text" data-back="Voir tous ses enseignements" data-front="Voir tous ses enseignements"></span>
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Quote of the Teacher -->
+                    {% if teacher.quote %}
+                    <div class="teacher-quote mb-40">
+                        <div class="quote-wrapper">
+                            <div class="quote-icon">
+                                <img src="{{ asset('assets/img/icon/quote.svg') }}" alt="Quote">
+                            </div>
+                            <blockquote class="quote-text">
+                                "{{ teacher.quote }}"
+                            </blockquote>
+                            <cite class="quote-author">- {{ teacher.name }}</cite>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Teacher Legacy -->
+                    {% if teacher.legacy %}
+                    <div class="teacher-legacy mb-40">
+                        <h3 class="teacher-details-title">Héritage et Influence</h3>
+                        <div class="legacy-content">
+                            {{ teacher.legacy|raw }}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Share Section -->
+                    <div class="share-links clearfix">
+                        <div class="row justify-content-between">
+                            <div class="col-md-auto">
+                                <span class="share-links-title">Partager ce profil :</span>
+                                <div class="th-social">
+                                    <a target="_blank" href="https://facebook.com/sharer/sharer.php?u={{ url('app_teacher_show', {'slug': teacher.slug}) }}">
+                                        <i class="fab fa-facebook-f"></i>
+                                    </a>
+                                    <a target="_blank" href="https://twitter.com/intent/tweet?url={{ url('app_teacher_show', {'slug': teacher.slug}) }}&text={{ teacher.name|url_encode }}">
+                                        <i class="fab fa-twitter"></i>
+                                    </a>
+                                    <a target="_blank" href="https://linkedin.com/sharing/share-offsite/?url={{ url('app_teacher_show', {'slug': teacher.slug}) }}">
+                                        <i class="fab fa-linkedin-in"></i>
+                                    </a>
+                                    <a href="mailto:?subject={{ teacher.name|url_encode }}&body={{ url('app_teacher_show', {'slug': teacher.slug}) }}">
+                                        <i class="fab fa-envelope"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-xxl-4 col-lg-5">
+                <aside class="sidebar-area">
+                    <!-- Teacher Quick Info -->
+                    <div class="widget teacher-info-widget">
+                        <h3 class="widget_title">Informations</h3>
+                        <div class="teacher-info-list">
+                            {% if teacher.specialty %}
+                            <div class="info-item">
+                                <span class="info-label">Spécialité :</span>
+                                <span class="info-value">{{ teacher.specialty }}</span>
+                            </div>
+                            {% endif %}
+                            {% if teacher.era %}
+                            <div class="info-item">
+                                <span class="info-label">Époque :</span>
+                                <span class="info-value">
+                                    {% if teacher.era == 'historical' %}
+                                        Historique
+                                    {% else %}
+                                        Contemporain
+                                    {% endif %}
+                                </span>
+                            </div>
+                            {% endif %}
+                            {% if teacher.birthPlace %}
+                            <div class="info-item">
+                                <span class="info-label">Lieu de naissance :</span>
+                                <span class="info-value">{{ teacher.birthPlace }}</span>
+                            </div>
+                            {% endif %}
+                            {% if teacher.school %}
+                            <div class="info-item">
+                                <span class="info-label">École de pensée :</span>
+                                <span class="info-value">{{ teacher.school }}</span>
+                            </div>
+                            {% endif %}
+                            {% if teacher.languages %}
+                            <div class="info-item">
+                                <span class="info-label">Langues :</span>
+                                <span class="info-value">{{ teacher.languages|join(', ') }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Other Teachers -->
+                    {% if relatedTeachers is defined and relatedTeachers|length > 0 %}
+                    <div class="widget">
+                        <h3 class="widget_title">Autres Maîtres</h3>
+                        <div class="recent-post-wrap">
+                            {% for relatedTeacher in relatedTeachers %}
+                            <div class="recent-post">
+                                <div class="media-img">
+                                    <a href="{{ path('app_teacher_show', {'slug': relatedTeacher.slug}) }}">
+                                        <img src="{{ relatedTeacher.profilePicture ? asset('assets/uploads/teachers/' ~ relatedTeacher.profilePicture) : asset('assets/images/default/teacher-thumb.jpg') }}" alt="{{ relatedTeacher.name }}">
+                                    </a>
+                                </div>
+                                <div class="media-body">
+                                    <h4 class="post-title">
+                                        <a class="text-inherit" href="{{ path('app_teacher_show', {'slug': relatedTeacher.slug}) }}">
+                                            {{ relatedTeacher.name }}
+                                        </a>
+                                    </h4>
+                                    <div class="recent-post-meta">
+                                        <span>{{ relatedTeacher.specialty }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Related Articles -->
+                    {% if relatedArticles is defined and relatedArticles|length > 0 %}
+                    <div class="widget">
+                        <h3 class="widget_title">Articles Liés</h3>
+                        <div class="recent-post-wrap">
+                            {% for article in relatedArticles %}
+                            <div class="recent-post">
+                                <div class="media-img">
+                                    <a href="{{ path('app_blog_show', {'slug': article.slug}) }}">
+                                        <img src="{{ article.featuredImage ? asset('assets/uploads/articles/' ~ article.featuredImage) : asset('assets/images/default/article-thumb.jpg') }}" alt="{{ article.title }}">
+                                    </a>
+                                </div>
+                                <div class="media-body">
+                                    <div class="recent-post-meta">
+                                        <a href="{{ path('app_blog_index') }}">{{ article.publishedAt ? article.publishedAt|date('d M Y') : article.createdAt|date('d M Y') }}</a>
+                                    </div>
+                                    <h4 class="post-title">
+                                        <a class="text-inherit" href="{{ path('app_blog_show', {'slug': article.slug}) }}">
+                                            {{ article.title|length > 40 ? article.title|slice(0, 40) ~ '...' : article.title }}
+                                        </a>
+                                    </h4>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Contact Widget -->
+                    <div class="widget contact-widget">
+                        <h4 class="widget_title">Vous connaissez ce maître ?</h4>
+                        <p class="contact-text">
+                            Partagez vos connaissances ou souvenirs de {{ teacher.name }} pour enrichir son profil.
+                        </p>
+                        <a href="{{ path('app_contact') }}?subject=Informations sur {{ teacher.name|url_encode }}" class="th-btn style2">
+                            <span class="btn-text" data-back="Contribuer" data-front="Contribuer"></span>
+                        </a>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Related Teachers -->
+{% if relatedTeachers is defined and relatedTeachers|length > 3 %}
+<section class="related-teachers space-bottom">
+    <div class="container">
+        <div class="title-area text-center">
+            <span class="sub-title">Maîtres Similaires</span>
+            <h2 class="sec-title">Autres Maîtres de {{ teacher.specialty }}</h2>
+        </div>
+        <div class="row gy-4">
+            {% for relatedTeacher in relatedTeachers|slice(0, 4) %}
+            <div class="col-md-6 col-lg-3">
+                <div class="th-team team-card">
+                    <div class="team-img">
+                        <img src="{{ relatedTeacher.profilePicture ? asset('assets/uploads/teachers/' ~ relatedTeacher.profilePicture) : asset('assets/images/default/teacher-default.jpg') }}" alt="{{ relatedTeacher.name }}">
+                        <div class="team-social">
+                            <a href="{{ path('app_teacher_show', {'slug': relatedTeacher.slug}) }}" class="icon-btn">
+                                <i class="far fa-eye"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="team-content">
+                        <h3 class="team-title">
+                            <a href="{{ path('app_teacher_show', {'slug': relatedTeacher.slug}) }}">{{ relatedTeacher.name }}</a>
+                        </h3>
+                        <span class="team-desig">{{ relatedTeacher.specialty }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

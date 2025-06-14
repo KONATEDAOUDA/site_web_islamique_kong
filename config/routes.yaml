@@ -1,5 +1,217 @@
-controllers:
-    resource:
-        path: ../src/Controller/
-        namespace: App\Controller
-    type: attribute
+# Configuration des routes personnalisées pour Kong
+
+# Route d'accueil
+app_home:
+    path: /
+    controller: App\Controller\HomeController::index
+    methods: GET
+
+# Routes principales des sections
+app_blog_index:
+    path: /actualites
+    controller: App\Controller\BlogController::index
+    methods: GET
+
+app_blog_show:
+    path: /actualites/{slug}
+    controller: App\Controller\BlogController::show
+    methods: GET
+
+app_blog_favorite:
+    path: /actualites/{id}/favorite
+    controller: App\Controller\BlogController::addToFavorites
+    methods: POST
+
+app_blog_category:
+    path: /actualites/categorie/{slug}
+    controller: App\Controller\BlogController::showCategory
+    methods: GET
+
+# Routes des podcasts
+app_podcast_index:
+    path: /podcasts
+    controller: App\Controller\PodcastController::index
+    methods: GET
+
+app_podcast_show:
+    path: /podcasts/{slug}
+    controller: App\Controller\PodcastController::show
+    methods: GET
+
+app_podcast_download:
+    path: /podcasts/{id}/download
+    controller: App\Controller\PodcastController::incrementDownload
+    methods: POST
+
+app_podcast_by_type:
+    path: /podcasts/type/{type}
+    controller: App\Controller\PodcastController::byType
+    methods: GET
+    requirements:
+        type: audio|video
+
+app_podcast_by_teacher:
+    path: /podcasts/maitre/{teacherSlug}
+    controller: App\Controller\PodcastController::byTeacher
+    methods: GET
+
+app_podcast_by_language:
+    path: /podcasts/langue/{language}
+    controller: App\Controller\PodcastController::byLanguage
+    methods: GET
+    requirements:
+        language: fr|ar|en
+
+app_podcast_search_ajax:
+    path: /podcasts/recherche/ajax
+    controller: App\Controller\PodcastController::searchAjax
+    methods: GET
+
+# Routes des archives
+app_archive:
+    path: /archives
+    controller: App\Controller\ArchiveController::index
+    methods: GET
+
+app_archive_show:
+    path: /archives/{slug}
+    controller: App\Controller\ArchiveController::show
+    methods: GET
+
+app_archive_download:
+    path: /archives/{slug}/download
+    controller: App\Controller\ArchiveController::download
+    methods: GET
+
+app_archive_by_type:
+    path: /archives/type/{type}
+    controller: App\Controller\ArchiveController::byType
+    methods: GET
+    requirements:
+        type: manuscript|document|photo|audio|video
+
+app_archive_by_collection:
+    path: /archives/collection/{collection}
+    controller: App\Controller\ArchiveController::byCollection
+    methods: GET
+
+# Routes des maîtres
+app_teacher:
+    path: /maitres
+    controller: App\Controller\TeacherController::index
+    methods: GET
+
+app_teacher_show:
+    path: /maitres/{slug}
+    controller: App\Controller\TeacherController::show
+    methods: GET
+
+app_teacher_by_specialty:
+    path: /maitres/specialite/{specialty}
+    controller: App\Controller\TeacherController::bySpecialty
+    methods: GET
+
+app_teacher_by_era:
+    path: /maitres/epoque/{era}
+    controller: App\Controller\TeacherController::byEra
+    methods: GET
+    requirements:
+        era: historical|contemporary
+
+# Routes de recherche
+app_search:
+    path: /recherche
+    controller: App\Controller\PageController::search
+    methods: GET
+
+# Pages statiques
+app_gallery:
+    path: /galerie
+    controller: App\Controller\PageController::gallery
+    methods: GET
+
+app_prayer_times:
+    path: /horaires-priere
+    controller: App\Controller\PageController::prayerTimes
+    methods: GET
+
+app_faq:
+    path: /faq
+    controller: App\Controller\PageController::faq
+    methods: GET
+
+app_terms:
+    path: /conditions-utilisation
+    controller: App\Controller\PageController::terms
+    methods: GET
+
+app_privacy:
+    path: /politique-confidentialite
+    controller: App\Controller\PageController::privacy
+    methods: GET
+
+app_sitemap_html:
+    path: /sitemap
+    controller: App\Controller\PageController::sitemapHtml
+    methods: GET
+
+# Routes d'authentification
+app_login:
+    path: /login
+    controller: App\Controller\SecurityController::login
+    methods: GET|POST
+
+app_logout:
+    path: /logout
+    controller: App\Controller\SecurityController::logout
+    methods: GET
+
+app_register:
+    path: /register
+    controller: App\Controller\RegistrationController::register
+    methods: GET|POST
+
+app_verify_email:
+    path: /verify/email
+    controller: App\Controller\RegistrationController::verifyUserEmail
+    methods: GET
+
+# Routes de réinitialisation de mot de passe
+app_forgot_password_request:
+    path: /reset-password
+    controller: App\Controller\ResetPasswordController::request
+    methods: GET|POST
+
+app_check_email:
+    path: /reset-password/check-email
+    controller: App\Controller\ResetPasswordController::checkEmail
+    methods: GET
+
+app_reset_password:
+    path: /reset-password/reset/{token}
+    controller: App\Controller\ResetPasswordController::reset
+    methods: GET|POST
+    defaults:
+        token: null
+
+# Pages du HomeController
+app_about:
+    path: /about
+    controller: App\Controller\HomeController::about
+    methods: GET
+
+app_contact:
+    path: /contact
+    controller: App\Controller\HomeController::contact
+    methods: GET
+
+# Routes du Forum
+app_forum:
+    path: /forum
+    controller: App\Controller\ForumController::index
+    methods: GET
+
+app_forum_subscribe:
+    path: /forum/subscribe
+    controller: App\Controller\ForumController::subscribe
+    methods: POST

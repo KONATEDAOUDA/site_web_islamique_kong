@@ -1,20 +1,461 @@
 {% extends 'frontend/base.html.twig' %}
 
-{% block title %}Hello ArchiveController!{% endblock %}
+{% block title %}Archives Historiques - Kong Islamique{% endblock %}
 
 {% block main %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/home/david/Bureau/projet_site_islam_kong/islamique_kong/src/Controller/ArchiveController.php</code></li>
-        <li>Your template at <code>/home/david/Bureau/projet_site_islam_kong/islamique_kong/templates/archive/index.html.twig</code></li>
-    </ul>
+<!-- Breadcrumb -->
+<div class="breadcumb-wrapper" data-bg-src="{{ asset('assets/images/kong/archives-hero.jpg') }}">
+    <div class="container">
+        <div class="breadcumb-content">
+            <h1 class="breadcumb-title">Archives Historiques</h1>
+            <ul class="breadcumb-menu">
+                <li><a href="{{ path('app_home') }}">Accueil</a></li>
+                <li>Archives</li>
+            </ul>
+        </div>
+    </div>
 </div>
+
+<!-- Intro Section -->
+<section class="space-top">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-8">
+                <div class="title-area text-center">
+                    <span class="sub-title">Patrimoine Numérique</span>
+                    <h2 class="sec-title">Archives du Patrimoine Islamique de Kong</h2>
+                    <p class="sec-text">
+                        Explorez notre collection unique d'archives numériques préservant l'histoire, la culture 
+                        et les traditions islamiques de Kong. Ces documents précieux témoignent de la richesse 
+                        intellectuelle et spirituelle de cette ville historique.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Archives Filter and Search -->
+<section class="archive-filter-area space-bottom">
+    <div class="container">
+        <div class="archive-filter-wrapper">
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <form class="search-form" action="{{ path('app_archive') }}" method="get">
+                        <input type="text" name="q" placeholder="Rechercher dans les archives..." 
+                               value="{{ app.request.query.get('q')|default('') }}">
+                        <button type="submit"><i class="far fa-search"></i></button>
+                    </form>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" onchange="location.href=this.value">
+                        <option value="{{ path('app_archive') }}">Tous les types</option>
+                        <option value="{{ path('app_archive', {type: 'manuscript'}) }}" {% if app.request.query.get('type') == 'manuscript' %}selected{% endif %}>
+                            Manuscrits
+                        </option>
+                        <option value="{{ path('app_archive', {type: 'document'}) }}" {% if app.request.query.get('type') == 'document' %}selected{% endif %}>
+                            Documents
+                        </option>
+                        <option value="{{ path('app_archive', {type: 'photo'}) }}" {% if app.request.query.get('type') == 'photo' %}selected{% endif %}>
+                            Photographies
+                        </option>
+                        <option value="{{ path('app_archive', {type: 'audio'}) }}" {% if app.request.query.get('type') == 'audio' %}selected{% endif %}>
+                            Enregistrements Audio
+                        </option>
+                        <option value="{{ path('app_archive', {type: 'video'}) }}" {% if app.request.query.get('type') == 'video' %}selected{% endif %}>
+                            Vidéos
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" onchange="location.href=this.value">
+                        <option value="{{ path('app_archive') }}">Toutes les périodes</option>
+                        <option value="{{ path('app_archive', {period: '1700-1800'}) }}" {% if app.request.query.get('period') == '1700-1800' %}selected{% endif %}>
+                            1700-1800
+                        </option>
+                        <option value="{{ path('app_archive', {period: '1800-1900'}) }}" {% if app.request.query.get('period') == '1800-1900' %}selected{% endif %}>
+                            1800-1900
+                        </option>
+                        <option value="{{ path('app_archive', {period: '1900-2000'}) }}" {% if app.request.query.get('period') == '1900-2000' %}selected{% endif %}>
+                            1900-2000
+                        </option>
+                        <option value="{{ path('app_archive', {period: '2000-present'}) }}" {% if app.request.query.get('period') == '2000-present' %}selected{% endif %}>
+                            2000-Présent
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <div class="view-toggle">
+                        <button class="view-btn active" data-view="grid"><i class="fas fa-th-large"></i></button>
+                        <button class="view-btn" data-view="list"><i class="fas fa-list"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="archive-stats mt-4">
+            <div class="row text-center">
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <h3 class="stat-number">{{ archiveStats.totalDocuments ?? 500 }}</h3>
+                        <p class="stat-label">Documents Total</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <h3 class="stat-number">{{ archiveStats.manuscripts ?? 150 }}</h3>
+                        <p class="stat-label">Manuscrits</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <h3 class="stat-number">{{ archiveStats.audioRecordings ?? 200 }}</h3>
+                        <p class="stat-label">Enregistrements</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <h3 class="stat-number">{{ archiveStats.photos ?? 300 }}</h3>
+                        <p class="stat-label">Photographies</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Archives Grid -->
+<section class="archive-grid-area space-bottom">
+    <div class="container">
+        <div class="archive-grid-wrapper" id="archiveGrid">
+            <div class="row gy-4">
+                {% if archives is defined and archives|length > 0 %}
+                    {% for archive in archives %}
+                    <div class="col-lg-4 col-md-6 archive-item">
+                        <div class="archive-card">
+                            <div class="archive-thumb">
+                                {% if archive.thumbnail %}
+                                    <img src="{{ asset('assets/uploads/archives/' ~ archive.thumbnail) }}" alt="{{ archive.title }}">
+                                {% else %}
+                                    <img src="{{ asset('assets/images/default/archive-' ~ archive.type ~ '.jpg') }}" alt="{{ archive.title }}">
+                                {% endif %}
+                                <div class="archive-overlay">
+                                    <div class="archive-type">
+                                        <span class="type-badge type-{{ archive.type }}">
+                                            {% if archive.type == 'manuscript' %}
+                                                <i class="fas fa-scroll"></i> Manuscrit
+                                            {% elseif archive.type == 'document' %}
+                                                <i class="fas fa-file-alt"></i> Document
+                                            {% elseif archive.type == 'photo' %}
+                                                <i class="fas fa-camera"></i> Photo
+                                            {% elseif archive.type == 'audio' %}
+                                                <i class="fas fa-volume-up"></i> Audio
+                                            {% elseif archive.type == 'video' %}
+                                                <i class="fas fa-video"></i> Vidéo
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    <div class="archive-actions">
+                                        <a href="{{ path('app_archive_show', {'slug': archive.slug}) }}" class="action-btn">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        {% if archive.downloadable %}
+                                        <a href="{{ path('app_archive_download', {'slug': archive.slug}) }}" class="action-btn">
+                                            <i class="fas fa-download"></i>
+                                        </a>
+                                        {% endif %}
+                                        <a href="#" class="action-btn share-btn" data-url="{{ url('app_archive_show', {'slug': archive.slug}) }}">
+                                            <i class="fas fa-share-alt"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="archive-content">
+                                <h3 class="archive-title">
+                                    <a href="{{ path('app_archive_show', {'slug': archive.slug}) }}">
+                                        {{ archive.title|length > 50 ? archive.title|slice(0, 50) ~ '...' : archive.title }}
+                                    </a>
+                                </h3>
+                                <p class="archive-description">
+                                    {{ archive.description|striptags|length > 100 ? archive.description|striptags|slice(0, 100) ~ '...' : archive.description|striptags }}
+                                </p>
+                                <div class="archive-meta">
+                                    {% if archive.year %}
+                                    <span class="meta-item">
+                                        <i class="fas fa-calendar-alt"></i> {{ archive.year }}
+                                    </span>
+                                    {% endif %}
+                                    {% if archive.language %}
+                                    <span class="meta-item">
+                                        <i class="fas fa-language"></i> 
+                                        {% if archive.language == 'ar' %}Arabe{% elseif archive.language == 'fr' %}Français{% else %}{{ archive.language }}{% endif %}
+                                    </span>
+                                    {% endif %}
+                                    {% if archive.viewCount %}
+                                    <span class="meta-item">
+                                        <i class="fas fa-eye"></i> {{ archive.viewCount }}
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <!-- Sample Archive Items (to be replaced with real data) -->
+                    <div class="col-lg-4 col-md-6 archive-item">
+                        <div class="archive-card">
+                            <div class="archive-thumb">
+                                <img src="{{ asset('assets/images/archive/manuscript-1.jpg') }}" alt="Manuscrit du Coran">
+                                <div class="archive-overlay">
+                                    <div class="archive-type">
+                                        <span class="type-badge type-manuscript">
+                                            <i class="fas fa-scroll"></i> Manuscrit
+                                        </span>
+                                    </div>
+                                    <div class="archive-actions">
+                                        <a href="#" class="action-btn"><i class="fas fa-eye"></i></a>
+                                        <a href="#" class="action-btn"><i class="fas fa-download"></i></a>
+                                        <a href="#" class="action-btn"><i class="fas fa-share-alt"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="archive-content">
+                                <h3 class="archive-title">
+                                    <a href="#">Manuscrit du Coran - Période Classique</a>
+                                </h3>
+                                <p class="archive-description">
+                                    Manuscrit du Coran en calligraphie arabe, datant du XVIIIe siècle, conservé dans les archives de Kong.
+                                </p>
+                                <div class="archive-meta">
+                                    <span class="meta-item"><i class="fas fa-calendar-alt"></i> 1750</span>
+                                    <span class="meta-item"><i class="fas fa-language"></i> Arabe</span>
+                                    <span class="meta-item"><i class="fas fa-eye"></i> 245</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-6 archive-item">
+                        <div class="archive-card">
+                            <div class="archive-thumb">
+                                <img src="{{ asset('assets/images/archive/photo-kong-old.jpg') }}" alt="Kong Historique">
+                                <div class="archive-overlay">
+                                    <div class="archive-type">
+                                        <span class="type-badge type-photo">
+                                            <i class="fas fa-camera"></i> Photo
+                                        </span>
+                                    </div>
+                                    <div class="archive-actions">
+                                        <a href="#" class="action-btn"><i class="fas fa-eye"></i></a>
+                                        <a href="#" class="action-btn"><i class="fas fa-download"></i></a>
+                                        <a href="#" class="action-btn"><i class="fas fa-share-alt"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="archive-content">
+                                <h3 class="archive-title">
+                                    <a href="#">Kong au début du XXe siècle</a>
+                                </h3>
+                                <p class="archive-description">
+                                    Photographie historique de Kong montrant l'architecture traditionnelle et la vie quotidienne.
+                                </p>
+                                <div class="archive-meta">
+                                    <span class="meta-item"><i class="fas fa-calendar-alt"></i> 1920</span>
+                                    <span class="meta-item"><i class="fas fa-camera"></i> N&B</span>
+                                    <span class="meta-item"><i class="fas fa-eye"></i> 189</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-6 archive-item">
+                        <div class="archive-card">
+                            <div class="archive-thumb">
+                                <img src="{{ asset('assets/images/archive/audio-recording.jpg') }}" alt="Enregistrement Audio">
+                                <div class="archive-overlay">
+                                    <div class="archive-type">
+                                        <span class="type-badge type-audio">
+                                            <i class="fas fa-volume-up"></i> Audio
+                                        </span>
+                                    </div>
+                                    <div class="archive-actions">
+                                        <a href="#" class="action-btn"><i class="fas fa-play"></i></a>
+                                        <a href="#" class="action-btn"><i class="fas fa-download"></i></a>
+                                        <a href="#" class="action-btn"><i class="fas fa-share-alt"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="archive-content">
+                                <h3 class="archive-title">
+                                    <a href="#">Récitation Coranique Traditionnelle</a>
+                                </h3>
+                                <p class="archive-description">
+                                    Enregistrement d'une récitation coranique dans le style traditionnel de Kong.
+                                </p>
+                                <div class="archive-meta">
+                                    <span class="meta-item"><i class="fas fa-calendar-alt"></i> 1980</span>
+                                    <span class="meta-item"><i class="fas fa-clock"></i> 45 min</span>
+                                    <span class="meta-item"><i class="fas fa-eye"></i> 312</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Pagination -->
+            {% if archives.haveToPaginate %}
+            <div class="th-pagination text-center pt-50">
+                <ul>
+                    {% if archives.hasPreviousPage %}
+                        <li><a href="{{ path('app_archive', {'page': archives.previousPage}) }}"><i class="far fa-arrow-left"></i></a></li>
+                    {% endif %}
+
+                    {% for page in archives.pagesInRange %}
+                        {% if page != archives.currentPage %}
+                            <li><a href="{{ path('app_archive', {'page': page}) }}">{{ page }}</a></li>
+                        {% else %}
+                            <li><a class="current">{{ page }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if archives.hasNextPage %}
+                        <li><a href="{{ path('app_archive', {'page': archives.nextPage}) }}"><i class="far fa-arrow-right"></i></a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Featured Collections -->
+<section class="featured-collections space" data-bg-src="{{ asset('assets/img/bg/collection_bg.jpg') }}">
+    <div class="container">
+        <div class="title-area text-center text-white">
+            <span class="sub-title">Collections Spéciales</span>
+            <h2 class="sec-title text-white">Collections Thématiques</h2>
+        </div>
+        <div class="row gy-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="collection-card">
+                    <div class="collection-icon">
+                        <i class="fas fa-mosque"></i>
+                    </div>
+                    <h3 class="collection-title">Architecture Islamique</h3>
+                    <p class="collection-text">Photos et plans des mosquées historiques de Kong</p>
+                    <a href="{{ path('app_archive', {collection: 'architecture'}) }}" class="collection-link">
+                        Explorer <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="collection-card">
+                    <div class="collection-icon">
+                        <i class="fas fa-scroll"></i>
+                    </div>
+                    <h3 class="collection-title">Manuscrits Anciens</h3>
+                    <p class="collection-text">Textes religieux et académiques en arabe</p>
+                    <a href="{{ path('app_archive', {collection: 'manuscripts'}) }}" class="collection-link">
+                        Explorer <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="collection-card">
+                    <div class="collection-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="collection-title">Portraits de Maîtres</h3>
+                    <p class="collection-text">Photos et biographies des érudits</p>
+                    <a href="{{ path('app_archive', {collection: 'scholars'}) }}" class="collection-link">
+                        Explorer <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="collection-card">
+                    <div class="collection-icon">
+                        <i class="fas fa-microphone"></i>
+                    </div>
+                    <h3 class="collection-title">Enregistrements Historiques</h3>
+                    <p class="collection-text">Archives audio des enseignements</p>
+                    <a href="{{ path('app_archive', {collection: 'audio'}) }}" class="collection-link">
+                        Explorer <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contribute Section -->
+<section class="contribute-area space">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <div class="contribute-content">
+                    <h2 class="contribute-title">Contribuez à nos Archives</h2>
+                    <p class="contribute-text">
+                        Vous possédez des documents, photos ou enregistrements liés à l'histoire islamique de Kong ? 
+                        Aidez-nous à enrichir nos archives numériques pour préserver ce patrimoine unique.
+                    </p>
+                    <ul class="contribute-list">
+                        <li><i class="fas fa-check"></i> Numérisation gratuite de vos documents</li>
+                        <li><i class="fas fa-check"></i> Conservation sécurisée et accessible</li>
+                        <li><i class="fas fa-check"></i> Reconnaissance de votre contribution</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <a href="{{ path('app_contact') }}?subject=Contribution Archives" class="th-btn">
+                    <span class="btn-text" data-back="Contribuer" data-front="Contribuer"></span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // View toggle functionality
+        document.querySelectorAll('.view-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const view = this.getAttribute('data-view');
+                const grid = document.getElementById('archiveGrid');
+                
+                if (view === 'list') {
+                    grid.classList.add('list-view');
+                } else {
+                    grid.classList.remove('list-view');
+                }
+            });
+        });
+
+        // Share functionality
+        document.querySelectorAll('.share-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const url = this.getAttribute('data-url');
+                
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'Archive - Kong Islamique',
+                        url: url
+                    });
+                } else {
+                    navigator.clipboard.writeText(url).then(() => {
+                        alert('Lien copié dans le presse-papiers !');
+                    });
+                }
+            });
+        });
+    </script>
 {% endblock %}

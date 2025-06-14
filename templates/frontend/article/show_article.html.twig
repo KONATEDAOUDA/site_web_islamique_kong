@@ -3,188 +3,278 @@
 {% block title %}{{ article.title }} - Kong{% endblock %}
 
 {% block main %}
-<div class="container my-5">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb bg-white px-0">
-            <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
-            <li class="breadcrumb-item"><a href="{{ path('app_blog_index') }}">Actualités</a></li>
-            {% if article.category %}
-                <li class="breadcrumb-item">
-                    <a href="{{ path('category_show', {slug: article.category.slug}) }}">
-                        {{ article.category.name }}
-                    </a>
-                </li>
-            {% endif %}
-            <li class="breadcrumb-item active" aria-current="page">
-                {{ article.title|length > 40 ? article.title|slice(0, 40) ~ '...' : article.title }}
-            </li>
-        </ol>
-    </nav>
-
-    <article>
-        <header>
-            <h1 class="display-4">{{ article.title }}</h1>
-            <div class="mb-3 text-muted">
-                <span><i class="fas fa-calendar-alt"></i> {{ article.publishedAt ? article.publishedAt|date('d/m/Y') : article.createdAt|date('d/m/Y') }}</span>
-                {% if article.author %}
-                <span class="ml-3">
-                    <i class="fas fa-user"></i> {{ article.author.firstName ~ ' ' ~ article.author.lastName }}
-                </span>
+<!-- Breadcrumb -->
+<div class="breadcumb-wrapper" data-bg-src="{{ article.featuredImage ? asset('assets/uploads/articles/' ~ article.featuredImage) : asset('assets/img/bg/breadcumb-bg.jpg') }}">
+    <div class="container">
+        <div class="breadcumb-content">
+            <h1 class="breadcumb-title">{{ article.title }}</h1>
+            <ul class="breadcumb-menu">
+                <li><a href="{{ path('app_home') }}">Accueil</a></li>
+                <li><a href="{{ path('app_blog_index') }}">Actualités</a></li>
+                {% if article.category %}
+                    <li><a href="{{ path('app_blog_category', {slug: article.category.slug}) }}">{{ article.category.name }}</a></li>
                 {% endif %}
-                {% if article.readingTime %}
-                <span class="ml-3">
-                    <i class="fas fa-clock"></i> {{ article.readingTime }} min de lecture
-                </span>
-                {% endif %}
-            </div>
-            
-            {# Utilisation de thumbnail #}
-            {% if article.thumbnail %}
-                <img src="{{ asset('assets/uploads/articles/' ~ article.thumbnail) }}" 
-                     alt="{{ article.title }}" 
-                     class="img-fluid rounded mb-4 w-100" 
-                     style="max-height:400px; object-fit:cover;">
-            {% endif %}
-            
-            {% if article.excerpt %}
-                <div class="alert alert-info">
-                    <strong>Résumé :</strong> {{ article.excerpt }}
-                </div>
-            {% endif %}
-        </header>
-
-        <section class="mb-5 article-content">
-            {{ article.content|raw }}
-        </section>
-
-        {# Affichage des tags #}
-        {% if article.tags|length > 0 %}
-        <section class="mb-4">
-            <i class="fas fa-tags mr-2"></i>
-            {% for tag in article.tags %}
-                <span class="badge badge-secondary mr-1">{{ tag }}</span>
-            {% endfor %}
-        </section>
-        {% endif %}
-
-        {# Statistiques de l'article #}
-        <section class="mb-4">
-            <div class="d-flex flex-wrap">
-                <span class="badge badge-light mr-2">
-                    <i class="fas fa-eye"></i> {{ article.viewCount }} vues
-                </span>
-                {% if article.favoriteCount > 0 %}
-                <span class="badge badge-light mr-2">
-                    <i class="fas fa-heart"></i> {{ article.favoriteCount }} favoris
-                </span>
-                {% endif %}
-                {% if article.isFeatured %}
-                <span class="badge badge-warning mr-2">
-                    <i class="fas fa-star"></i> Article vedette
-                </span>
-                {% endif %}
-            </div>
-        </section>
-
-        <footer class="mt-5">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <small class="text-muted">
-                        Publié le {{ article.publishedAt ? article.publishedAt|date('d/m/Y à H:i') : article.createdAt|date('d/m/Y à H:i') }}
-                        {% if article.updatedAt %}
-                            | Modifié le {{ article.updatedAt|date('d/m/Y à H:i') }}
-                        {% endif %}
-                    </small>
-                </div>
-                <div>
-                    <button class="btn btn-outline-primary" onclick="shareArticle()">
-                        <i class="fas fa-share-alt"></i> Partager
-                    </button>
-                </div>
-            </div>
-        </footer>
-    </article>
-
-    {# Commentaires - Utilise directement les commentaires de l'article avec filtrage #}
-    {% set approvedComments = article.comments|filter(c => c.isIsApproved) %}
-    {% if approvedComments|length > 0 %}
-        <section class="mt-5">
-            <h3 class="h5 mb-4"><i class="fas fa-comments"></i> Commentaires ({{ approvedComments|length }})</h3>
-            {% for comment in approvedComments %}
-            <div class="media mb-4">
-                <img class="mr-3 rounded-circle" images/
-                     src="{{ comment.author.profilePicture ? asset('assets/uploads/users/' ~ comment.author.profilePicture) : asset('default-avatar.png') }}" 
-                     alt="Avatar" 
-                     style="width:40px; height:40px; object-fit:cover;">
-                <div class="media-body">
-                    <h6 class="mt-0 mb-1">
-                        {{ comment.author.firstName ~ ' ' ~ comment.author.lastName }} 
-                        <small class="text-muted">{{ comment.createdAt|date('d/m/Y H:i') }}</small>
-                    </h6>
-                    <p>{{ comment.content }}</p>
-                </div>
-            </div>
-            {% endfor %}
-        </section>
-    {% endif %}
-
-    {# Articles similaires (optionnel) #}
-    {% if article.category %}
-    <section class="mt-5">
-        <h4>Articles de la même catégorie</h4>
-        <p class="text-muted">
-            <a href="{{ path('app_blog_category', {slug: article.category.slug}) }}" class="btn btn-outline-secondary">
-                Voir tous les articles de "{{ article.category.name }}"
-            </a>
-        </p>
-    </section>
-    {% endif %}
-
-    {# Formulaire de commentaire (à adapter selon votre système d'authentification) #}
-    {% if app.user %}
-        <section class="mt-5">
-            <h5>Laisser un commentaire</h5>
-            {{ form_start(form) }}
-            {{ form_widget(form) }}
-            <button class="btn btn-success mt-2" type="submit">
-                <i class="fas fa-paper-plane"></i> Envoyer
-            </button>
-            {{ form_end(form) }}
-        </section>
-    {% else %}
-        <section class="mt-5">
-            <div class="alert alert-info">
-                <a href="{{ path('app_login') }}">Connectez-vous</a> pour laisser un commentaire.
-            </div>
-        </section>
-    {% endif %}
+                <li>{{ article.title|length > 30 ? article.title|slice(0, 30) ~ '...' : article.title }}</li>
+            </ul>
+        </div>
+    </div>
 </div>
-{% endblock %}
 
-{% block javascripts %}
-    {{ parent() }}
-    <script>
-        function shareArticle() {
-            if (navigator.share) {
-                navigator.share({
-                    title: '{{ article.title|e('js') }}',
-                    text: '{{ article.excerpt|default('Article à découvrir')|e('js') }}',
-                    url: window.location.href
-                });
-            } else {
-                navigator.clipboard.writeText(window.location.href).then(function() {
-                    alert('Lien copié dans le presse-papiers !');
-                }, function() {
-                    // Fallback si clipboard API n'est pas disponible
-                    const textArea = document.createElement('textarea');
-                    textArea.value = window.location.href;
-                    document.body.appendChild(textArea);
-                    textArea.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(textArea);
-                    alert('Lien copié dans le presse-papiers !');
-                });
-            }
-        }
-    </script>
+<section class="th-blog-wrapper blog-details space-top space-extra2-bottom">
+    <div class="container">
+        <div class="row gx-30">
+            <div class="col-xxl-8 col-lg-7">
+                <div class="th-blog blog-single">
+                    <div class="blog-img">
+                        {% if article.featuredImage %}
+                            <img src="{{ asset('assets/uploads/articles/' ~ article.featuredImage) }}" alt="{{ article.title }}">
+                        {% endif %}
+                    </div>
+                    
+                    <div class="blog-content">
+                        <div class="blog-meta">
+                            <a class="author" href="{{ path('app_blog_index') }}">
+                                <i class="fa-light fa-user"></i>Par {{ article.author ? article.author.firstName ~ ' ' ~ article.author.lastName : 'Admin' }}
+                            </a>
+                            <a href="{{ path('app_blog_index') }}">
+                                <i class="fa-light fa-calendar-days"></i>{{ article.publishedAt ? article.publishedAt|date('d F Y') : article.createdAt|date('d F Y') }}
+                            </a>
+                            {% if article.category %}
+                            <a href="{{ path('app_blog_category', {slug: article.category.slug}) }}">
+                                <i class="fa-light fa-tags"></i>{{ article.category.name }}
+                            </a>
+                            {% endif %}
+                            <a href="#comments">
+                                <i class="fa-light fa-comments"></i>{{ article.comments|filter(c => c.isIsApproved)|length }} Commentaires
+                            </a>
+                        </div>
+                        
+                        {% if article.excerpt %}
+                        <div class="blog-excerpt">
+                            <p class="fs-md">{{ article.excerpt }}</p>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="blog-text">
+                            {{ article.content|raw }}
+                        </div>
+                        
+                        <!-- Tags -->
+                        {% if article.tags|length > 0 %}
+                        <div class="share-links clearfix">
+                            <div class="row justify-content-between">
+                                <div class="col-md-auto">
+                                    <span class="share-links-title">Tags:</span>
+                                    <div class="tagcloud">
+                                        {% for tag in article.tags %}
+                                            <a href="{{ path('app_blog_index', {tag: tag}) }}">{{ tag }}</a>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="col-md-auto text-xl-end">
+                                    <span class="share-links-title">Partager:</span>
+                                    <div class="th-social">
+                                        <a target="_blank" href="https://facebook.com/sharer/sharer.php?u={{ url('app_blog_show', {'slug': article.slug}) }}">
+                                            <i class="fab fa-facebook-f"></i>
+                                        </a>
+                                        <a target="_blank" href="https://twitter.com/intent/tweet?url={{ url('app_blog_show', {'slug': article.slug}) }}&text={{ article.title|url_encode }}">
+                                            <i class="fab fa-twitter"></i>
+                                        </a>
+                                        <a target="_blank" href="https://linkedin.com/sharing/share-offsite/?url={{ url('app_blog_show', {'slug': article.slug}) }}">
+                                            <i class="fab fa-linkedin-in"></i>
+                                        </a>
+                                        <a href="mailto:?subject={{ article.title|url_encode }}&body={{ url('app_blog_show', {'slug': article.slug}) }}">
+                                            <i class="fab fa-envelope"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Author Bio -->
+                {% if article.author %}
+                <div class="blog-author">
+                    <div class="auhtor-img">
+                        <img src="{{ article.author.profilePicture ? asset('assets/uploads/users/' ~ article.author.profilePicture) : asset('assets/images/default/avatar.png') }}" alt="{{ article.author.firstName ~ ' ' ~ article.author.lastName }}">
+                    </div>
+                    <div class="media-body">
+                        <h3 class="author-name">
+                            <a class="text-inherit" href="#">{{ article.author.firstName ~ ' ' ~ article.author.lastName }}</a>
+                        </h3>
+                        {% if article.author.bio %}
+                            <p class="author-text">{{ article.author.bio }}</p>
+                        {% endif %}
+                        <div class="th-social">
+                            <!-- Liens sociaux de l'auteur si disponibles -->
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Navigation Article -->
+                <div class="blog-post-navigation">
+                    <div class="row">
+                        {% if previousArticle is defined and previousArticle %}
+                        <div class="col-md-6">
+                            <div class="post-navigation-card prev-post">
+                                <div class="post-navigation-info">
+                                    <a href="{{ path('app_blog_show', {'slug': previousArticle.slug}) }}" class="nav-btn">
+                                        <i class="fa-light fa-arrow-left"></i>Article précédent
+                                    </a>
+                                    <h4 class="post-navigation-title">
+                                        <a href="{{ path('app_blog_show', {'slug': previousArticle.slug}) }}">{{ previousArticle.title }}</a>
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if nextArticle is defined and nextArticle %}
+                        <div class="col-md-6">
+                            <div class="post-navigation-card next-post">
+                                <div class="post-navigation-info">
+                                    <a href="{{ path('app_blog_show', {'slug': nextArticle.slug}) }}" class="nav-btn">
+                                        Article suivant<i class="fa-light fa-arrow-right"></i>
+                                    </a>
+                                    <h4 class="post-navigation-title">
+                                        <a href="{{ path('app_blog_show', {'slug': nextArticle.slug}) }}">{{ nextArticle.title }}</a>
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Comments Section -->
+                {% set approvedComments = article.comments|filter(c => c.isIsApproved) %}
+                {% if approvedComments|length > 0 %}
+                <div class="th-comments-wrap" id="comments">
+                    <h2 class="blog-inner-title">Commentaires ({{ approvedComments|length }})</h2>
+                    <ul class="comment-list">
+                        {% for comment in approvedComments %}
+                        <li class="th-comment-item">
+                            <div class="th-post-comment">
+                                <div class="comment-avater">
+                                    <img src="{{ comment.author.profilePicture ? asset('assets/uploads/users/' ~ comment.author.profilePicture) : asset('assets/images/default/avatar.png') }}" alt="Comment Author">
+                                </div>
+                                <div class="comment-content">
+                                    <h4 class="name">{{ comment.author.firstName ~ ' ' ~ comment.author.lastName }}</h4>
+                                    <span class="commented-on"><i class="fal fa-calendar-alt"></i>{{ comment.createdAt|date('d F Y à H:i') }}</span>
+                                    <p class="text">{{ comment.content }}</p>
+                                    <div class="reply_and_edit">
+                                        <a href="#comment-form" class="reply-btn">
+                                            <i class="fas fa-reply"></i>Répondre
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <!-- Comment Form -->
+                {% if app.user %}
+                <div class="th-comment-form" id="comment-form">
+                    <div class="form-title">
+                        <h3 class="blog-inner-title">Laisser un commentaire</h3>
+                    </div>
+                    {{ form_start(form, {'attr': {'class': 'comment-form ajax-contact'}}) }}
+                        <div class="row">
+                            <div class="col-12 form-group">
+                                {{ form_widget(form.content, {'attr': {'class': 'form-control', 'placeholder': 'Écrivez votre commentaire*'}}) }}
+                                {{ form_errors(form.content) }}
+                            </div>
+                            <div class="col-12 form-group mb-0">
+                                <button class="th-btn" type="submit">Publier le commentaire</button>
+                            </div>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+                {% else %}
+                <div class="th-comment-form">
+                    <div class="form-title">
+                        <h3 class="blog-inner-title">Laisser un commentaire</h3>
+                        <p>Vous devez être <a href="{{ path('app_login') }}">connecté</a> pour laisser un commentaire.</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Sidebar -->
+            <div class="col-xxl-4 col-lg-5">
+                <aside class="sidebar-area">
+                    <!-- Search Widget -->
+                    <div class="widget widget_search">
+                        <form class="search-form" action="{{ path('app_blog_index') }}" method="get">
+                            <input type="text" name="q" placeholder="Rechercher un article..." value="{{ app.request.query.get('q')|default('') }}">
+                            <button type="submit"><i class="far fa-search"></i></button>
+                        </form>
+                    </div>
+
+                    <!-- Categories Widget -->
+                    {% if categories is defined and categories|length > 0 %}
+                    <div class="widget widget_categories">
+                        <h3 class="widget_title">Catégories</h3>
+                        <ul>
+                            {% for category in categories %}
+                            <li>
+                                <a href="{{ path('app_blog_category', {slug: category.slug}) }}">
+                                    {{ category.name }} <span>({{ category.articles|length }})</span>
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <!-- Recent Posts Widget -->
+                    {% if recentArticles is defined and recentArticles|length > 0 %}
+                    <div class="widget">
+                        <h3 class="widget_title">Articles récents</h3>
+                        <div class="recent-post-wrap">
+                            {% for recentArticle in recentArticles %}
+                            <div class="recent-post">
+                                <div class="media-img">
+                                    <a href="{{ path('app_blog_show', {'slug': recentArticle.slug}) }}">
+                                        <img src="{{ recentArticle.featuredImage ? asset('assets/uploads/articles/' ~ recentArticle.featuredImage) : asset('assets/images/default/article-thumb.jpg') }}" alt="{{ recentArticle.title }}">
+                                    </a>
+                                </div>
+                                <div class="media-body">
+                                    <div class="recent-post-meta">
+                                        <a href="{{ path('app_blog_index') }}">{{ recentArticle.publishedAt ? recentArticle.publishedAt|date('d M Y') : recentArticle.createdAt|date('d M Y') }}</a>
+                                    </div>
+                                    <h4 class="post-title">
+                                        <a class="text-inherit" href="{{ path('app_blog_show', {'slug': recentArticle.slug}) }}">
+                                            {{ recentArticle.title|length > 40 ? recentArticle.title|slice(0, 40) ~ '...' : recentArticle.title }}
+                                        </a>
+                                    </h4>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Tags Widget -->
+                    {% if popularTags is defined and popularTags|length > 0 %}
+                    <div class="widget widget_tag_cloud">
+                        <h3 class="widget_title">Tags populaires</h3>
+                        <div class="tagcloud">
+                            {% for tag in popularTags %}
+                                <a href="{{ path('app_blog_index', {tag: tag}) }}">{{ tag }}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </aside>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}

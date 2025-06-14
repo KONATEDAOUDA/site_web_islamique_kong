@@ -1,0 +1,434 @@
+{% extends 'frontend/base.html.twig' %}
+
+{% block title %}Questions Fréquentes - Kong Islamique{% endblock %}
+
+{% block main %}
+<!-- Breadcrumb -->
+<div class="breadcumb-wrapper" data-bg-src="{{ asset('assets/images/kong/faq-hero.jpg') }}">
+    <div class="container">
+        <div class="breadcumb-content">
+            <h1 class="breadcumb-title">Questions Fréquentes</h1>
+            <ul class="breadcumb-menu">
+                <li><a href="{{ path('app_home') }}">Accueil</a></li>
+                <li>FAQ</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Intro Section -->
+<section class="space-top">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-8">
+                <div class="title-area text-center">
+                    <span class="sub-title">Aide & Support</span>
+                    <h2 class="sec-title">Questions Fréquemment Posées</h2>
+                    <p class="sec-text">
+                        Trouvez rapidement les réponses aux questions les plus courantes concernant 
+                        notre portail islamique de Kong. Si vous ne trouvez pas la réponse à votre question, 
+                        n'hésitez pas à nous contacter.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Search -->
+<section class="faq-search space-bottom">
+    <div class="container">
+        <div class="faq-search-wrapper">
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <form class="search-form faq-search-form">
+                        <input type="text" id="faqSearch" placeholder="Rechercher dans les questions..." class="form-control">
+                        <button type="button" onclick="searchFAQ()"><i class="far fa-search"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Content -->
+<section class="faq-content space-bottom">
+    <div class="container">
+        <!-- FAQ Categories Tabs -->
+        <div class="faq-tabs-wrapper">
+            <ul class="nav nav-tabs faq-tabs" id="faqTabs" role="tablist">
+                {% for index, faqCategory in faqs %}
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link {% if loop.first %}active{% endif %}" 
+                            id="tab-{{ index }}" 
+                            data-bs-toggle="tab" 
+                            data-bs-target="#category-{{ index }}" 
+                            type="button" 
+                            role="tab">
+                        {{ faqCategory.category }}
+                    </button>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- FAQ Content -->
+        <div class="tab-content faq-tab-content" id="faqTabContent">
+            {% for index, faqCategory in faqs %}
+            <div class="tab-pane fade {% if loop.first %}show active{% endif %}" 
+                 id="category-{{ index }}" 
+                 role="tabpanel">
+                <div class="faq-category-content">
+                    <div class="row">
+                        <div class="col-lg-8 mx-auto">
+                            <div class="accordion faq-accordion" id="faqAccordion{{ index }}">
+                                {% for qIndex, qa in faqCategory.questions %}
+                                <div class="accordion-card faq-item" data-category="{{ faqCategory.category|lower }}">
+                                    <div class="accordion-header" id="heading{{ index }}{{ qIndex }}">
+                                        <button class="accordion-button {% if not loop.first %}collapsed{% endif %}" 
+                                                type="button" 
+                                                data-bs-toggle="collapse" 
+                                                data-bs-target="#collapse{{ index }}{{ qIndex }}">
+                                            <span class="question-text">{{ qa.question }}</span>
+                                        </button>
+                                    </div>
+                                    <div id="collapse{{ index }}{{ qIndex }}" 
+                                         class="accordion-collapse collapse {% if loop.first and loop.parent.loop.first %}show{% endif %}" 
+                                         data-bs-parent="#faqAccordion{{ index }}">
+                                        <div class="accordion-body">
+                                            <p class="faq-answer">{{ qa.answer|raw }}</p>
+                                            <div class="faq-helpful">
+                                                <span class="helpful-text">Cette réponse vous a-t-elle été utile ?</span>
+                                                <div class="helpful-buttons">
+                                                    <button class="helpful-btn yes" onclick="markHelpful(this, true)">
+                                                        <i class="fas fa-thumbs-up"></i> Oui
+                                                    </button>
+                                                    <button class="helpful-btn no" onclick="markHelpful(this, false)">
+                                                        <i class="fas fa-thumbs-down"></i> Non
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Quick Links -->
+<section class="faq-quick-links space" data-bg-src="{{ asset('assets/img/bg/quick_links_bg.jpg') }}">
+    <div class="container">
+        <div class="title-area text-center text-white">
+            <span class="sub-title">Accès Rapide</span>
+            <h2 class="sec-title text-white">Actions Courantes</h2>
+        </div>
+        <div class="row gy-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="quick-link-card">
+                    <div class="quick-link-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h3 class="quick-link-title">Créer un Compte</h3>
+                    <p class="quick-link-text">Inscrivez-vous pour accéder aux fonctionnalités avancées</p>
+                    <a href="{{ path('app_register') }}" class="quick-link-btn">
+                        S'inscrire <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="quick-link-card">
+                    <div class="quick-link-icon">
+                        <i class="fas fa-archive"></i>
+                    </div>
+                    <h3 class="quick-link-title">Explorer les Archives</h3>
+                    <p class="quick-link-text">Découvrez notre collection de documents historiques</p>
+                    <a href="{{ path('app_archive') }}" class="quick-link-btn">
+                        Découvrir <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="quick-link-card">
+                    <div class="quick-link-icon">
+                        <i class="fas fa-podcast"></i>
+                    </div>
+                    <h3 class="quick-link-title">Écouter Podcasts</h3>
+                    <p class="quick-link-text">Accédez aux enseignements des maîtres</p>
+                    <a href="{{ path('app_podcast_index') }}" class="quick-link-btn">
+                        Écouter <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="quick-link-card">
+                    <div class="quick-link-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h3 class="quick-link-title">Nous Contacter</h3>
+                    <p class="quick-link-text">Posez directement vos questions à notre équipe</p>
+                    <a href="{{ path('app_contact') }}" class="quick-link-btn">
+                        Contacter <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Support -->
+<section class="contact-support space">
+    <div class="container">
+        <div class="contact-support-wrapper">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="support-content">
+                        <h2 class="support-title">Besoin d'Aide Supplémentaire ?</h2>
+                        <p class="support-text">
+                            Si vous n'avez pas trouvé la réponse à votre question dans notre FAQ, 
+                            notre équipe est là pour vous aider. N'hésitez pas à nous contacter.
+                        </p>
+                        <div class="support-methods">
+                            <div class="support-method">
+                                <div class="method-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="method-content">
+                                    <h4 class="method-title">Email</h4>
+                                    <p class="method-text">contact@kong-islamique.org</p>
+                                    <span class="method-time">Réponse sous 24h</span>
+                                </div>
+                            </div>
+                            <div class="support-method">
+                                <div class="method-icon">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <div class="method-content">
+                                    <h4 class="method-title">Téléphone</h4>
+                                    <p class="method-text">+225 00 00 00 00</p>
+                                    <span class="method-time">Lun-Ven 9h-17h</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="support-form-wrapper">
+                        <h3 class="form-title">Poser une Question</h3>
+                        <form class="support-form">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Votre nom" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <input type="email" class="form-control" placeholder="Votre email" required>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <select class="form-select" required>
+                                            <option value="">Catégorie de question</option>
+                                            <option value="general">Question générale</option>
+                                            <option value="archives">Archives et documents</option>
+                                            <option value="podcasts">Podcasts et audio</option>
+                                            <option value="technique">Problème technique</option>
+                                            <option value="contribution">Contribution de contenu</option>
+                                            <option value="other">Autre</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <textarea class="form-control" rows="4" placeholder="Votre question ou message" required></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="th-btn">
+                                        <span class="btn-text" data-back="Envoyer la question" data-front="Envoyer la question"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Popular Questions -->
+<section class="popular-questions space-bottom">
+    <div class="container">
+        <div class="title-area text-center">
+            <span class="sub-title">Les Plus Demandées</span>
+            <h2 class="sec-title">Questions Populaires</h2>
+        </div>
+        <div class="row gy-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="popular-question-card">
+                    <div class="question-icon">
+                        <i class="fas fa-question-circle"></i>
+                    </div>
+                    <h3 class="question-title">Comment télécharger les archives ?</h3>
+                    <p class="question-preview">Cliquez sur l'icône de téléchargement disponible sur chaque document...</p>
+                    <a href="#" class="question-link" onclick="showAnswer('download')">Voir la réponse</a>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="popular-question-card">
+                    <div class="question-icon">
+                        <i class="fas fa-question-circle"></i>
+                    </div>
+                    <h3 class="question-title">Le site est-il gratuit ?</h3>
+                    <p class="question-preview">Oui, l'accès au contenu du site est entièrement gratuit...</p>
+                    <a href="#" class="question-link" onclick="showAnswer('free')">Voir la réponse</a>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="popular-question-card">
+                    <div class="question-icon">
+                        <i class="fas fa-question-circle"></i>
+                    </div>
+                    <h3 class="question-title">Comment contribuer ?</h3>
+                    <p class="question-preview">Vous pouvez contribuer en partageant des documents historiques...</p>
+                    <a href="#" class="question-link" onclick="showAnswer('contribute')">Voir la réponse</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // FAQ Search functionality
+        function searchFAQ() {
+            const searchTerm = document.getElementById('faqSearch').value.toLowerCase();
+            const faqItems = document.querySelectorAll('.faq-item');
+            let hasResults = false;
+
+            faqItems.forEach(item => {
+                const questionText = item.querySelector('.question-text').textContent.toLowerCase();
+                const answerText = item.querySelector('.faq-answer').textContent.toLowerCase();
+                
+                if (questionText.includes(searchTerm) || answerText.includes(searchTerm)) {
+                    item.style.display = 'block';
+                    hasResults = true;
+                    
+                    // Highlight search term
+                    if (searchTerm) {
+                        highlightText(item, searchTerm);
+                    }
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            // Show message if no results
+            if (!hasResults && searchTerm) {
+                showNoResults();
+            } else {
+                hideNoResults();
+            }
+        }
+
+        // Real-time search
+        document.getElementById('faqSearch').addEventListener('input', searchFAQ);
+
+        // Highlight search terms
+        function highlightText(element, searchTerm) {
+            // Simple highlighting implementation
+            const walker = document.createTreeWalker(
+                element,
+                NodeFilter.SHOW_TEXT,
+                null,
+                false
+            );
+
+            const textNodes = [];
+            let node;
+            while (node = walker.nextNode()) {
+                textNodes.push(node);
+            }
+
+            textNodes.forEach(textNode => {
+                const content = textNode.textContent;
+                const regex = new RegExp(`(${searchTerm})`, 'gi');
+                if (regex.test(content)) {
+                    const highlightedContent = content.replace(regex, '<mark>$1</mark>');
+                    const span = document.createElement('span');
+                    span.innerHTML = highlightedContent;
+                    textNode.parentNode.replaceChild(span, textNode);
+                }
+            });
+        }
+
+        // Show/hide no results message
+        function showNoResults() {
+            let noResultsMsg = document.getElementById('noResultsMessage');
+            if (!noResultsMsg) {
+                noResultsMsg = document.createElement('div');
+                noResultsMsg.id = 'noResultsMessage';
+                noResultsMsg.className = 'no-results-message text-center py-5';
+                noResultsMsg.innerHTML = `
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h4>Aucun résultat trouvé</h4>
+                    <p>Essayez avec d'autres mots-clés ou <a href="${'{{ path("app_contact") }}'.replace(/'/g, '"')}">contactez-nous</a> directement.</p>
+                `;
+                document.querySelector('.faq-tab-content').appendChild(noResultsMsg);
+            }
+            noResultsMsg.style.display = 'block';
+        }
+
+        function hideNoResults() {
+            const noResultsMsg = document.getElementById('noResultsMessage');
+            if (noResultsMsg) {
+                noResultsMsg.style.display = 'none';
+            }
+        }
+
+        // Mark FAQ as helpful
+        function markHelpful(button, isHelpful) {
+            const buttonsContainer = button.parentElement;
+            const message = document.createElement('span');
+            message.className = 'helpful-feedback';
+            message.innerHTML = isHelpful ? 
+                '<i class="fas fa-check text-success"></i> Merci pour votre retour !' : 
+                '<i class="fas fa-info-circle text-info"></i> Merci, nous améliorerons cette réponse.';
+            
+            buttonsContainer.style.display = 'none';
+            buttonsContainer.parentElement.appendChild(message);
+
+            // Send feedback to server (optional)
+            // fetch('/api/faq-feedback', { ... });
+        }
+
+        // Popular questions quick access
+        function showAnswer(type) {
+            const answers = {
+                'download': 'Cliquez sur l\'icône de téléchargement disponible sur chaque document dans la section Archives.',
+                'free': 'Oui, l\'accès au contenu du site est entièrement gratuit. Notre mission est de rendre accessible le patrimoine islamique.',
+                'contribute': 'Contactez-nous via le formulaire de contact en précisant le type de contribution que vous souhaitez apporter.'
+            };
+            
+            alert(answers[type] || 'Réponse non disponible.');
+        }
+
+        // Support form handling
+        document.querySelector('.support-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Votre question a été envoyée avec succès ! Nous vous répondrons dans les plus brefs délais.');
+            this.reset();
+        });
+    </script>
+{% endblock %}

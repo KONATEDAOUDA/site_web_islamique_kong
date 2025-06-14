@@ -134,7 +134,7 @@ class AdminStatisticsService
         $stats['user_info'] = [
             'roles' => $userRoles,
             'created_at' => $user->getCreatedAt(),
-            'last_activity' => $user->getLastActivityAt() ?? null,
+            'last_activity' => method_exists($user, 'getLastActivityAt') ? $user->getLastActivityAt() : null,
         ];
 
         // Statistiques pour les gestionnaires de blog
@@ -149,7 +149,8 @@ class AdminStatisticsService
 
         // Statistiques pour les enseignants
         if (in_array('ROLE_TEACHER', $userRoles) || in_array('ROLE_DAVE_SUPER_ADMIN_2108', $userRoles)) {
-           $maitre = $this->maitreRepository->findOneBy(['author' => $user]);
+            // Correction: utiliser 'author' au lieu de 'user' pour la relation avec MaitreIslamique
+            $maitre = $this->maitreRepository->findOneBy(['author' => $user]);
             
             $stats['podcasts'] = [
                 'authored' => $this->podcastRepository->count(['author' => $user]),
@@ -297,7 +298,13 @@ class AdminStatisticsService
     private function getNewUsersThisMonth(): int
     {
         $startOfMonth = new \DateTime('first day of this month 00:00:00');
-        return $this->userRepository->count(['createdAt' => $startOfMonth]);
+        $qb = $this->entityManager->createQueryBuilder();
+        $qb->select('COUNT(u.id)')
+           ->from('App\Entity\User', 'u')
+           ->where('u.createdAt >= :start')
+           ->setParameter('start', $startOfMonth);
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     private function getUsersByRole(): array
@@ -348,7 +355,13 @@ class AdminStatisticsService
     private function getCommentsThisMonth(): int
     {
         $startOfMonth = new \DateTime('first day of this month 00:00:00');
-        return $this->commentRepository->count(['createdAt' => $startOfMonth]);
+        $qb = $this->entityManager->createQueryBuilder();
+        $qb->select('COUNT(c.id)')
+           ->from('App\Entity\Comment', 'c')
+           ->where('c.createdAt >= :start')
+           ->setParameter('start', $startOfMonth);
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     private function getContentGrowthTrend(): array
@@ -463,7 +476,7 @@ class AdminStatisticsService
         return $data;
     }
 
-    // Autres méthodes privées...
+    // Autres méthodes privées - implémentations simplifiées...
     private function getContentEvolutionData(): array { return []; }
     private function getUserRegistrationData(): array { return []; }
     private function getContentByCategoryData(): array { return []; }

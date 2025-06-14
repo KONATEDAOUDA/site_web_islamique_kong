@@ -196,7 +196,8 @@ class EnseignementType extends AbstractType
                 'label' => 'Maître islamique',
                 'class' => MaitreIslamique::class,
                 'choice_label' => function(MaitreIslamique $maitre) {
-                    return $maitre->getUser() ? $maitre->getUser()->getFullName() : $maitre->getName();
+                    // Correction: utiliser la méthode qui existe
+                    return $maitre->getNomComplet();
                 },
                 'placeholder' => 'Sélectionnez un maître',
                 'attr' => [

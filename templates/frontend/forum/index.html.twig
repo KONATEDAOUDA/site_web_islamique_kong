@@ -1,0 +1,436 @@
+{% extends 'frontend/base.html.twig' %}
+
+{% block title %}Forum Communautaire - Kong Islamique{% endblock %}
+
+{% block main %}
+<!-- Breadcrumb -->
+<div class="breadcumb-wrapper" data-bg-src="{{ asset('assets/images/kong/forum-hero.jpg') }}">
+    <div class="container">
+        <div class="breadcumb-content">
+            <h1 class="breadcumb-title">Forum Communautaire</h1>
+            <ul class="breadcumb-menu">
+                <li><a href="{{ path('app_home') }}">Accueil</a></li>
+                <li>Forum</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Forum Intro -->
+<section class="space-top">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-8">
+                <div class="title-area text-center">
+                    <span class="sub-title">Communauté</span>
+                    <h2 class="sec-title">Échanges et Discussions</h2>
+                    <p class="sec-text">
+                        Rejoignez notre communauté pour échanger sur l'Islam, l'histoire de Kong, 
+                        partager vos connaissances et poser vos questions aux érudits et membres.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Forum Coming Soon -->
+<section class="forum-coming-soon space">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="coming-soon-content">
+                    <div class="coming-soon-icon mb-4">
+                        <img src="{{ asset('assets/img/icon/forum.svg') }}" alt="Forum" width="80">
+                    </div>
+                    <h2 class="coming-soon-title">Forum en Développement</h2>
+                    <p class="coming-soon-text">
+                        Nous travaillons actuellement sur le développement de notre forum communautaire. 
+                        Cette plateforme permettra à notre communauté d'échanger, de partager des connaissances 
+                        et de discuter des sujets liés à l'Islam et au patrimoine de Kong.
+                    </p>
+                    
+                    <div class="features-preview mb-4">
+                        <h4>Fonctionnalités à venir :</h4>
+                        <ul class="features-list">
+                            <li><i class="fas fa-check-circle"></i> Discussions thématiques organisées</li>
+                            <li><i class="fas fa-check-circle"></i> Questions/Réponses avec les érudits</li>
+                            <li><i class="fas fa-check-circle"></i> Partage de ressources et documents</li>
+                            <li><i class="fas fa-check-circle"></i> Groupes de discussion spécialisés</li>
+                            <li><i class="fas fa-check-circle"></i> Modération par des experts</li>
+                            <li><i class="fas fa-check-circle"></i> Support multilingue (Français, Arabe)</li>
+                        </ul>
+                    </div>
+
+                    <div class="btn-group">
+                        <a href="{{ path('app_contact') }}?subject=Forum" class="th-btn">
+                            <span class="btn-text" data-back="Être notifié" data-front="Être notifié"></span>
+                        </a>
+                        <a href="{{ path('app_blog_index') }}" class="th-btn style2">
+                            <span class="btn-text" data-back="Lire les articles" data-front="Lire les articles"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="coming-soon-image">
+                    <img src="{{ asset('assets/images/kong/forum-preview.jpg') }}" alt="Forum Preview" class="img-fluid rounded">
+                    <div class="preview-overlay">
+                        <div class="preview-badge">
+                            <span class="badge-text">Bientôt Disponible</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Temporary Alternatives -->
+<section class="alternatives-section space" data-bg-src="{{ asset('assets/img/bg/alternatives_bg.jpg') }}">
+    <div class="container">
+        <div class="title-area text-center text-white">
+            <span class="sub-title">En Attendant</span>
+            <h2 class="sec-title text-white">Autres Moyens d'Échange</h2>
+        </div>
+        <div class="row gy-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="alternative-card">
+                    <div class="alternative-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3 class="alternative-title">Commentaires d'Articles</h3>
+                    <p class="alternative-text">
+                        Participez aux discussions sous nos articles et partagez vos réflexions.
+                    </p>
+                    <a href="{{ path('app_blog_index') }}" class="alternative-link">
+                        Voir les articles <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="alternative-card">
+                    <div class="alternative-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h3 class="alternative-title">Contact Direct</h3>
+                    <p class="alternative-text">
+                        Contactez-nous directement pour vos questions et suggestions.
+                    </p>
+                    <a href="{{ path('app_contact') }}" class="alternative-link">
+                        Nous contacter <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="alternative-card">
+                    <div class="alternative-icon">
+                        <i class="fab fa-facebook"></i>
+                    </div>
+                    <h3 class="alternative-title">Réseaux Sociaux</h3>
+                    <p class="alternative-text">
+                        Suivez-nous sur nos réseaux sociaux pour les dernières actualités.
+                    </p>
+                    <a href="https://facebook.com/kong.islamique" target="_blank" class="alternative-link">
+                        Nous suivre <i class="fas fa-external-link-alt"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="alternative-card">
+                    <div class="alternative-icon">
+                        <i class="fas fa-podcast"></i>
+                    </div>
+                    <h3 class="alternative-title">Podcasts Interactifs</h3>
+                    <p class="alternative-text">
+                        Écoutez nos podcasts et envoyez vos questions aux maîtres.
+                    </p>
+                    <a href="{{ path('app_podcast_index') }}" class="alternative-link">
+                        Écouter <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter Section -->
+<section class="newsletter-forum space">
+    <div class="container">
+        <div class="newsletter-wrap forum-newsletter" data-bg-src="{{ asset('assets/img/bg/newsletter_forum_bg.jpg') }}">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="newsletter-content">
+                        <div class="newsletter-icon">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <h4 class="newsletter-title">Soyez informé du lancement</h4>
+                        <p class="newsletter-text">
+                            Inscrivez-vous pour être parmi les premiers à accéder à notre forum communautaire.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <form class="newsletter-form forum-notification" action="{{ path('app_forum_subscribe') }}" method="POST">
+                        <div class="form-group">
+                            <input class="form-control" type="email" name="email" placeholder="Votre adresse email" required>
+                            <button type="submit" class="th-btn">S'inscrire</button>
+                        </div>
+                        <div class="form-check mt-3">
+                            <input type="checkbox" class="form-check-input" name="forum_updates" id="forum-updates" required>
+                            <label class="form-check-label text-white" for="forum-updates">
+                                Je souhaite recevoir les notifications sur le forum et les actualités du site
+                            </label>
+                        </div>
+                        <!-- Message de statut -->
+                        <div class="subscription-message" style="display: none; margin-top: 1rem;">
+                            <div class="alert" role="alert"></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Community Guidelines Preview -->
+<section class="guidelines-preview space">
+    <div class="container">
+        <div class="title-area text-center">
+            <span class="sub-title">Principes Communautaires</span>
+            <h2 class="sec-title">Nos Valeurs pour le Forum</h2>
+        </div>
+        <div class="row gy-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="guideline-card">
+                    <div class="guideline-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3 class="guideline-title">Respect et Bienveillance</h3>
+                    <p class="guideline-text">
+                        Nos échanges seront guidés par le respect mutuel et la bienveillance islamique.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="guideline-card">
+                    <div class="guideline-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h3 class="guideline-title">Partage de Connaissances</h3>
+                    <p class="guideline-text">
+                        Encouragement du partage de connaissances authentiques et sourcées.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="guideline-card">
+                    <div class="guideline-icon">
+                        <i class="fas fa-balance-scale"></i>
+                    </div>
+                    <h3 class="guideline-title">Modération Équitable</h3>
+                    <p class="guideline-text">
+                        Une modération juste et transparente par des érudits qualifiés.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="guideline-card">
+                    <div class="guideline-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3 class="guideline-title">Ouverture Culturelle</h3>
+                    <p class="guideline-text">
+                        Accueil de tous les musulmans, quelle que soit leur origine culturelle.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="guideline-card">
+                    <div class="guideline-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="guideline-title">Espace Sécurisé</h3>
+                    <p class="guideline-text">
+                        Un environnement sûr pour l'apprentissage et la discussion spirituelle.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="guideline-card">
+                    <div class="guideline-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3 class="guideline-title">Innovation Respectueuse</h3>
+                    <p class="guideline-text">
+                        Utilisation moderne des technologies dans le respect de la tradition.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-forum space" data-bg-src="{{ asset('assets/img/bg/faq_forum_bg.jpg') }}">
+    <div class="container">
+        <div class="title-area text-center">
+            <span class="sub-title">Questions Fréquentes</span>
+            <h2 class="sec-title">À propos du Forum</h2>
+        </div>
+        <div class="row">
+            <div class="col-xl-6">
+                <div class="accordion-card active">
+                    <div class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq-1">
+                            Quand le forum sera-t-il disponible ?
+                        </button>
+                    </div>
+                    <div id="faq-1" class="accordion-collapse collapse show">
+                        <div class="accordion-body">
+                            <p class="faq-text">
+                                Nous prévoyons de lancer le forum dans les prochains mois. Les inscrits à la newsletter 
+                                seront informés en priorité de la date d'ouverture.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-card">
+                    <div class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-2">
+                            Le forum sera-t-il modéré ?
+                        </button>
+                    </div>
+                    <div id="faq-2" class="accordion-collapse collapse">
+                        <div class="accordion-body">
+                            <p class="faq-text">
+                                Oui, le forum sera modéré par des érudits qualifiés pour assurer la qualité 
+                                des échanges et le respect des principes islamiques.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-card">
+                    <div class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-3">
+                            Puis-je poser des questions religieuses ?
+                        </button>
+                    </div>
+                    <div id="faq-3" class="accordion-collapse collapse">
+                        <div class="accordion-body">
+                            <p class="faq-text">
+                                Absolument ! Le forum aura une section dédiée aux questions religieuses 
+                                avec des réponses d'érudits qualifiés.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6">
+                <div class="accordion-card">
+                    <div class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-4">
+                            Le forum sera-t-il multilingue ?
+                        </button>
+                    </div>
+                    <div id="faq-4" class="accordion-collapse collapse">
+                        <div class="accordion-body">
+                            <p class="faq-text">
+                                Oui, le forum supportera le français et l'arabe pour permettre à tous 
+                                les membres de notre communauté de participer.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-card">
+                    <div class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-5">
+                            Comment devenir modérateur ?
+                        </button>
+                    </div>
+                    <div id="faq-5" class="accordion-collapse collapse">
+                        <div class="accordion-body">
+                            <p class="faq-text">
+                                Nous recruterons des modérateurs parmi les membres actifs et qualifiés. 
+                                Les critères et procédures seront annoncés lors du lancement.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-card">
+                    <div class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-6">
+                            Y aura-t-il une application mobile ?
+                        </button>
+                    </div>
+                    <div id="faq-6" class="accordion-collapse collapse">
+                        <div class="accordion-body">
+                            <p class="faq-text">
+                                Le forum sera d'abord accessible via navigateur web. Une application mobile 
+                                pourra être développée selon les besoins de la communauté.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // Newsletter form handling with AJAX
+        document.querySelector('.forum-notification').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const form = this;
+            const formData = new FormData(form);
+            const messageContainer = form.querySelector('.subscription-message');
+            const alertDiv = messageContainer.querySelector('.alert');
+            const submitButton = form.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.textContent;
+            
+            // Disable button and show loading
+            submitButton.disabled = true;
+            submitButton.textContent = 'Inscription...';
+            
+            // Hide previous messages
+            messageContainer.style.display = 'none';
+            
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Show message container
+                messageContainer.style.display = 'block';
+                
+                if (data.success) {
+                    alertDiv.className = 'alert alert-success';
+                    alertDiv.textContent = data.message;
+                    form.reset();
+                } else {
+                    alertDiv.className = 'alert alert-danger';
+                    alertDiv.textContent = data.message;
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                messageContainer.style.display = 'block';
+                alertDiv.className = 'alert alert-danger';
+                alertDiv.textContent = 'Une erreur est survenue. Veuillez réessayer.';
+            })
+            .finally(() => {
+                // Re-enable button
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText;
+            });
+        });
+    </script>
+{% endblock %}

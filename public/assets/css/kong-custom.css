@@ -1,0 +1,274 @@
+/* =========================
+   Kong Islamic Portal Custom Styles
+   ========================= */
+
+:root {
+    --kong-primary: #2D5A27;
+    --kong-secondary: #FF7A00;
+    --kong-accent: #B8860B;
+    --kong-gold: #FFD700;
+    --kong-dark: #1a3a1a;
+    --kong-light: #f8f9fa;
+}
+
+/* Brand Colors Override */
+.th-primary-color {
+    color: var(--kong-primary) !important;
+}
+
+.bg-kong-primary {
+    background-color: var(--kong-primary) !important;
+}
+
+.text-kong-secondary {
+    color: var(--kong-secondary) !important;
+}
+
+/* Custom Header Styling */
+.header-layout4 .menu-top {
+    background: linear-gradient(135deg, var(--kong-primary), var(--kong-dark));
+}
+
+.header-layout4 .sticky-wrapper {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+}
+
+/* Logo customization */
+.header-logo img {
+    max-height: 60px;
+    width: auto;
+}
+
+/* Hero Section Enhancements */
+.hero-5 .hero-title {
+    background: linear-gradient(45deg, var(--kong-primary), var(--kong-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+}
+
+.hero-5 .th-btn.style1 {
+    background: linear-gradient(45deg, var(--kong-primary), var(--kong-secondary));
+    border: none;
+    padding: 15px 30px;
+    border-radius: 50px;
+    transition: transform 0.3s ease;
+}
+
+.hero-5 .th-btn.style1:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(45, 90, 39, 0.3);
+}
+
+/* Section Titles */
+.sec-title {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.sec-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(45deg, var(--kong-primary), var(--kong-secondary));
+    border-radius: 2px;
+}
+
+.text-center .sec-title::after {
+    left: 50%;
+}
+
+.text-start .sec-title::after,
+.text-left .sec-title::after {
+    left: 0;
+    transform: none;
+}
+
+/* Card Enhancements */
+.blog-card,
+.donation-card,
+.th-team {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.blog-card:hover,
+.donation-card:hover,
+.th-team:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Islamic Patterns */
+.islamic-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232D5A27' fill-opacity='0.05'%3E%3Cpath d='M30 30c0-11.046-8.954-20-20-20s-20 8.954-20 20 8.954 20 20 20 20-8.954 20-20zm0 0c0 11.046 8.954 20 20 20s20-8.954 20-20-8.954-20-20-20-20 8.954-20 20z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Prayer Times Styling */
+.prayer-times-widget {
+    background: linear-gradient(135deg, var(--kong-primary), var(--kong-dark));
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    margin: 20px 0;
+}
+
+.prayer-time-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.prayer-time-item:last-child {
+    border-bottom: none;
+}
+
+/* Arabic Text Support */
+.arabic-text {
+    font-family: 'Amiri', 'Times New Roman', serif;
+    direction: rtl;
+    text-align: right;
+    font-size: 1.2em;
+    line-height: 1.8;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .hero-5 .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-5 .hero-text {
+        font-size: 1rem;
+    }
+    
+    .header-logo img {
+        max-height: 40px;
+    }
+}
+
+/* Animation Classes */
+.fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fade-in.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Custom Buttons */
+.btn-kong-primary {
+    background: linear-gradient(45deg, var(--kong-primary), var(--kong-secondary));
+    border: none;
+    color: white;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-kong-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(45, 90, 39, 0.3);
+    color: white;
+}
+
+.btn-kong-outline {
+    border: 2px solid var(--kong-primary);
+    color: var(--kong-primary);
+    background: transparent;
+    padding: 10px 25px;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-kong-outline:hover {
+    background: var(--kong-primary);
+    color: white;
+}
+
+/* Footer Enhancements */
+.footer-wrapper {
+    background: linear-gradient(135deg, var(--kong-dark), #0d1f0d);
+    position: relative;
+}
+
+.footer-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M20 20c0-5.5-4.5-10-10-10s-10 4.5-10 10 4.5 10 10 10 10-4.5 10-10zm0 0c0 5.5 4.5 10 10 10s10-4.5 10-10-4.5-10-10-10-10 4.5-10 20z'/%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+}
+
+/* Search Form Styling */
+.search-form {
+    position: relative;
+    border-radius: 25px;
+    overflow: hidden;
+}
+
+.search-form input {
+    padding-right: 50px;
+    border-radius: 25px;
+    border: 2px solid var(--kong-primary);
+}
+
+.search-form button {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--kong-primary);
+    border: none;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    color: white;
+}
+
+/* Comments Styling */
+.th-comment-item {
+    border-left: 4px solid var(--kong-primary);
+    padding-left: 20px;
+    margin-bottom: 30px;
+}
+
+.comment-avater img {
+    border-radius: 50%;
+    border: 3px solid var(--kong-light);
+}
+
+/* Tags Styling */
+.tagcloud a {
+    background: var(--kong-light);
+    color: var(--kong-primary);
+    padding: 5px 15px;
+    margin: 3px;
+    border-radius: 15px;
+    text-decoration: none;
+    font-size: 0.9em;
+    transition: all 0.3s ease;
+}
+
+.tagcloud a:hover {
+    background: var(--kong-primary);
+    color: white;
+    transform: translateY(-2px);
+}

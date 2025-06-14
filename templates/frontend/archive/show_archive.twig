@@ -1,0 +1,499 @@
+{% extends 'frontend/base.html.twig' %}
+
+{% block title %}{{ archive.title }} - Archives Kong{% endblock %}
+
+{% block main %}
+<!-- Breadcrumb -->
+<div class="breadcumb-wrapper" data-bg-src="{{ archive.thumbnail ? asset('assets/uploads/archives/' ~ archive.thumbnail) : asset('assets/images/kong/archive-detail-hero.jpg') }}">
+    <div class="container">
+        <div class="breadcumb-content">
+            <h1 class="breadcumb-title">{{ archive.title }}</h1>
+            <ul class="breadcumb-menu">
+                <li><a href="{{ path('app_home') }}">Accueil</a></li>
+                <li><a href="{{ path('app_archive') }}">Archives</a></li>
+                <li>{{ archive.title|length > 30 ? archive.title|slice(0, 30) ~ '...' : archive.title }}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Archive Details -->
+<section class="archive-details-area space">
+    <div class="container">
+        <div class="row">
+            <div class="col-xxl-8 col-lg-7">
+                <div class="archive-details-wrap">
+                    <!-- Archive Header -->
+                    <div class="archive-header mb-40">
+                        <div class="archive-type-badge mb-3">
+                            <span class="badge type-{{ archive.type }} badge-lg">
+                                {% if archive.type == 'manuscript' %}
+                                    <i class="fas fa-scroll"></i> Manuscrit
+                                {% elseif archive.type == 'document' %}
+                                    <i class="fas fa-file-alt"></i> Document
+                                {% elseif archive.type == 'photo' %}
+                                    <i class="fas fa-camera"></i> Photographie
+                                {% elseif archive.type == 'audio' %}
+                                    <i class="fas fa-volume-up"></i> Enregistrement Audio
+                                {% elseif archive.type == 'video' %}
+                                    <i class="fas fa-video"></i> Vidéo
+                                {% endif %}
+                            </span>
+                        </div>
+                        
+                        <h1 class="archive-title">{{ archive.title }}</h1>
+                        
+                        <div class="archive-meta">
+                            {% if archive.year %}
+                            <div class="meta-item">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>{{ archive.year }}</span>
+                            </div>
+                            {% endif %}
+                            {% if archive.language %}
+                            <div class="meta-item">
+                                <i class="fas fa-language"></i>
+                                <span>
+                                    {% if archive.language == 'ar' %}Arabe{% elseif archive.language == 'fr' %}Français{% else %}{{ archive.language }}{% endif %}
+                                </span>
+                            </div>
+                            {% endif %}
+                            {% if archive.author %}
+                            <div class="meta-item">
+                                <i class="fas fa-user"></i>
+                                <span>{{ archive.author }}</span>
+                            </div>
+                            {% endif %}
+                            {% if archive.source %}
+                            <div class="meta-item">
+                                <i class="fas fa-archive"></i>
+                                <span>{{ archive.source }}</span>
+                            </div>
+                            {% endif %}
+                            <div class="meta-item">
+                                <i class="fas fa-eye"></i>
+                                <span>{{ archive.viewCount }} vues</span>
+                            </div>
+                            {% if archive.downloadCount > 0 %}
+                            <div class="meta-item">
+                                <i class="fas fa-download"></i>
+                                <span>{{ archive.downloadCount }} téléchargements</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Archive Media -->
+                    <div class="archive-media mb-40">
+                        {% if archive.type == 'photo' %}
+                            <div class="archive-image">
+                                {% if archive.filePath %}
+                                    <img src="{{ asset('assets/uploads/archives/' ~ archive.filePath) }}" alt="{{ archive.title }}" class="img-fluid">
+                                {% elseif archive.thumbnail %}
+                                    <img src="{{ asset('assets/uploads/archives/' ~ archive.thumbnail) }}" alt="{{ archive.title }}" class="img-fluid">
+                                {% endif %}
+                                <div class="image-zoom-btn">
+                                    <a href="{{ asset('assets/uploads/archives/' ~ (archive.filePath ?: archive.thumbnail)) }}" class="popup-image">
+                                        <i class="fas fa-search-plus"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        {% elseif archive.type == 'audio' %}
+                            <div class="archive-audio">
+                                <div class="audio-player-wrapper">
+                                    {% if archive.externalUrl %}
+                                        <div class="external-audio">
+                                            <a href="{{ archive.externalUrl }}" target="_blank" class="external-audio-btn">
+                                                <i class="fas fa-external-link-alt"></i>
+                                                Écouter sur plateforme externe
+                                            </a>
+                                        </div>
+                                    {% elseif archive.filePath %}
+                                        <audio controls class="w-100">
+                                            <source src="{{ asset('assets/uploads/archives/' ~ archive.filePath) }}" type="audio/mpeg">
+                                            Votre navigateur ne supporte pas l'élément audio.
+                                        </audio>
+                                    {% endif %}
+                                </div>
+                                {% if archive.thumbnail %}
+                                <div class="audio-cover mt-3">
+                                    <img src="{{ asset('assets/uploads/archives/' ~ archive.thumbnail) }}" alt="{{ archive.title }}" class="img-fluid">
+                                </div>
+                                {% endif %}
+                            </div>
+                        {% elseif archive.type == 'video' %}
+                            <div class="archive-video">
+                                {% if archive.externalUrl %}
+                                    {% if 'youtube.com' in archive.externalUrl or 'youtu.be' in archive.externalUrl %}
+                                        {% set youtube_id = archive.externalUrl|split('v=')|last|split('&')|first %}
+                                        {% if 'youtu.be' in archive.externalUrl %}
+                                            {% set youtube_id = archive.externalUrl|split('youtu.be/')|last|split('?')|first %}
+                                        {% endif %}
+                                        <div class="embed-responsive embed-responsive-16by9">
+                                            <iframe class="embed-responsive-item" 
+                                                    src="https://www.youtube.com/embed/{{ youtube_id }}" 
+                                                    allowfullscreen></iframe>
+                                        </div>
+                                    {% else %}
+                                        <div class="external-video">
+                                            <a href="{{ archive.externalUrl }}" target="_blank" class="external-video-btn">
+                                                <i class="fas fa-external-link-alt"></i>
+                                                Voir sur plateforme externe
+                                            </a>
+                                        </div>
+                                    {% endif %}
+                                {% elseif archive.filePath %}
+                                    <video controls class="w-100">
+                                        <source src="{{ asset('assets/uploads/archives/' ~ archive.filePath) }}" type="video/mp4">
+                                        Votre navigateur ne supporte pas l'élément vidéo.
+                                    </video>
+                                {% endif %}
+                            </div>
+                        {% elseif archive.type in ['manuscript', 'document'] %}
+                            <div class="archive-document">
+                                {% if archive.thumbnail %}
+                                    <div class="document-preview">
+                                        <img src="{{ asset('assets/uploads/archives/' ~ archive.thumbnail) }}" alt="{{ archive.title }}" class="img-fluid">
+                                        <div class="document-overlay">
+                                            {% if archive.downloadable and archive.filePath %}
+                                                <a href="{{ path('app_archive_download', {'slug': archive.slug}) }}" class="download-btn">
+                                                    <i class="fas fa-download"></i>
+                                                    Télécharger
+                                                </a>
+                                            {% endif %}
+                                            <a href="{{ asset('assets/uploads/archives/' ~ archive.thumbnail) }}" class="popup-image zoom-btn">
+                                                <i class="fas fa-search-plus"></i>
+                                                Agrandir
+                                            </a>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Archive Description -->
+                    <div class="archive-description mb-40">
+                        <h3 class="archive-section-title">Description</h3>
+                        <div class="description-content">
+                            {{ archive.description|raw }}
+                        </div>
+                    </div>
+
+                    <!-- Archive Details -->
+                    {% if archive.historicalContext or archive.significance %}
+                    <div class="archive-context mb-40">
+                        {% if archive.historicalContext %}
+                        <h4 class="context-title">Contexte Historique</h4>
+                        <div class="context-content">
+                            {{ archive.historicalContext|raw }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if archive.significance %}
+                        <h4 class="significance-title">Importance</h4>
+                        <div class="significance-content">
+                            {{ archive.significance|raw }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Archive Keywords/Tags -->
+                    {% if archive.keywords %}
+                    <div class="archive-keywords mb-40">
+                        <h4 class="keywords-title">Mots-clés</h4>
+                        <div class="tagcloud">
+                            {% for keyword in archive.keywords|split(',') %}
+                                <a href="{{ path('app_archive', {q: keyword|trim}) }}">{{ keyword|trim }}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Technical Details -->
+                    <div class="archive-technical mb-40">
+                        <h4 class="technical-title">Détails Techniques</h4>
+                        <div class="technical-details">
+                            <div class="row">
+                                {% if archive.dimensions %}
+                                <div class="col-md-6">
+                                    <div class="detail-item">
+                                        <span class="detail-label">Dimensions :</span>
+                                        <span class="detail-value">{{ archive.dimensions }}</span>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% if archive.condition %}
+                                <div class="col-md-6">
+                                    <div class="detail-item">
+                                        <span class="detail-label">État :</span>
+                                        <span class="detail-value">{{ archive.condition }}</span>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% if archive.fileSize %}
+                                <div class="col-md-6">
+                                    <div class="detail-item">
+                                        <span class="detail-label">Taille :</span>
+                                        <span class="detail-value">{{ (archive.fileSize / 1024 / 1024)|number_format(1) }} MB</span>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% if archive.format %}
+                                <div class="col-md-6">
+                                    <div class="detail-item">
+                                        <span class="detail-label">Format :</span>
+                                        <span class="detail-value">{{ archive.format }}</span>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Download and Share -->
+                    <div class="archive-actions">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                {% if archive.downloadable and archive.filePath %}
+                                <a href="{{ path('app_archive_download', {'slug': archive.slug}) }}" class="th-btn download-btn">
+                                    <i class="fas fa-download"></i>
+                                    <span class="btn-text" data-back="Télécharger" data-front="Télécharger"></span>
+                                </a>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <div class="share-section">
+                                    <span class="share-title">Partager :</span>
+                                    <div class="th-social">
+                                        <a target="_blank" href="https://facebook.com/sharer/sharer.php?u={{ url('app_archive_show', {'slug': archive.slug}) }}">
+                                            <i class="fab fa-facebook-f"></i>
+                                        </a>
+                                        <a target="_blank" href="https://twitter.com/intent/tweet?url={{ url('app_archive_show', {'slug': archive.slug}) }}&text={{ archive.title|url_encode }}">
+                                            <i class="fab fa-twitter"></i>
+                                        </a>
+                                        <a target="_blank" href="https://linkedin.com/sharing/share-offsite/?url={{ url('app_archive_show', {'slug': archive.slug}) }}">
+                                            <i class="fab fa-linkedin-in"></i>
+                                        </a>
+                                        <a href="mailto:?subject={{ archive.title|url_encode }}&body={{ url('app_archive_show', {'slug': archive.slug}) }}">
+                                            <i class="fas fa-envelope"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-xxl-4 col-lg-5">
+                <aside class="sidebar-area">
+                    <!-- Archive Info Widget -->
+                    <div class="widget archive-info-widget">
+                        <h3 class="widget_title">Informations</h3>
+                        <div class="archive-info-list">
+                            {% if archive.type %}
+                            <div class="info-item">
+                                <span class="info-label">Type :</span>
+                                <span class="info-value">
+                                    {% if archive.type == 'manuscript' %}Manuscrit
+                                    {% elseif archive.type == 'document' %}Document
+                                    {% elseif archive.type == 'photo' %}Photographie
+                                    {% elseif archive.type == 'audio' %}Audio
+                                    {% elseif archive.type == 'video' %}Vidéo
+                                    {% endif %}
+                                </span>
+                            </div>
+                            {% endif %}
+                            {% if archive.collection %}
+                            <div class="info-item">
+                                <span class="info-label">Collection :</span>
+                                <span class="info-value">{{ archive.collection|title }}</span>
+                            </div>
+                            {% endif %}
+                            {% if archive.period %}
+                            <div class="info-item">
+                                <span class="info-label">Période :</span>
+                                <span class="info-value">{{ archive.period }}</span>
+                            </div>
+                            {% endif %}
+                            {% if archive.location %}
+                            <div class="info-item">
+                                <span class="info-label">Lieu :</span>
+                                <span class="info-value">{{ archive.location }}</span>
+                            </div>
+                            {% endif %}
+                            {% if archive.copyright %}
+                            <div class="info-item">
+                                <span class="info-label">Droits :</span>
+                                <span class="info-value">{{ archive.copyright }}</span>
+                            </div>
+                            {% endif %}
+                            <div class="info-item">
+                                <span class="info-label">Ajouté le :</span>
+                                <span class="info-value">{{ archive.createdAt|date('d/m/Y') }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Related Archives -->
+                    {% if relatedArchives|length > 0 %}
+                    <div class="widget">
+                        <h3 class="widget_title">Archives Similaires</h3>
+                        <div class="related-archives-wrap">
+                            {% for relatedArchive in relatedArchives|slice(0, 4) %}
+                            <div class="related-archive-item">
+                                <div class="archive-thumb">
+                                    <a href="{{ path('app_archive_show', {'slug': relatedArchive.slug}) }}">
+                                        <img src="{{ relatedArchive.thumbnail ? asset('assets/uploads/archives/' ~ relatedArchive.thumbnail) : asset('assets/images/default/archive-thumb.jpg') }}" alt="{{ relatedArchive.title }}">
+                                    </a>
+                                    <div class="archive-type-mini">
+                                        {% if relatedArchive.type == 'manuscript' %}<i class="fas fa-scroll"></i>
+                                        {% elseif relatedArchive.type == 'document' %}<i class="fas fa-file-alt"></i>
+                                        {% elseif relatedArchive.type == 'photo' %}<i class="fas fa-camera"></i>
+                                        {% elseif relatedArchive.type == 'audio' %}<i class="fas fa-volume-up"></i>
+                                        {% elseif relatedArchive.type == 'video' %}<i class="fas fa-video"></i>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="archive-content">
+                                    <h4 class="archive-title">
+                                        <a href="{{ path('app_archive_show', {'slug': relatedArchive.slug}) }}">
+                                            {{ relatedArchive.title|length > 40 ? relatedArchive.title|slice(0, 40) ~ '...' : relatedArchive.title }}
+                                        </a>
+                                    </h4>
+                                    {% if relatedArchive.year %}
+                                    <div class="archive-year">{{ relatedArchive.year }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Archive Statistics -->
+                    <div class="widget stats-widget">
+                        <h3 class="widget_title">Statistiques</h3>
+                        <div class="stats-list">
+                            <div class="stat-item">
+                                <div class="stat-icon"><i class="fas fa-eye"></i></div>
+                                <div class="stat-content">
+                                    <span class="stat-number">{{ archive.viewCount }}</span>
+                                    <span class="stat-label">Vues</span>
+                                </div>
+                            </div>
+                            {% if archive.downloadCount > 0 %}
+                            <div class="stat-item">
+                                <div class="stat-icon"><i class="fas fa-download"></i></div>
+                                <div class="stat-content">
+                                    <span class="stat-number">{{ archive.downloadCount }}</span>
+                                    <span class="stat-label">Téléchargements</span>
+                                </div>
+                            </div>
+                            {% endif %}
+                            <div class="stat-item">
+                                <div class="stat-icon"><i class="fas fa-share-alt"></i></div>
+                                <div class="stat-content">
+                                    <span class="stat-number">{{ archive.shareCount ?? 0 }}</span>
+                                    <span class="stat-label">Partages</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contribute Widget -->
+                    <div class="widget contribute-widget">
+                        <h4 class="widget_title">Contribuer</h4>
+                        <p class="contribute-text">
+                            Vous avez des informations complémentaires sur cette archive ?
+                        </p>
+                        <a href="{{ path('app_contact') }}?subject=Information archive {{ archive.title|url_encode }}" class="th-btn style2">
+                            <span class="btn-text" data-back="Contribuer" data-front="Contribuer"></span>
+                        </a>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Related Archives Section -->
+{% if relatedArchives|length > 4 %}
+<section class="related-archives-section space-bottom">
+    <div class="container">
+        <div class="title-area text-center">
+            <span class="sub-title">Archives Similaires</span>
+            <h2 class="sec-title">Plus d'Archives {{ archive.type|title }}</h2>
+        </div>
+        <div class="row gy-4">
+            {% for relatedArchive in relatedArchives|slice(4, 4) %}
+            <div class="col-md-6 col-lg-3">
+                <div class="archive-card">
+                    <div class="archive-thumb">
+                        <img src="{{ relatedArchive.thumbnail ? asset('assets/uploads/archives/' ~ relatedArchive.thumbnail) : asset('assets/images/default/archive-' ~ relatedArchive.type ~ '.jpg') }}" alt="{{ relatedArchive.title }}">
+                        <div class="archive-overlay">
+                            <div class="archive-type">
+                                <span class="type-badge type-{{ relatedArchive.type }}">
+                                    {{ relatedArchive.type|title }}
+                                </span>
+                            </div>
+                            <div class="archive-actions">
+                                <a href="{{ path('app_archive_show', {'slug': relatedArchive.slug}) }}" class="action-btn">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="archive-content">
+                        <h3 class="archive-title">
+                            <a href="{{ path('app_archive_show', {'slug': relatedArchive.slug}) }}">
+                                {{ relatedArchive.title|length > 30 ? relatedArchive.title|slice(0, 30) ~ '...' : relatedArchive.title }}
+                            </a>
+                        </h3>
+                        {% if relatedArchive.year %}
+                        <div class="archive-meta">
+                            <span class="meta-item">
+                                <i class="fas fa-calendar-alt"></i> {{ relatedArchive.year }}
+                            </span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // Download tracking
+        document.querySelector('.download-btn')?.addEventListener('click', function() {
+            // Track download analytics if needed
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'download', {
+                    'event_category': 'Archive',
+                    'event_label': '{{ archive.title|e('js') }}'
+                });
+            }
+        });
+
+        // Share tracking
+        document.querySelectorAll('.th-social a').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'share', {
+                        'event_category': 'Archive',
+                        'event_label': '{{ archive.title|e('js') }}'
+                    });
+                }
+            });
+        });
+    </script>
+{% endblock %}

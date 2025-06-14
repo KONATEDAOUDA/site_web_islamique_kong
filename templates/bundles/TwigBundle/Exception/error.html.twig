@@ -1,0 +1,236 @@
+{% extends 'frontend/base.html.twig' %}
+
+{% block title %}Erreur {{ status_code }} - Kong Islamique{% endblock %}
+
+{% block main %}
+<!-- Error Section -->
+<section class="error-area space">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-6 col-lg-8">
+                <div class="error-content text-center">
+                    <div class="error-img mb-4">
+                        {% if status_code == 404 %}
+                            <img src="{{ asset('assets/img/error/404.svg') }}" alt="Page non trouvée" class="img-fluid">
+                        {% elseif status_code == 403 %}
+                            <img src="{{ asset('assets/img/error/403.svg') }}" alt="Accès interdit" class="img-fluid">
+                        {% elseif status_code == 500 %}
+                            <img src="{{ asset('assets/img/error/500.svg') }}" alt="Erreur serveur" class="img-fluid">
+                        {% else %}
+                            <img src="{{ asset('assets/img/error/general.svg') }}" alt="Erreur" class="img-fluid">
+                        {% endif %}
+                    </div>
+                    
+                    <div class="error-number">
+                        <h1 class="error-code">{{ status_code|default('Erreur') }}</h1>
+                    </div>
+                    
+                    <div class="error-text">
+                        {% if status_code == 404 %}
+                            <h2 class="error-title">Page Non Trouvée</h2>
+                            <p class="error-description">
+                                Désolé, la page que vous recherchez n'existe pas ou a été déplacée. 
+                                Elle pourrait avoir été supprimée, renommée ou être temporairement indisponible.
+                            </p>
+                        {% elseif status_code == 403 %}
+                            <h2 class="error-title">Accès Interdit</h2>
+                            <p class="error-description">
+                                Vous n'avez pas les permissions nécessaires pour accéder à cette page. 
+                                Veuillez vous connecter ou contacter l'administrateur.
+                            </p>
+                        {% elseif status_code == 500 %}
+                            <h2 class="error-title">Erreur Serveur</h2>
+                            <p class="error-description">
+                                Une erreur interne s'est produite sur notre serveur. 
+                                Nos équipes techniques ont été automatiquement informées et travaillent à résoudre le problème.
+                            </p>
+                        {% else %}
+                            <h2 class="error-title">Une Erreur s'est Produite</h2>
+                            <p class="error-description">
+                                Nous rencontrons actuellement des difficultés techniques. 
+                                Veuillez réessayer dans quelques instants.
+                            </p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="error-actions mt-4">
+                        <a href="{{ path('app_home') }}" class="th-btn">
+                            <i class="fas fa-home"></i>
+                            <span class="btn-text" data-back="Retour à l'accueil" data-front="Retour à l'accueil"></span>
+                        </a>
+                        
+                        {% if status_code == 404 %}
+                        <a href="javascript:history.back()" class="th-btn style2 ms-3">
+                            <i class="fas fa-arrow-left"></i>
+                            <span class="btn-text" data-back="Page précédente" data-front="Page précédente"></span>
+                        </a>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Search Box for 404 -->
+                    {% if status_code == 404 %}
+                    <div class="error-search mt-5">
+                        <h4>Ou recherchez ce que vous cherchiez :</h4>
+                        <form action="{{ path('app_search') }}" method="get" class="search-form">
+                            <div class="input-group">
+                                <input type="text" name="q" class="form-control" placeholder="Rechercher sur le site..." autocomplete="off">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Helpful Links -->
+<section class="helpful-links space" data-bg-src="{{ asset('assets/img/bg/error_help_bg.jpg') }}">
+    <div class="container">
+        <div class="title-area text-center text-white">
+            <span class="sub-title">Liens Utiles</span>
+            <h2 class="sec-title text-white">Que Souhaitez-vous Faire ?</h2>
+        </div>
+        <div class="row gy-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="help-card">
+                    <div class="help-icon">
+                        <i class="fas fa-archive"></i>
+                    </div>
+                    <h3 class="help-title">Explorer les Archives</h3>
+                    <p class="help-text">Découvrez notre collection de documents historiques</p>
+                    <a href="{{ path('app_archive') }}" class="help-link">
+                        Découvrir <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="help-card">
+                    <div class="help-icon">
+                        <i class="fas fa-podcast"></i>
+                    </div>
+                    <h3 class="help-title">Écouter des Podcasts</h3>
+                    <p class="help-text">Enseignements audio et vidéo des maîtres</p>
+                    <a href="{{ path('app_podcast_index') }}" class="help-link">
+                        Écouter <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="help-card">
+                    <div class="help-icon">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <h3 class="help-title">Profils des Maîtres</h3>
+                    <p class="help-text">Biographies et enseignements des érudits</p>
+                    <a href="{{ path('app_teacher') }}" class="help-link">
+                        Découvrir <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="help-card">
+                    <div class="help-icon">
+                        <i class="fas fa-newspaper"></i>
+                    </div>
+                    <h3 class="help-title">Lire les Actualités</h3>
+                    <p class="help-text">Articles et dernières nouvelles</p>
+                    <a href="{{ path('app_blog_index') }}" class="help-link">
+                        Lire <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+{% if status_code in [403, 500] %}
+<section class="error-contact space-bottom">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="contact-error-wrapper">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <div class="contact-error-content">
+                                <h3>Besoin d'Aide ?</h3>
+                                <p>
+                                    Si cette erreur persiste, n'hésitez pas à nous contacter. 
+                                    Notre équipe technique vous aidera à résoudre le problème.
+                                </p>
+                                <div class="contact-methods">
+                                    <div class="contact-method">
+                                        <i class="fas fa-envelope"></i>
+                                        <span>contact@kong-islamique.org</span>
+                                    </div>
+                                    <div class="contact-method">
+                                        <i class="fas fa-phone"></i>
+                                        <span>+225 00 00 00 00</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="quick-contact-form">
+                                <h4>Signaler le Problème</h4>
+                                <form action="{{ path('app_contact') }}" method="post">
+                                    <input type="hidden" name="error_code" value="{{ status_code }}">
+                                    <input type="hidden" name="error_url" value="{{ app.request.uri }}">
+                                    <div class="form-group">
+                                        <input type="email" class="form-control" name="email" placeholder="Votre email" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <textarea class="form-control" name="message" rows="3" placeholder="Décrivez le problème..." required></textarea>
+                                    </div>
+                                    <button type="submit" class="th-btn w-100">
+                                        <span class="btn-text" data-back="Envoyer le rapport" data-front="Envoyer le rapport"></span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // Auto-focus on search input for 404 errors
+        {% if status_code == 404 %}
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.querySelector('.error-search input[type="text"]');
+            if (searchInput) {
+                setTimeout(() => {
+                    searchInput.focus();
+                }, 500);
+            }
+        });
+        {% endif %}
+
+        // Track error in analytics
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'exception', {
+                'description': 'Error {{ status_code }} - {{ app.request.uri }}',
+                'fatal': false
+            });
+        }
+
+        // Auto-refresh for 500 errors after 30 seconds
+        {% if status_code == 500 %}
+        setTimeout(function() {
+            if (confirm('Voulez-vous recharger la page pour réessayer ?')) {
+                window.location.reload();
+            }
+        }, 30000);
+        {% endif %}
+    </script>
+{% endblock %}

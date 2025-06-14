@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\publics;
+namespace App\Controller;
 
 use App\Entity\Article;
 use App\Entity\Comment;
@@ -13,28 +13,30 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/actualité')]
 class BlogController extends AbstractController
 {
-    #[Route('/', name: 'app_blog_index')]
     public function index(ArticleRepository $articleRepository, CategoryRepository $categoryRepository): Response
     {
+        $articles = $articleRepository->findBy(
+            ['isPublished' => true],
+            ['publishedAt' => 'DESC']
+        );
+
+        $categories = $categoryRepository->findAll();
+
         return $this->render('frontend/article/index.html.twig', [
-            'articles' => $articleRepository->findPublishedArticles(),
-            'categories' => $categoryRepository->findAll(),
+            'articles' => $articles,
+            'categories' => $categories,
         ]);
     }
 
-    #[Route('/{slug}', name: 'app_blog_show')]
     public function show(string $slug, Request $request,
                         ArticleRepository $articleRepository,
                         EntityManagerInterface $entityManager,
                         RequestStack $requestStack): Response
     {
-
         $article = $articleRepository->findOneBy(['slug' => $slug, 'isPublished' => true]);
 
         if (!$article) {
@@ -48,7 +50,7 @@ class BlogController extends AbstractController
             $comment->setAuthor($this->getUser());
             $comment->setArticle($article);
             $comment->setCreatedAt(new \DateTime());
-            $comment->setIsApproved(false); // à modérer
+            $comment->setIsApproved(false);
             $comment->setIpAddress($request->getClientIp());
             $comment->setUserAgent($request->headers->get('User-Agent'));
 
@@ -75,7 +77,6 @@ class BlogController extends AbstractController
         ]);
     }
 
-    #[Route('/categorie/{slug}', name: 'app_blog_category')]
     public function showCategory(string $slug, ArticleRepository $articleRepository, CategoryRepository $categoryRepository): Response
     {
         $category = $categoryRepository->findOneBy(['slug' => $slug]);
@@ -84,14 +85,20 @@ class BlogController extends AbstractController
             throw $this->createNotFoundException('Cette catégorie n\'existe pas');
         }
 
+        $articles = $articleRepository->findBy(
+            ['category' => $category, 'isPublished' => true],
+            ['publishedAt' => 'DESC']
+        );
+
+        $categories = $categoryRepository->findAll();
+
         return $this->render('frontend/article/category_show.html.twig', [
             'category' => $category,
-            'articles' => $articleRepository->findByCategory($category),
-            'categories' => $categoryRepository->findAll(),
+            'articles' => $articles,
+            'categories' => $categories,
         ]);
     }
 
-    #[Route('/{id}/favorite', name: 'app_blog_favorite', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
     public function addToFavorites(Article $article, EntityManagerInterface $entityManager): Response
     {

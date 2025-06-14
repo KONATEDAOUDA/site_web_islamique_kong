@@ -1,0 +1,318 @@
+{% extends 'frontend/base.html.twig' %}
+
+{% block title %}Contact - Kong Islamique{% endblock %}
+
+{% block main %}
+<!-- Breadcrumb -->
+<div class="breadcumb-wrapper" data-bg-src="{{ asset('assets/images/kong/contact-hero.jpg') }}">
+    <div class="container">
+        <div class="breadcumb-content">
+            <h1 class="breadcumb-title">Contactez-nous</h1>
+            <ul class="breadcumb-menu">
+                <li><a href="{{ path('app_home') }}">Accueil</a></li>
+                <li>Contact</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Contact Info Section -->
+<div class="space">
+    <div class="container">
+        <div class="title-area text-center">
+            <span class="sub-title">Contactez-nous</span>
+            <h2 class="sec-title">Restons en Contact</h2>
+            <p class="sec-text">N'hésitez pas à nous contacter pour toute question concernant le patrimoine islamique de Kong</p>
+        </div>
+        <div class="row gy-4">
+            <div class="col-xl-3 col-md-6">
+                <div class="contact-info">
+                    <div class="contact-info_icon">
+                        <img src="{{ asset('assets/img/icon/contact_1_1.svg') }}" alt="Adresse">
+                    </div>
+                    <div class="media-body">
+                        <h3 class="contact-info_title">Notre Adresse</h3>
+                        <p class="contact-info_text">Kong, Région du Tchologo<br>Côte d'Ivoire</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="contact-info">
+                    <div class="contact-info_icon">
+                        <img src="{{ asset('assets/img/icon/contact_1_2.svg') }}" alt="Téléphone">
+                    </div>
+                    <div class="media-body">
+                        <h3 class="contact-info_title">Téléphone</h3>
+                        <p class="contact-info_text">
+                            <a href="tel:+22500000000">+225 00 00 00 00</a><br>
+                            <a href="tel:+22511111111">+225 11 11 11 11</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="contact-info">
+                    <div class="contact-info_icon">
+                        <img src="{{ asset('assets/img/icon/contact_1_3.svg') }}" alt="Email">
+                    </div>
+                    <div class="media-body">
+                        <h3 class="contact-info_title">Email</h3>
+                        <p class="contact-info_text">
+                            <a href="mailto:contact@kong-islamique.org">contact@kong-islamique.org</a><br>
+                            <a href="mailto:info@kong-islamique.org">info@kong-islamique.org</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="contact-info">
+                    <div class="contact-info_icon">
+                        <img src="{{ asset('assets/img/icon/contact_1_4.svg') }}" alt="Horaires">
+                    </div>
+                    <div class="media-body">
+                        <h3 class="contact-info_title">Horaires</h3>
+                        <p class="contact-info_text">Lun - Ven: 8h00 - 17h00<br>Sam: 9h00 - 15h00</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Contact Form Section -->
+<section class="contact-area space-bottom">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-6">
+                <div class="contact-form-wrap">
+                    <div class="title-area mb-30">
+                        <span class="sub-title">Envoyez-nous un message</span>
+                        <h2 class="sec-title">Nous sommes là pour vous aider</h2>
+                    </div>
+                    <form action="{{ path('app_contact') }}" method="POST" class="contact-form ajax-contact">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" name="name" id="name" placeholder="Votre nom*" required>
+                                    <i class="fal fa-user"></i>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input type="email" class="form-control" name="email" id="email" placeholder="Votre email*" required>
+                                    <i class="fal fa-envelope"></i>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input type="tel" class="form-control" name="number" id="number" placeholder="Votre téléphone">
+                                    <i class="fal fa-phone"></i>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <select name="subject" id="subject" class="form-select">
+                                        <option value="">Sujet du message</option>
+                                        <option value="general">Question générale</option>
+                                        <option value="archive">Archives et recherche</option>
+                                        <option value="collaboration">Collaboration</option>
+                                        <option value="donation">Don et soutien</option>
+                                        <option value="technique">Support technique</option>
+                                        <option value="other">Autre</option>
+                                    </select>
+                                    <i class="fal fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <textarea name="message" id="message" cols="30" rows="3" class="form-control" placeholder="Votre message*" required></textarea>
+                                    <i class="fal fa-comment"></i>
+                                </div>
+                            </div>
+                            <div class="form-btn col-12">
+                                <button class="th-btn">Envoyer le message</button>
+                            </div>
+                        </div>
+                        <p class="form-messages mb-0 mt-3"></p>
+                    </form>
+                </div>
+            </div>
+            <div class="col-xl-6">
+                <div class="contact-map">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31697.776782964087!2d-5.4584599!3d9.3847!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xf0331e7f7c4c6b9%3A0x8b5f0df4c4b8e0c6!2sKong%2C%20C%C3%B4te%20d'Ivoire!5e0!3m2!1sfr!2sus!4v1706789123456!5m2!1sfr!2sus" 
+                            width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-area space" data-bg-src="{{ asset('assets/img/bg/faq_bg.jpg') }}">
+    <div class="container">
+        <div class="title-area text-center">
+            <span class="sub-title">Questions Fréquentes</span>
+            <h2 class="sec-title">Comment pouvons-nous vous aider ?</h2>
+        </div>
+        <div class="row">
+            <div class="col-xl-6">
+                <div class="accordion-card active">
+                    <div class="accordion-header" id="collapse-item-1">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-1">
+                            Comment puis-je accéder aux archives de Kong ?
+                        </button>
+                    </div>
+                    <div id="collapse-1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            <p class="faq-text">Vous pouvez consulter nos archives numériques directement sur notre plateforme. Certains documents nécessitent une inscription gratuite pour un accès complet.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-card">
+                    <div class="accordion-header" id="collapse-item-2">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-2">
+                            Puis-je contribuer avec mes propres documents historiques ?
+                        </button>
+                    </div>
+                    <div id="collapse-2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            <p class="faq-text">Absolument ! Nous encourageons les contributions de la communauté. Contactez-nous pour discuter de la numérisation et de l'archivage de vos documents.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-card">
+                    <div class="accordion-header" id="collapse-item-3">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-3">
+                            Comment soutenir financièrement le projet ?
+                        </button>
+                    </div>
+                    <div id="collapse-3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            <p class="faq-text">Nous acceptons les dons pour soutenir notre mission de préservation. Contactez-nous pour connaître les modalités de contribution.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6">
+                <div class="accordion-card">
+                    <div class="accordion-header" id="collapse-item-4">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-4">
+                            Proposez-vous des visites guidées de Kong ?
+                        </button>
+                    </div>
+                    <div id="collapse-4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            <p class="faq-text">Nous organisons occasionnellement des visites culturelles et historiques. Suivez nos actualités pour être informé des prochaines opportunités.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-card">
+                    <div class="accordion-header" id="collapse-item-5">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-5">
+                            Comment devenir bénévole ou collaborateur ?
+                        </button>
+                    </div>
+                    <div id="collapse-5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            <p class="faq-text">Nous recherchons toujours des personnes passionnées pour nous aider. Envoyez-nous votre candidature avec vos compétences et votre motivation.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-card">
+                    <div class="accordion-header" id="collapse-item-6">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-6">
+                            Les contenus sont-ils disponibles en plusieurs langues ?
+                        </button>
+                    </div>
+                    <div id="collapse-6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            <p class="faq-text">Nous travaillons à rendre nos contenus disponibles en français, arabe et anglais. Certains documents originaux sont en arabe avec traductions.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter Section -->
+<section class="newsletter-area">
+    <div class="container">
+        <div class="newsletter-wrap" data-bg-src="{{ asset('assets/img/bg/newsletter_bg.jpg') }}">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="newsletter-content">
+                        <div class="newsletter-icon">
+                            <img src="{{ asset('assets/img/icon/newsletter.svg') }}" alt="Newsletter">
+                        </div>
+                        <h4 class="newsletter-title">Restez informé</h4>
+                        <p class="newsletter-text">Recevez les dernières actualités et mises à jour sur le patrimoine islamique de Kong.</p>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <form class="newsletter-form">
+                        <div class="form-group">
+                            <input class="form-control" type="email" placeholder="Entrez votre adresse email" required>
+                            <button type="submit" class="th-btn">S'abonner</button>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="privacy-policy" required>
+                            <label class="form-check-label" for="privacy-policy">
+                                J'accepte les <a href="{{ path('app_terms') }}">conditions d'utilisation</a> et la <a href="{{ path('app_privacy') }}">politique de confidentialité</a>
+                            </label>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // Contact form handling
+        document.querySelector('.contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const messageDiv = this.querySelector('.form-messages');
+            
+            // Simple validation
+            const name = formData.get('name');
+            const email = formData.get('email');
+            const message = formData.get('message');
+            
+            if (!name || !email || !message) {
+                messageDiv.innerHTML = '<div class="alert alert-danger">Veuillez remplir tous les champs obligatoires.</div>';
+                return;
+            }
+            
+            // Simulate form submission
+            messageDiv.innerHTML = '<div class="alert alert-success">Votre message a été envoyé avec succès ! Nous vous répondrons dans les plus brefs délais.</div>';
+            this.reset();
+        });
+
+        // Newsletter form handling
+        document.querySelector('.newsletter-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = this.querySelector('input[type="email"]').value;
+            const checkbox = this.querySelector('#privacy-policy').checked;
+            
+            if (!email) {
+                alert('Veuillez entrer votre adresse email.');
+                return;
+            }
+            
+            if (!checkbox) {
+                alert('Veuillez accepter les conditions d\'utilisation.');
+                return;
+            }
+            
+            alert('Merci pour votre inscription à notre newsletter !');
+            this.reset();
+        });
+    </script>
+{% endblock %}

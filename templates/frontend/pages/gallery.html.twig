@@ -1,0 +1,492 @@
+{% extends 'frontend/base.html.twig' %}
+
+{% block title %}Galerie - Kong Islamique{% endblock %}
+
+{% block main %}
+<!-- Breadcrumb -->
+<div class="breadcumb-wrapper" data-bg-src="{{ asset('assets/images/kong/gallery-hero.jpg') }}">
+    <div class="container">
+        <div class="breadcumb-content">
+            <h1 class="breadcumb-title">Galerie Photographique</h1>
+            <ul class="breadcumb-menu">
+                <li><a href="{{ path('app_home') }}">Accueil</a></li>
+                <li>Galerie</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Intro Section -->
+<section class="space-top">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-8">
+                <div class="title-area text-center">
+                    <span class="sub-title">Patrimoine Visuel</span>
+                    <h2 class="sec-title">Images Historiques de Kong</h2>
+                    <p class="sec-text">
+                        Découvrez Kong à travers les siècles grâce à notre collection d'images historiques. 
+                        Ces photographies et illustrations témoignent de l'évolution de cette ville islamique 
+                        emblématique de la Côte d'Ivoire.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Gallery Filter -->
+<section class="gallery-filter-area space-bottom">
+    <div class="container">
+        <div class="filter-menu-wrapper">
+            <div class="filter-menu-area">
+                <div class="filter-menu filter-menu-active">
+                    <button data-filter="*" class="active" type="button">Toutes</button>
+                    <button data-filter=".architecture" type="button">Architecture</button>
+                    <button data-filter=".people" type="button">Personnages</button>
+                    <button data-filter=".ceremonies" type="button">Cérémonies</button>
+                    <button data-filter=".historical" type="button">Documents</button>
+                    <button data-filter=".contemporary" type="button">Moderne</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Gallery Grid -->
+<section class="gallery-area space-bottom">
+    <div class="container">
+        <div class="row gy-4 filter-active">
+            <!-- Architecture Images -->
+            <div class="col-md-6 col-lg-4 filter-item architecture">
+                <div class="gallery-card">
+                    <div class="gallery-img">
+                        <img src="{{ asset('assets/images/kong/grande-mosquee-kong-historical.jpg') }}" alt="Grande Mosquée de Kong">
+                        <div class="gallery-overlay">
+                            <div class="gallery-content">
+                                <h3 class="gallery-title">Grande Mosquée de Kong</h3>
+                                <p class="gallery-text">Architecture traditionnelle soudano-sahélienne</p>
+                                <a href="{{ asset('assets/images/kong/grande-mosquee-kong-historical.jpg') }}" class="gallery-btn popup-image">
+                                    <i class="fas fa-search-plus"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 filter-item architecture">
+                <div class="gallery-card">
+                    <div class="gallery-img">
+                        <img src="{{ asset('assets/images/kong/architecture-traditional.jpg') }}" alt="Architecture Traditionnelle">
+                        <div class="gallery-overlay">
+                            <div class="gallery-content">
+                                <h3 class="gallery-title">Maisons Traditionnelles</h3>
+                                <p class="gallery-text">Style architectural local en terre</p>
+                                <a href="{{ asset('assets/images/kong/architecture-traditional.jpg') }}" class="gallery-btn popup-image">
+                                    <i class="fas fa-search-plus"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 filter-item architecture">
+                <div class="gallery-card">
+                    <div class="gallery-img">
+                        <img src="{{ asset('assets/images/kong/minaret-detail.jpg') }}" alt="Détail Minaret">
+                        <div class="gallery-overlay">
+                            <div class="gallery-content">
+                                <h3 class="gallery-title">Détail du Minaret</h3>
+                                <p class="gallery-text">Ornementation islamique traditionnelle</p>
+                                <a href="{{ asset('assets/images/kong/minaret-detail.jpg') }}" class="gallery-btn popup-image">
+                                    <i class="fas fa-search-plus"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- People Images -->
+            <div class="col-md-6 col-lg-4 filter-item people">
+                <div class="gallery-card">
+                    <div class="gallery-img">
+                        <img src="{{ asset('assets/images/kong/scholars-group.jpg') }}" alt="Groupe d'Érudits">
+                        <div class="gallery-overlay">
+                            <div class="gallery-content">
+                                <h3 class="gallery-title">Érudits de Kong</h3>
+                                <p class="gallery-text">Maîtres islamiques, années 1950</p>
+                                <a href="{{ asset('assets/images/kong/scholars-group.jpg') }}" class="gallery-btn popup-image">
+                                    <i class="fas fa-search-plus"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 filter-item people">
+                <div class="gallery-card">
+                    <div class="gallery-img">
+                        <img src="{{ asset('assets/images/kong/elder-teaching.jpg') }}" alt="Enseignement">
+                        <div class="gallery-overlay">
+                            <div class="gallery-content">
+                                <h3 class="gallery-title">Transmission du Savoir</h3>
+                                <p class="gallery-text">Maître enseignant le Coran</p>
+                                <a href="{{ asset('assets/images/kong/elder-teaching.jpg') }}" class="gallery-btn popup-image">
+                                    <i class="fas fa-search-plus"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 filter-item people">
+                <div class="gallery-card">
+                    <div class="gallery-img">
+                        <img src="{{ asset('assets/images/kong/students-learning.jpg') }}" alt="Étudiants">
+                        <div class="gallery-overlay">
+                            <div class="gallery-content">
+                                <h3 class="gallery-title">École Coranique</h3>
+                                <p class="gallery-text">Enfants apprenant le Coran</p>
+                                <a href="{{ asset('assets/images/kong/students-learning.jpg') }}" class="gallery-btn popup-image">
+                                    <i class="fas fa-search-plus"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ceremonies Images -->
+            <div class="col-md-6 col-lg-4 filter-item ceremonies">
+                <div class="gallery-card">
+                    <div class="gallery-img">
+                        <img src="{{ asset('assets/images/kong/friday-prayer.jpg') }}" alt="Prière du Vendredi">
+                        <div class="gallery-overlay">
+                            <div class="gallery-content">
+                                <h3 class="gallery-title">Prière du Vendredi</h3>
+                                <p class="gallery-text">Rassemblement communautaire</p>
+                                <a href="{{ asset('assets/images/kong/friday-prayer.jpg') }}" class="gallery-btn popup-image">
+                                    <i class="fas fa-search-plus"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 filter-item ceremonies">
+                <div class="gallery-card">
+                    <div class="gallery-img">
+                        <img src="{{ asset('assets/images/kong/ramadan-celebration.jpg') }}" alt="Célébration Ramadan">
+                        <div class="gallery-overlay">
+                            <div class="gallery-content">
+                                <h3 class="gallery-title">Fin du Ramadan</h3>
+                                <p class="gallery-text">Célébration de l'Aïd</p>
+                                <a href="{{ asset('assets/images/kong/ramadan-celebration.jpg') }}" class="gallery-btn popup-image">
+                                    <i class="fas fa-search-plus"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 filter-item ceremonies">
+                <div class="gallery-card">
+                    <div class="gallery-img">
+                        <img src="{{ asset('assets/images/kong/religious-ceremony.jpg') }}" alt="Cérémonie Religieuse">
+                        <div class="gallery-overlay">
+                            <div class="gallery-content">
+                                <h3 class="gallery-title">Cérémonie Traditionnelle</h3>
+                                <p class="gallery-text">Rituel islamique local</p>
+                                <a href="{{ asset('assets/images/kong/religious-ceremony.jpg') }}" class="gallery-btn popup-image">
+                                    <i class="fas fa-search-plus"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Historical Documents -->
+            <div class="col-md-6 col-lg-4 filter-item historical">
+                <div class="gallery-card">
+                    <div class="gallery-img">
+                        <img src="{{ asset('assets/images/kong/manuscript-page.jpg') }}" alt="Page de Manuscrit">
+                        <div class="gallery-overlay">
+                            <div class="gallery-content">
+                                <h3 class="gallery-title">Manuscrit Ancien</h3>
+                                <p class="gallery-text">Calligraphie arabe, XVIIIe siècle</p>
+                                <a href="{{ asset('assets/images/kong/manuscript-page.jpg') }}" class="gallery-btn popup-image">
+                                    <i class="fas fa-search-plus"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 filter-item historical">
+                <div class="gallery-card">
+                    <div class="gallery-img">
+                        <img src="{{ asset('assets/images/kong/old-map.jpg') }}" alt="Carte Ancienne">
+                        <div class="gallery-overlay">
+                            <div class="gallery-content">
+                                <h3 class="gallery-title">Carte Historique</h3>
+                                <p class="gallery-text">Kong sur les routes commerciales</p>
+                                <a href="{{ asset('assets/images/kong/old-map.jpg') }}" class="gallery-btn popup-image">
+                                    <i class="fas fa-search-plus"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 filter-item historical">
+                <div class="gallery-card">
+                    <div class="gallery-img">
+                        <img src="{{ asset('assets/images/kong/colonial-document.jpg') }}" alt="Document Colonial">
+                        <div class="gallery-overlay">
+                            <div class="gallery-content">
+                                <h3 class="gallery-title">Document Colonial</h3>
+                                <p class="gallery-text">Témoignage administratif</p>
+                                <a href="{{ asset('assets/images/kong/colonial-document.jpg') }}" class="gallery-btn popup-image">
+                                    <i class="fas fa-search-plus"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contemporary Images -->
+            <div class="col-md-6 col-lg-4 filter-item contemporary">
+                <div class="gallery-card">
+                    <div class="gallery-img">
+                        <img src="{{ asset('assets/images/kong/modern-kong.jpg') }}" alt="Kong Moderne">
+                        <div class="gallery-overlay">
+                            <div class="gallery-content">
+                                <h3 class="gallery-title">Kong Aujourd'hui</h3>
+                                <p class="gallery-text">Vue contemporaine de la ville</p>
+                                <a href="{{ asset('assets/images/kong/modern-kong.jpg') }}" class="gallery-btn popup-image">
+                                    <i class="fas fa-search-plus"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 filter-item contemporary">
+                <div class="gallery-card">
+                    <div class="gallery-img">
+                        <img src="{{ asset('assets/images/kong/restoration-work.jpg') }}" alt="Travaux de Restauration">
+                        <div class="gallery-overlay">
+                            <div class="gallery-content">
+                                <h3 class="gallery-title">Restauration</h3>
+                                <p class="gallery-text">Préservation du patrimoine</p>
+                                <a href="{{ asset('assets/images/kong/restoration-work.jpg') }}" class="gallery-btn popup-image">
+                                    <i class="fas fa-search-plus"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 filter-item contemporary">
+                <div class="gallery-card">
+                    <div class="gallery-img">
+                        <img src="{{ asset('assets/images/kong/community-today.jpg') }}" alt="Communauté Actuelle">
+                        <div class="gallery-overlay">
+                            <div class="gallery-content">
+                                <h3 class="gallery-title">Communauté Actuelle</h3>
+                                <p class="gallery-text">Kong au XXIe siècle</p>
+                                <a href="{{ asset('assets/images/kong/community-today.jpg') }}" class="gallery-btn popup-image">
+                                    <i class="fas fa-search-plus"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Gallery Statistics -->
+<section class="gallery-stats space" data-bg-src="{{ asset('assets/img/bg/stats_bg.jpg') }}">
+    <div class="container">
+        <div class="row text-center text-white">
+            <div class="col-md-3">
+                <div class="stat-item">
+                    <h3 class="stat-number"><span class="counter-number">500</span>+</h3>
+                    <p class="stat-label">Photos Historiques</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-item">
+                    <h3 class="stat-number"><span class="counter-number">150</span>+</h3>
+                    <p class="stat-label">Documents Numérisés</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-item">
+                    <h3 class="stat-number"><span class="counter-number">80</span>+</h3>
+                    <p class="stat-label">Années Documentées</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-item">
+                    <h3 class="stat-number"><span class="counter-number">25</span>+</h3>
+                    <p class="stat-label">Contributeurs</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contribute Section -->
+<section class="contribute-gallery space">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="contribute-content">
+                    <h2 class="contribute-title">Partagez vos Photos Historiques</h2>
+                    <p class="contribute-text">
+                        Vous possédez des photographies historiques de Kong ? Aidez-nous à enrichir notre galerie 
+                        en partageant vos précieux souvenirs visuels.
+                    </p>
+                    <ul class="contribute-features">
+                        <li><i class="fas fa-camera"></i> Numérisation professionnelle gratuite</li>
+                        <li><i class="fas fa-shield-alt"></i> Conservation sécurisée de vos originaux</li>
+                        <li><i class="fas fa-award"></i> Reconnaissance de votre contribution</li>
+                        <li><i class="fas fa-globe"></i> Partage avec la communauté mondiale</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="contribute-image">
+                    <img src="{{ asset('assets/images/kong/contribute-gallery.jpg') }}" alt="Contribuer à la galerie" class="img-fluid rounded">
+                </div>
+            </div>
+        </div>
+        <div class="row mt-5">
+            <div class="col-12 text-center">
+                <a href="{{ path('app_contact') }}?subject=Contribution Galerie" class="th-btn">
+                    <span class="btn-text" data-back="Contribuer à la galerie" data-front="Contribuer à la galerie"></span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Related Sections -->
+<section class="related-sections space" data-bg-src="{{ asset('assets/img/bg/related_bg.jpg') }}">
+    <div class="container">
+        <div class="title-area text-center text-white">
+            <span class="sub-title">Explorez Plus</span>
+            <h2 class="sec-title text-white">Découvrez Nos Autres Collections</h2>
+        </div>
+        <div class="row gy-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="related-card">
+                    <div class="related-icon">
+                        <i class="fas fa-archive"></i>
+                    </div>
+                    <h3 class="related-title">Archives Numériques</h3>
+                    <p class="related-text">Explorez nos documents historiques numérisés</p>
+                    <a href="{{ path('app_archive') }}" class="related-link">
+                        Découvrir <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="related-card">
+                    <div class="related-icon">
+                        <i class="fas fa-podcast"></i>
+                    </div>
+                    <h3 class="related-title">Podcasts</h3>
+                    <p class="related-text">Écoutez les enseignements des maîtres</p>
+                    <a href="{{ path('app_podcast_index') }}" class="related-link">
+                        Écouter <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="related-card">
+                    <div class="related-icon">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <h3 class="related-title">Maîtres Islamiques</h3>
+                    <p class="related-text">Découvrez les profils des érudits</p>
+                    <a href="{{ path('app_teacher') }}" class="related-link">
+                        Voir <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="related-card">
+                    <div class="related-icon">
+                        <i class="fas fa-newspaper"></i>
+                    </div>
+                    <h3 class="related-title">Articles</h3>
+                    <p class="related-text">Lisez nos dernières actualités</p>
+                    <a href="{{ path('app_blog_index') }}" class="related-link">
+                        Lire <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // Filter functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterButtons = document.querySelectorAll('.filter-menu button');
+            const filterItems = document.querySelectorAll('.filter-item');
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    const filterValue = this.getAttribute('data-filter');
+                    
+                    filterItems.forEach(item => {
+                        if (filterValue === '*' || item.classList.contains(filterValue.substring(1))) {
+                            item.style.display = 'block';
+                            setTimeout(() => {
+                                item.style.opacity = '1';
+                                item.style.transform = 'scale(1)';
+                            }, 100);
+                        } else {
+                            item.style.opacity = '0';
+                            item.style.transform = 'scale(0.8)';
+                            setTimeout(() => {
+                                item.style.display = 'none';
+                            }, 300);
+                        }
+                    });
+                });
+            });
+
+            // Initialize all items as visible
+            filterItems.forEach(item => {
+                item.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            });
+        });
+    </script>
+{% endblock %}
